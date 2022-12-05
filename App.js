@@ -27,13 +27,13 @@ import {
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
 
-const { DIDFuncionalities, CalendarModuleFoo } = ReactNative.NativeModules;
+const { CalendarModuleFoo } = ReactNative.NativeModules;
 
 const NewModuleButton = (): Node => {
   const onPress = () => {
     console.log('We will invoke the native module here!');
     CalendarModuleFoo.createCalendarEvent('testName', 'testLocation');
-    DIDFuncionalities.addEvent('testEvent','testLocation',12334);
+    //DIDFuncionalities.addEvent('testEvent','testLocation',12334);
   };
 
   return (
