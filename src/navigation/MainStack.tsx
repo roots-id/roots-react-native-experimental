@@ -36,7 +36,7 @@ export default function MainStack() {
             const iconName = focused
               ? 'check-bold'
               : 'checkbox-blank-circle-outline';
-            return <Avatar.Icon size={20} icon={iconName} />;
+            return <Avatar.Image size={20} />;
           },
           tabBarActiveBackgroundColor: '#362631',
           tabBarInactiveBackgroundColor: '#150510',

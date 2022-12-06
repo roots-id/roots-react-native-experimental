@@ -3,7 +3,7 @@ import { Animated, View, Text, Pressable } from 'react-native';
 import { useTheme } from '@react-navigation/native';
 import { useCardAnimation } from '@react-navigation/stack';
 import { IconButton, ToggleButton } from 'react-native-paper';
-import QRCode from 'react-native-qrcode-svg';
+//import QRCode from 'react-native-qrcode-svg';
 import { styles } from '../styles/styles';
 
 export default function ShowQrCodeScreen({ route, navigation }) {
@@ -26,7 +26,7 @@ export default function ShowQrCodeScreen({ route, navigation }) {
   useEffect(() => {
     switch (viewSelection) {
       case qrView:
-        setViewOut(<QRCode value={jsonData} size={300} />);
+        //setViewOut(<QRCode value={jsonData} size={300} />);
         setViewIcon('toggle-switch');
         break;
       case textView:
@@ -63,7 +63,7 @@ export default function ShowQrCodeScreen({ route, navigation }) {
             size={26}
             color='#e69138'
             value='toggle view switch'
-            status={viewSelection}
+            status={viewSelection == 1?"checked":"unchecked"}
             onPress={onButtonToggle}
           />
         </View>
