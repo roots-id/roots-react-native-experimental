@@ -21,6 +21,7 @@ import { DevStack } from './dev-stack';
 import { ROUTE_NAMES } from './constants';
 import ScanQrCode from '../screens/ScanQrCodeScreen';
 import ShowQrCodeScreen from '../screens/ShowQrCodeScreen';
+import TestScreen from "../screens/TestScreen";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -32,24 +33,50 @@ export default function MainStack() {
       <Tab.Navigator
         screenOptions={{
           headerShown: false,
-          tabBarIcon: ({ focused, color, size }) => {
-            const iconName = focused
-              ? 'check-bold'
-              : 'checkbox-blank-circle-outline';
-            return <Avatar.Image size={20} />;
-          },
-          tabBarActiveBackgroundColor: '#362631',
+            tabBarActiveBackgroundColor: '#362631',
           tabBarInactiveBackgroundColor: '#150510',
           tabBarActiveTintColor: 'orange',
           tabBarInactiveTintColor: 'grey',
           tabBarLabelStyle: { fontSize: 22 },
         }}
       >
-        <Tab.Screen name='Contacts' component={RelationshipsStack} />
-        <Tab.Screen name='Credentials' component={CredentialsStack} />
+          <Tab.Screen name='Test' component={TestStack} />
+        {/*<Tab.Screen name='Contacts' component={RelationshipsStack} />*/}
+        {/*<Tab.Screen name='Credentials' component={CredentialsStack} />*/}
       </Tab.Navigator>
     );
   };
+
+    const TestStack = () => {
+        return (
+            <Stack.Navigator
+                screenOptions={{
+                    headerStyle: {
+                        backgroundColor: '#150510',
+                    },
+                    headerTintColor: '#eeeeee',
+                    headerTitleStyle: {
+                        fontSize: 22,
+                    },
+                    gestureEnabled: true,
+                    gestureDirection: 'horizontal',
+                    cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+                    animationEnabled: true,
+                }}
+            >
+                <Stack.Group>
+                    <Stack.Screen
+                        name={ROUTE_NAMES.TEST}
+                        component={TestScreen}
+                        options={({ navigation, route }) => ({
+                            headerTitle: (props) => <LogoTitle {...props} title='Test' />,
+                        })}
+                    />
+                </Stack.Group>
+            </Stack.Navigator>
+        );
+    };
+
   const RelationshipsStack = () => {
     return (
       <Stack.Navigator

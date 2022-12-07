@@ -18,6 +18,7 @@ export const ROUTE_NAMES = {
   SIDE_TREE: 'Sidetree',
   SETTINGS: 'Settings',
   SAVE: 'Save',
+  TEST: 'Test',
   VCS: 'VCs',
   CREDENTIAL_DETAILS: 'Credential Details',
 };
