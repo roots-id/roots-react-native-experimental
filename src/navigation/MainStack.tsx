@@ -40,9 +40,9 @@ export default function MainStack() {
           tabBarLabelStyle: { fontSize: 22 },
         }}
       >
-          <Tab.Screen name='Test' component={TestStack} />
-        {/*<Tab.Screen name='Contacts' component={RelationshipsStack} />*/}
-        {/*<Tab.Screen name='Credentials' component={CredentialsStack} />*/}
+          {/*<Tab.Screen name='Test' component={TestStack} />*/}
+        <Tab.Screen name='Contacts' component={RelationshipsStack} />
+        <Tab.Screen name='Credentials' component={CredentialsStack} />
       </Tab.Navigator>
     );
   };
