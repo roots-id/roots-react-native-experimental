@@ -175,7 +175,7 @@ export const initiateWalletCreation = createAsyncThunk(
         })
       )
     ).payload;
-        console.log('discordSocialIssuerId', discordSocialIssuerId);
+    console.log('discordSocialIssuerId', discordSocialIssuerId);
     thunkAPI.dispatch(initiateChat({ chatId: discordSocialIssuerId }));
     const today = new Date(Date.now());
     const discordCreds = {
@@ -209,11 +209,16 @@ export const initiateWalletCreation = createAsyncThunk(
       })
     );
 
-      console.log('We will invoke the native module here!');
-      CalendarModuleFoo.createCalendarEvent('testName', 'testLocation');
-      DIDFuncionalities.addEvent('testEvent','testLocation',12334);
-    const fakeDid: string = "did:fake:"+today.getMilliseconds()
-      console.log('wallet - fake DID is', fakeDid);
+    console.log('We will invoke the native module here!');
+    CalendarModuleFoo.createCalendarEvent('testName', 'testLocation');
+    DIDFuncionalities.addEvent('testEvent','testLocation',12334);
+      //const response = DIDFuncionalities.create.createPrismDID();
+    // if(response) {
+    //     console.log('async call response',response);
+    // }
+
+      const fakeDid: string = "did:fake:"+today.getMilliseconds()
+    console.log('wallet - fake DID is', fakeDid);
 
       const didObj = {
           _id: fakeDid,

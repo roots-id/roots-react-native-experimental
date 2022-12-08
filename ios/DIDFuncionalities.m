@@ -17,4 +17,8 @@ RCT_EXTERN_METHOD(addEvent:(NSString *)name location:(NSString *)location date:(
 //    (RCTPromiseResolveBlock) resolve
 //    rejecter: (RCTPromiseRejectBlock) reject
 //  )
+// RCT_EXTERN_METHOD(createPrismDID:
+//                     (RCTPromiseResolveBlock)resolve
+//                     (RCTPromiseRejectBlock)reject
+//                   )
 @end
