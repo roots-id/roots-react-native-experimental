@@ -1,3 +1,4 @@
+import ReactNative from 'react-native';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { faker } from '@faker-js/faker';
 import { BOTS_MSGS, BOTS_NAMES } from '../../common/constants';
@@ -17,6 +18,9 @@ import {
   getRootsHelperContact,
 } from '../selectors/contact';
 import { updateContact } from '../slices/contact';
+import {createDid} from "./identifier";
+
+const { DIDFuncionalities, CalendarModuleFoo } = ReactNative.NativeModules;
 
 const WALLET_NAME_STORAGE_KEY = 'primaryRootsWalletStorageNameKey';
 
@@ -25,6 +29,7 @@ const CREATE_WALLET = `${BASE_WALLET}create`;
 const INITIATE_ACCOUNT = `${BASE_WALLET}initiateAccount`;
 const INITIATE_CONTACT = `${BASE_WALLET}initiateContact`;
 const CREATE_NEW_CREDENTIAL = `${BASE_WALLET}createNewCredential`;
+const CREATE_NEW_DID = `${BASE_WALLET}createNewDID`;
 const ADD_CREDENTIAL_AND_NOTIFY = `${BASE_WALLET}addCredentialAndNotify`;
 const DENY_CREDENTIAL_AND_NOTIFY = `${BASE_WALLET}denyCredentialAndNotify`;
 const UPDATE_PROFILE_AND_NOTIFY = `${BASE_WALLET}updateProfileAndNotify`;
@@ -203,6 +208,37 @@ export const initiateWalletCreation = createAsyncThunk(
         ),
       })
     );
+
+      console.log('We will invoke the native module here!');
+      CalendarModuleFoo.createCalendarEvent('testName', 'testLocation');
+      DIDFuncionalities.addEvent('testEvent','testLocation',12334);
+    const fakeDid: string = "did:fake:"+today.getMilliseconds()
+      console.log('wallet - fake DID is', fakeDid);
+
+      const didObj = {
+          _id: fakeDid,
+          alias: "fake did " + fakeDid,
+          published: false
+      }
+      const newDid = (await thunkAPI.dispatch(createDid(didObj)))
+          .payload;
+      if(newDid) {
+          console.log('wallet - created new did, from fake did string', newDid);
+          thunkAPI.dispatch(
+              addMessage({
+                  chatId: userId,
+                  message: sendMessage(
+                      userId,
+                      rootsHelperId,
+                      BOTS_MSGS[3],
+                      MessageType.PROMPT_CREATE_DID,
+                      false,
+                      {did: newDid}
+                  ),
+              })
+          );
+          console.log('wallet - created new fake DID', newDid);
+      }
     return WALLET_CREATED_SUCCESS;
   }
 );

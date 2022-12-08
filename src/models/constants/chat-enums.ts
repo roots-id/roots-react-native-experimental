@@ -6,6 +6,7 @@ export enum MessageType {
   PROMPT_ACCEPTED_CREDENTIAL = 'rootsAcceptedCredentialMsgType',
   PROMPT_PREVIEW_ACCEPT_DENY_CREDENTIAL = 'rootsPreviewAcceptDenyCredentialMsgType',
   PROMPT_OWN_CREDENTIAL = 'rootsOwnCredentialMsgType',
+  PROMPT_CREATE_DID = 'rootsCreateDidMsgType',
   PROMPT_OWN_DID = 'rootsOwnDidMsgType',
   PROMPT_PUBLISH = 'rootsPromptPublishMsgType',
   PROMPT_ISSUED_CREDENTIAL = 'rootsIssuedCredentialMsgType',
