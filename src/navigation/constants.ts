@@ -21,4 +21,5 @@ export const ROUTE_NAMES = {
   TEST: 'Test',
   VCS: 'VCs',
   CREDENTIAL_DETAILS: 'Credential Details',
+  IDENTIFIER_DETAILS: 'Identifier Details',
 };

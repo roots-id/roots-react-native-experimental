@@ -42,6 +42,19 @@ function addQuickReply(msg: message) {
       ],
     };
   }
+  if (msg.type === MessageType.PROMPT_DISPLAY_IDENTIFIER) {
+    msg.quickReplies = {
+      type: 'checkbox',
+      keepIt: false,
+      values: [
+        {
+          title: 'View',
+          value: MessageType.PROMPT_DISPLAY_IDENTIFIER,
+          messageId: msg._id,
+        },
+      ],
+    };
+  }
   if (msg.type === MessageType.PROMPT_OWN_DID) {
     msg.quickReplies = {
       type: 'checkbox',

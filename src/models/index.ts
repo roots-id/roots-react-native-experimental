@@ -115,6 +115,10 @@ export type exportKeyValue = {
     value: Object,
 }
 
+export type identifier = {
+    identifier: string,
+}
+
 export interface issuedCredential extends credential {
     batchId: string,
     claim: claim,

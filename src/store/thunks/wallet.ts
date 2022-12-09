@@ -49,6 +49,14 @@ export const createWallet = createAsyncThunk(
   }
 );
 
+async function setupDID(): Promise<string> {
+    console.log('wallet - invoking DIDFunctionalities here');
+    DIDFuncionalities.addEvent('testEvent','testLocation',12334);
+    const result = await DIDFuncionalities.resolvePromise()
+    console.log('wallet - DIDFunctionalities await', result);
+    return result
+}
+
 export const initiateWalletCreation = createAsyncThunk(
   INITIATE_ACCOUNT,
   async (wallet: CreateWalletDto, thunkAPI) => {
@@ -209,15 +217,16 @@ export const initiateWalletCreation = createAsyncThunk(
       })
     );
 
-    console.log('We will invoke the native module here!');
+    console.log('wallet - invoking calendar example here');
     CalendarModuleFoo.createCalendarEvent('testName', 'testLocation');
-    DIDFuncionalities.addEvent('testEvent','testLocation',12334);
+    const prismDid = await setupDID()
+    console.log('wallet - prism did is',prismDid);
       //const response = DIDFuncionalities.create.createPrismDID();
     // if(response) {
     //     console.log('async call response',response);
     // }
-
-      const fakeDid: string = "did:fake:"+today.getMilliseconds()
+    console.log('wallet - creating fake dids');
+    const fakeDid: string = "did:fake:"+today.getMilliseconds()
     console.log('wallet - fake DID is', fakeDid);
 
       const didObj = {
@@ -227,7 +236,7 @@ export const initiateWalletCreation = createAsyncThunk(
       }
       const newDid = (await thunkAPI.dispatch(createDid(didObj)))
           .payload;
-      if(newDid) {
+      if(prismDid) {
           console.log('wallet - created new did, from fake did string', newDid);
           thunkAPI.dispatch(
               addMessage({
@@ -236,9 +245,9 @@ export const initiateWalletCreation = createAsyncThunk(
                       userId,
                       rootsHelperId,
                       BOTS_MSGS[3],
-                      MessageType.PROMPT_CREATE_DID,
+                      MessageType.PROMPT_DISPLAY_IDENTIFIER,
                       false,
-                      {did: newDid}
+                      {identifier: {identifier: prismDid}}
                   ),
               })
           );

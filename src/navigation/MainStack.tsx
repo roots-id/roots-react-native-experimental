@@ -15,6 +15,7 @@ import DeveloperScreen from '../screens/DeveloperScreen';
 import WalletScreen from '../screens/WalletScreen';
 import ChatScreen from '../screens/ChatScreen';
 import CredentialDetailScreen from '../screens/CredentialDetailScreen';
+import IdentifierDetailScreen from '../screens/IdentifierDetailScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 import SaveScreen from '../screens/SaveScreen';
 import { DevStack } from './dev-stack';
@@ -201,6 +202,10 @@ export default function MainStack() {
           name={ROUTE_NAMES.CREDENTIAL_DETAILS}
           component={CredentialDetailScreen}
         />
+      <Stack.Screen
+          name={ROUTE_NAMES.IDENTIFIER_DETAILS}
+          component={IdentifierDetailScreen}
+      />
         <Stack.Screen
           name={ROUTE_NAMES.SCAN_QR_CODE}
           component={ScanQrCode}

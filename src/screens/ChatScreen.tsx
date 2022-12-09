@@ -189,7 +189,15 @@ export default function ChatScreen({
               cred: msgCurrentChat?.data?.credential,
             });
           }
-        } else {
+        } else if (reply.value.startsWith(MessageType.PROMPT_DISPLAY_IDENTIFIER)) {
+          console.log('ChatScreen - quick reply display id');
+          const msg = currentChat?.messages.find(
+              (message) => message._id === reply.messageId)
+          navigation.navigate(ROUTE_NAMES.IDENTIFIER_DETAILS, {
+            identifier: msg?.data?.identifier,
+          });
+        }
+        else {
           console.log(
             'ChatScreen - reply value not recognized, was',
             reply.value

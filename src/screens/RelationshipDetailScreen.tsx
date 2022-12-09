@@ -41,47 +41,47 @@ export default function RelationshipDetailScreen({
     >
       <Pressable style={styles.pressable} onPress={navigation.goBack} />
       <View style={styles.closeButtonContainer}>
-        <IconButton
-          icon='close-circle'
-          size={36}
-          color='#e69138'
-          onPress={() => navigation.goBack()}
-        />
+      {/*  <IconButton*/}
+      {/*    icon='close-circle'*/}
+      {/*    size={36}*/}
+      {/*    color='#e69138'*/}
+      {/*    onPress={() => navigation.goBack()}*/}
+      {/*  />*/}
       </View>
       <Animated.View style={styles.viewAnimated}>
         <View style={{ flexDirection: 'row' }}>
-          <IconButton
-            icon='text-box'
-            size={36}
-            color='#e69138'
-            onPress={async () => {
-              if (rel) {
-                console.log('RelDetailScreen - setting rel', rel);
-                // setRel(await addDidDoc(rel));
-              } else {
-                console.error(
-                  'RelDetailScreen - cant set rel, rel not set',
-                  rel
-                );
-              }
-            }}
-          />
-          <IconButton
-            icon='qrcode'
-            size={36}
-            color='#e69138'
-            onPress={() => {
-              if (rel) {
-                console.log('RelDetailScreen - show QR for rel', rel);
-                goToShowQrCode(navigation, rel)
-              } else {
-                console.error(
-                  'RelDetailScreen - cant show qr, rel not set',
-                  rel
-                );
-              }
-            }}
-          />
+          {/*<IconButton*/}
+          {/*  icon='text-box'*/}
+          {/*  size={36}*/}
+          {/*  color='#e69138'*/}
+          {/*  onPress={async () => {*/}
+          {/*    if (rel) {*/}
+          {/*      console.log('RelDetailScreen - setting rel', rel);*/}
+          {/*      // setRel(await addDidDoc(rel));*/}
+          {/*    } else {*/}
+          {/*      console.error(*/}
+          {/*        'RelDetailScreen - cant set rel, rel not set',*/}
+          {/*        rel*/}
+          {/*      );*/}
+          {/*    }*/}
+          {/*  }}*/}
+          {/*/>*/}
+          {/*<IconButton*/}
+          {/*  icon='qrcode'*/}
+          {/*  size={36}*/}
+          {/*  color='#e69138'*/}
+          {/*  onPress={() => {*/}
+          {/*    if (rel) {*/}
+          {/*      console.log('RelDetailScreen - show QR for rel', rel);*/}
+          {/*      goToShowQrCode(navigation, rel)*/}
+          {/*    } else {*/}
+          {/*      console.error(*/}
+          {/*        'RelDetailScreen - cant show qr, rel not set',*/}
+          {/*        rel*/}
+          {/*      );*/}
+          {/*    }*/}
+          {/*  }}*/}
+          {/*/>*/}
         </View>
         <Image
           source={{ uri: rel.displayPictureUrl }}
