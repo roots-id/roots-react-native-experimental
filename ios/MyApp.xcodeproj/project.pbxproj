@@ -12,8 +12,10 @@
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		26A2EBE0F07A56CE5A7F054F /* libPods-MyApp-MyAppTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9B24BB57F4A4E410A2990E1C /* libPods-MyApp-MyAppTests.a */; };
+		55F383F4D3DFE7837608DFD7 /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = F567D9F04FB5C9AA15289666 /* ExpoModulesProvider.swift */; };
 		5A9B0DDA2859BF1779C866ED /* libPods-MyApp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E747661859776C37C5D41F0F /* libPods-MyApp.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
+		992A2DDC21C6E8C7255357C6 /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EB568864AE58F8405008E38 /* ExpoModulesProvider.swift */; };
 		A2EE66D6293A48AD005BF08C /* RCTCalendarModule.m in Sources */ = {isa = PBXBuildFile; fileRef = A2EE66D5293A48AD005BF08C /* RCTCalendarModule.m */; };
 		A2EE66D9293A5223005BF08C /* DIDFuncionalities.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2EE66D8293A5223005BF08C /* DIDFuncionalities.swift */; };
 		A2EE66DB293A970D005BF08C /* DIDFuncionalities.m in Sources */ = {isa = PBXBuildFile; fileRef = A2EE66DA293A970D005BF08C /* DIDFuncionalities.m */; };
@@ -40,6 +42,7 @@
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = MyApp/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = MyApp/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = MyApp/main.m; sourceTree = "<group>"; };
+		2EB568864AE58F8405008E38 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-MyApp-MyAppTests/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
 		617706B3112826A1D2C62151 /* Pods-MyApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MyApp.release.xcconfig"; path = "Target Support Files/Pods-MyApp/Pods-MyApp.release.xcconfig"; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = MyApp/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		904CB4FEC86C3158A01E5A57 /* Pods-MyApp-MyAppTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MyApp-MyAppTests.release.xcconfig"; path = "Target Support Files/Pods-MyApp-MyAppTests/Pods-MyApp-MyAppTests.release.xcconfig"; sourceTree = "<group>"; };
@@ -53,6 +56,7 @@
 		E747661859776C37C5D41F0F /* libPods-MyApp.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-MyApp.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E75AFF03C0534332933EB2AB /* Pods-MyApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MyApp.debug.xcconfig"; path = "Target Support Files/Pods-MyApp/Pods-MyApp.debug.xcconfig"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
+		F567D9F04FB5C9AA15289666 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-MyApp/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -121,6 +125,23 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		60BA426AB063850678218802 /* MyApp */ = {
+			isa = PBXGroup;
+			children = (
+				F567D9F04FB5C9AA15289666 /* ExpoModulesProvider.swift */,
+			);
+			name = MyApp;
+			sourceTree = "<group>";
+		};
+		714C182FD29141D27CC25CF3 /* ExpoModulesProviders */ = {
+			isa = PBXGroup;
+			children = (
+				60BA426AB063850678218802 /* MyApp */,
+				D21C881214A1DC6F5A63EEEC /* MyAppTests */,
+			);
+			name = ExpoModulesProviders;
+			sourceTree = "<group>";
+		};
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
@@ -137,6 +158,7 @@
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				BBD78D7AC51CEA395F1C20DB /* Pods */,
+				714C182FD29141D27CC25CF3 /* ExpoModulesProviders */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -161,6 +183,14 @@
 				904CB4FEC86C3158A01E5A57 /* Pods-MyApp-MyAppTests.release.xcconfig */,
 			);
 			path = Pods;
+			sourceTree = "<group>";
+		};
+		D21C881214A1DC6F5A63EEEC /* MyAppTests */ = {
+			isa = PBXGroup;
+			children = (
+				2EB568864AE58F8405008E38 /* ExpoModulesProvider.swift */,
+			);
+			name = MyAppTests;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -424,6 +454,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				00E356F31AD99517003FC87E /* MyAppTests.m in Sources */,
+				992A2DDC21C6E8C7255357C6 /* ExpoModulesProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -436,6 +467,7 @@
 				A2EE66D9293A5223005BF08C /* DIDFuncionalities.swift in Sources */,
 				13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
+				55F383F4D3DFE7837608DFD7 /* ExpoModulesProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -472,6 +504,7 @@
 					"-lc++",
 					"$(inherited)",
 				);
+				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MyApp.app/MyApp";
@@ -497,6 +530,7 @@
 					"-lc++",
 					"$(inherited)",
 				);
+				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_RELEASE";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MyApp.app/MyApp";
@@ -522,6 +556,7 @@
 					"-ObjC",
 					"-lc++",
 				);
+				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = MyApp;
 				SWIFT_OBJC_BRIDGING_HEADER = "MyApp-Bridging-Header.h";
@@ -549,6 +584,7 @@
 					"-ObjC",
 					"-lc++",
 				);
+				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_RELEASE";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = MyApp;
 				SWIFT_OBJC_BRIDGING_HEADER = "MyApp-Bridging-Header.h";
