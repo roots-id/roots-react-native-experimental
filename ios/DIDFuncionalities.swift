@@ -11,6 +11,8 @@ class DIDFuncionalities: NSObject {
   private let agent: PrismAgent
   @Published var createdDID: DID?
   @Published var resolvedDID: DIDDocument?
+  
+  @Published var createdDID1: DID?
 
   override
   init()
@@ -26,7 +28,7 @@ class DIDFuncionalities: NSObject {
     print("DIDFunctionalities - add event",location,date)
   }
 
-  @objc public func resolvePromise(
+  @objc public func createPrismDID(
     _ resolve: @escaping RCTPromiseResolveBlock,
     rejecter reject: @escaping RCTPromiseRejectBlock
   ) -> Void {
@@ -37,14 +39,6 @@ class DIDFuncionalities: NSObject {
       print("DIDFunctionalities - returning prism DID", did)
       resolve(did?.string)
     }
-
-//    if(self.createdDID != nil) {
-//      print("DIDFunctionalities - resolved promise for created DID", self.createdDID)
-//      resolve(self.createdDID)
-//    } else {
-//      print("DIDFunctionalities - unresolved promise for created DID", self.createdDID)
-//      resolve(self.createdDID)
-//    }
   }
 
      func createPrismDID() async -> DID? {
@@ -69,17 +63,38 @@ class DIDFuncionalities: NSObject {
          }
        return did
     }
-  //
-  //   func resolveDID() async {
-  //           guard let did = createdDID else { return }
-  //
-  //           // Resolves a DID and returns a DIDDocument
-  //           let document = try? await castor.resolveDID(did: did)
-  //
-  //           await MainActor.run {
-  //               self.resolvedDID = document
-  //           }
-  //       }
-  //   }
+
+
+
+  @objc public func createPeerDID(
+    _ resolve: @escaping RCTPromiseResolveBlock,
+    rejecter reject: @escaping RCTPromiseRejectBlock
+  ) -> Void {
+    Task {
+      print("DIDFunctionalities - creating peer DID asynchronously", self.createdDID1)
+      let did = await createPeerDID()
+      print("DIDFunctionalities - created peer DID asynchronously", self.createdDID1)
+      print("DIDFunctionalities - returning peer DID", did)
+      resolve(did?.string)
+    }
+  }
+
+     func createPeerDID() async -> DID? {
+       print("DIDFuncionalities - Called create peer DID!")
+         // Creates new peer DID
+         let did = try? await agent.createNewPeerDID(services: [ .init(
+          id: "DemoID",
+          type: ["DemoType"],
+          serviceEndpoint: .init(uri: "DemoServiceEndpoint")
+      )
+ ])
+   
+         await MainActor.run {
+           self.createdDID1 = did
+           print("DIDFunctionalities - DID is",createdDID ?? "DID unset")
+         }
+       return did
+    }
+
 
 }

@@ -52,8 +52,11 @@ export const createWallet = createAsyncThunk(
 async function setupDID(): Promise<string> {
     console.log('wallet - invoking DIDFunctionalities here');
     DIDFuncionalities.addEvent('testEvent','testLocation',12334);
-    const result = await DIDFuncionalities.resolvePromise()
+    const result = await DIDFuncionalities.createPrismDID()
     console.log('wallet - DIDFunctionalities await', result);
+
+    const result1 = await DIDFuncionalities.createPeerDID()
+    console.log('wallet - DIDFunctionalities await', result1);
     return result
 }
 
