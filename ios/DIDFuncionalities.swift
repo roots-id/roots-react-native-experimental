@@ -2,7 +2,7 @@
 import Builders
 import Domain
 import Foundation
-import PrismAgent
+import PrismAgent 
 
 @objc(DIDFuncionalities)
 class DIDFuncionalities: NSObject {
@@ -106,7 +106,7 @@ class DIDFuncionalities: NSObject {
   ) -> Void {
     Task {
       let didDoc = await resolveDID(did: did)
-      resolve(didDoc)
+      resolve(didDoc?.services[0].serviceEndpoint.uri)
     }
   }
 
@@ -117,8 +117,8 @@ class DIDFuncionalities: NSObject {
          print("trying to resolve did ",_did)
          let document = try? await castor.resolveDID(did: DID(string: _did))
        print("DIDDOC is ", document)
-//       let jsonString = try String(data: JSONEncoder().encode(document), encoding: .utf8)!
-//       print("DIDDOC JSON", jsonString)
+//      let jsonString = try String(data: JSONEncoder().encode(document), encoding: .utf8)!
+      print("DIDDOC JSON", document)
        
    
        return document
@@ -147,11 +147,19 @@ class DIDFuncionalities: NSObject {
        let toDID = try? DID(string: to)
        let msgtest = Message(
         piuri: "alex",
-        body: Data()
+        from: fromDID!,
+        to: toDID!,
+        body: Data("{'alex':'andrei'}".utf8),
+        thid: "alex"
        )
        print("msg is .", msgtest)
        
-       let packedMessage = try? await mercury.packMessage(msg: msgtest)
+       do {
+         let packedMessage = try await mercury.packMessage(msg: msgtest)
+       }
+       catch  {
+         print(error)
+       }
          await MainActor.run {
            self.packedMessage = packedMessage
            print("createFakeMsg - MSG is",packedMessage)
