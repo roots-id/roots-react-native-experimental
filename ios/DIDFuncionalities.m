@@ -25,4 +25,10 @@ RCT_EXTERN_METHOD(
     createPeerDID: (RCTPromiseResolveBlock) resolve
     rejecter: (RCTPromiseRejectBlock) reject
   )
+
+RCT_EXTERN_METHOD(
+  resolveDID:(NSString *)did
+  resolve:(RCTPromiseResolveBlock)resolve
+  rejecter:(RCTPromiseRejectBlock)reject
+)
 @end

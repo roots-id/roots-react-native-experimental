@@ -85,15 +85,44 @@ class DIDFuncionalities: NSObject {
          let did = try? await agent.createNewPeerDID(services: [ .init(
           id: "DemoID",
           type: ["DemoType"],
-          serviceEndpoint: .init(uri: "DemoServiceEndpoint")
+          serviceEndpoint: .init(uri: "alex")
       )
- ])
+         ], updateMediator: false)
    
          await MainActor.run {
            self.createdDID1 = did
            print("DIDFunctionalities - DID is",createdDID ?? "DID unset")
          }
        return did
+    }
+
+
+@objc public func resolveDID(
+    _ did: NSString,
+    resolve: @escaping RCTPromiseResolveBlock,
+    rejecter reject: @escaping RCTPromiseRejectBlock
+  ) -> Void {
+    Task {
+      print("DIDFunctionalities - resolving... DID asynchronously", self.resolvedDID)
+      let didDoc = await resolveDID(did: did)
+      print("DIDFunctionalities - resolving.. DID asynchronously", self.resolvedDID)
+      print("DIDFunctionalities - resolving... DID", didDoc)
+      resolve(didDoc)
+    }
+  }
+
+     func resolveDID(did: NSString) async -> DIDDocument? {
+       print("DIDFuncionalities - RESOLVING DID!")
+         // Creates new PRISM DID
+         let _did = did as String
+         print("trying to resolve did ",_did)
+         let document = try? await castor.resolveDID(did: DID(string: _did))
+   
+         await MainActor.run {
+           self.resolvedDID = document
+           print("DIDFunctionalities - DIDDOCIS is",document ?? "DID unset")
+         }
+       return document
     }
 
 

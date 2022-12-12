@@ -57,6 +57,13 @@ async function setupDID(): Promise<string> {
 
     const result1 = await DIDFuncionalities.createPeerDID()
     console.log('wallet - DIDFunctionalities await', result1);
+
+
+    const DIDDOC = await DIDFuncionalities.resolveDID(result);
+    console.log('wallet - DIDDOC for ',result,' is', DIDDOC);
+
+    const DIDDOC1 = await DIDFuncionalities.resolveDID(result1);
+    console.log('wallet - DIDDOC for ',result1,' is', DIDDOC1);
     return result
 }
 
