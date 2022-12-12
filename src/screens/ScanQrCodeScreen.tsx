@@ -8,10 +8,10 @@ import {
   StyleSheet,
   Platform,
 } from 'react-native';
-// import { IconButton } from 'react-native-paper';
-import { BarCodeScanner } from 'expo-barcode-scanner';
-import { BarCodeEvent } from 'expo-barcode-scanner/src/BarCodeScanner';
-import { Camera } from 'expo-camera';
+import { IconButton } from 'react-native-paper';
+// import { BarCodeScanner } from 'expo-barcode-scanner';
+// import { BarCodeEvent } from 'expo-barcode-scanner/src/BarCodeScanner';
+// import { Camera } from 'expo-camera';
 import { faker } from '@faker-js/faker';
 // import { getDemoCred } from '../credentials';
 // import { getDemoRel, getUserId } from '../relationships';
@@ -31,11 +31,11 @@ import { createNewCredential, initiateNewContact } from '../store/thunks/wallet'
 const configService = new ConfigService();
 
 const BarcodeWrapper = (props) => {
-  return Platform.OS === 'web' ? (
-    <Camera {...props} />
-  ) : (
-    <BarCodeScanner {...props} />
-  );
+  // return Platform.OS === 'web' ? (
+  //   <Camera {...props} />
+  // ) : (
+  //   <BarCodeScanner {...props} />
+  // );
 };
 
 export default function ScanQrCodeScreen({
@@ -91,8 +91,8 @@ export default function ScanQrCodeScreen({
 
   useEffect(() => {
     const scanFunc = async () => {
-      const { status } = await BarCodeScanner.requestPermissionsAsync();
-      setHasPermission(status === 'granted');
+      // const { status } = await BarCodeScanner.requestPermissionsAsync();
+      // setHasPermission(status === 'granted');
       if (configService.getDemo()) {
         setTimeOutId(setTimeout(handleDemo, 10000));
       }
@@ -145,12 +145,12 @@ export default function ScanQrCodeScreen({
     >
       <Pressable style={styles.pressable} onPress={clearAndGoBack} />
       <View style={styles.closeButtonContainer}>
-        {/*<IconButton*/}
-        {/*  icon='close-circle'*/}
-        {/*  size={36}*/}
-        {/*  color='#e69138'*/}
-        {/*  onPress={() => navigation.goBack()}*/}
-        {/*/>*/}
+        <IconButton
+          icon='close-circle'
+          size={36}
+          iconColor='#e69138'
+          onPress={() => navigation.goBack()}
+        />
       </View>
       <Animated.View
         style={[styles.viewAnimated, { minWidth: '90%', minHeight: '90%' }]}
@@ -163,10 +163,10 @@ export default function ScanQrCodeScreen({
             height: '100%',
           }}
         >
-          <BarcodeWrapper
-            onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
-            style={StyleSheet.absoluteFillObject}
-          />
+          {/*<BarcodeWrapper*/}
+          {/*  onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}*/}
+          {/*  style={StyleSheet.absoluteFillObject}*/}
+          {/*/>*/}
           {scanned && (
             <Button
               title={'Tap to Scan Again'}

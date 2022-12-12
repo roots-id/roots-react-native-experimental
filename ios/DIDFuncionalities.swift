@@ -32,7 +32,7 @@ class DIDFuncionalities: NSObject {
   ) -> Void {
     Task {
       print("DIDFunctionalities - creating prism DID asynchronously", self.createdDID)
-      let did = await createPrismDID()
+      let did = await createPeerDID()
       print("DIDFunctionalities - created prism DID asynchronously", self.createdDID)
       print("DIDFunctionalities - returning prism DID", did)
       resolve(did?.string)
@@ -46,6 +46,28 @@ class DIDFuncionalities: NSObject {
 //      resolve(self.createdDID)
 //    }
   }
+     func createPeerDID() async -> DID? {
+       print("DIDFuncionalities - Called create peer DID!")
+         // Creates new PRISM DID
+       let did = try? await agent.createNewPeerDID(
+             // Add this if you want to provide a IndexPath
+             // keyPathIndex: <#T##Int?#>
+             // Add this if you want to provide an alias for this DID
+             // alias: <#T##String?#>
+             // Add any services available in the DID
+             services: [ .init(
+                 id: "DemoID",
+                 type: ["DemoType"],
+                 serviceEndpoint: .init(uri: "DemoServiceEndpoint")
+             )],updateMediator: false
+        )
+
+         await MainActor.run {
+           self.createdDID = did
+           print("DIDFunctionalities - DID is",createdDID ?? "DID unset")
+         }
+       return did
+    }
 
      func createPrismDID() async -> DID? {
        print("DIDFuncionalities - Called create prism DID!")
@@ -62,7 +84,7 @@ class DIDFuncionalities: NSObject {
                  serviceEndpoint: .init(uri: "DemoServiceEndpoint")
              )
         ])
-   
+
          await MainActor.run {
            self.createdDID = did
            print("DIDFunctionalities - DID is",createdDID ?? "DID unset")

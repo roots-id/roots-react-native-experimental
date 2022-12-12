@@ -13,39 +13,34 @@ export default function IconActions(...props) {
     const scan = props[0]["scan"]
     const settings = props[0]["settings"]
     const workflows = props[0]["workflows"]
-//          <IconButton
-//                icon="plus"
-//                size={28}
-//                color="#e69138"
-//                onPress={() => navigation.navigate(add)}
-//            />
+
     return (
         <View style={{flexDirection: 'row',}}>
-            {/*<IconButton*/}
-            {/*    icon="account"*/}
-            {/*    size={28}*/}
-            {/*    color="#e69138"*/}
-            {/*    // onPress={() => showRel(navigation, asContactShareable(getContactByAlias(person)))}*/}
-            {/*    onPress={() => console.log('onPress clicked')}*/}
-            {/*/>*/}
-            {/*<IconButton*/}
-            {/*    icon="qrcode-scan"*/}
-            {/*    size={28}*/}
-            {/*    color="#e69138"*/}
-            {/*    onPress={() => navigation.navigate(ROUTE_NAMES.SCAN_QR_CODE, {type: scan})}*/}
-            {/*/>*/}
-            {/*<IconButton*/}
-            {/*    icon="cog-outline"*/}
-            {/*    size={28}*/}
-            {/*    color="#e69138"*/}
-            {/*    onPress={() => navigation.navigate(settings)}*/}
-            {/*/>*/}
-            {/*<IconButton*/}
-            {/*    icon="sitemap"*/}
-            {/*    size={28}*/}
-            {/*    color="#e69138"*/}
-            {/*    onPress={() => navigation.navigate(workflows)}*/}
-            {/*/>*/}
+            <IconButton
+                icon="account"
+                size={28}
+                iconColor="#e69138"
+                // onPress={() => showRel(navigation, asContactShareable(getContactByAlias(person)))}
+                onPress={() => console.log('onPress clicked')}
+            />
+            <IconButton
+                icon="qrcode-scan"
+                size={28}
+                iconColor="#e69138"
+                onPress={() => navigation.navigate(ROUTE_NAMES.SCAN_QR_CODE, {type: scan})}
+            />
+            <IconButton
+                icon="cog-outline"
+                size={28}
+                iconColor="#e69138"
+                onPress={() => navigation.navigate(settings)}
+            />
+            <IconButton
+                icon="sitemap"
+                size={28}
+                iconColor="#e69138"
+                onPress={() => navigation.navigate(workflows)}
+            />
         </View>
     )
 }

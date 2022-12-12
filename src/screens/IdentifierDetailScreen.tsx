@@ -43,7 +43,7 @@ export default function IdentifierDetailScreen({
         <IconButton
           icon='close-circle'
           size={36}
-          color='#e69138'
+          iconColor='#e69138'
           onPress={() => navigation.goBack()}
         />
       </View>

@@ -33,7 +33,16 @@
       "location" : "https://github.com/input-output-hk/atala-prism-swift-sdk",
       "state" : {
         "branch" : "main",
-        "revision" : "620c82a972eb9761688185674caee63250178de2"
+        "revision" : "fd2d37f5f62686bcd22e21669675d36eb05961e8"
+      }
+    },
+    {
+      "identity" : "swift-bases",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/swift-libp2p/swift-bases.git",
+      "state" : {
+        "revision" : "c84494da575bc776ae64c180af2731471193b812",
+        "version" : "0.0.2"
       }
     },
     {
@@ -43,6 +52,15 @@
       "state" : {
         "revision" : "6fe203dc33195667ce1759bf0182975e4653ba1c",
         "version" : "1.4.4"
+      }
+    },
+    {
+      "identity" : "swift-multibase",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/swift-libp2p/swift-multibase",
+      "state" : {
+        "branch" : "main",
+        "revision" : "3a079a04c3846efe91c35b5b67b91cdbf556ce9d"
       }
     },
     {

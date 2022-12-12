@@ -62,7 +62,7 @@ export default function SettingsScreen({
     }
   }, []);
 
-  
+
 
   const handleDemoModeChange = () => {
     configService.setDemo(!configService.isDemo);
@@ -94,7 +94,7 @@ export default function SettingsScreen({
         <IconButton
           icon='close-circle'
           size={36}
-          color='#e69138'
+          iconColor='#e69138'
           onPress={() => navigation.goBack()}
         />
       </View>
@@ -106,7 +106,7 @@ export default function SettingsScreen({
           <IconButton
             icon='content-save'
             size={18}
-            color='#e69138'
+            iconColor='#e69138'
             onPress={handleUsernameChange}
           />
         </View>
@@ -129,7 +129,7 @@ export default function SettingsScreen({
           <IconButton
             icon='content-save'
             size={18}
-            color='#e69138'
+            iconColor='#e69138'
             onPress={handleAvatarChange}
           />
         </View>

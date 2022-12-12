@@ -54,30 +54,30 @@ export default function CredentialDetailScreen({
     >
       <Pressable style={styles.pressable} onPress={navigation.goBack} />
       <View style={styles.closeButtonContainer}>
-        {/*<IconButton*/}
-        {/*  icon='close-circle'*/}
-        {/*  size={36}*/}
-        {/*  color='#e69138'*/}
-        {/*  onPress={() => navigation.goBack()}*/}
-        {/*/>*/}
+        <IconButton
+          icon='close-circle'
+          size={36}
+          iconColor='#e69138'
+          onPress={() => navigation.goBack()}
+        />
       </View>
       <Animated.View style={styles.viewAnimated}>
         <View style={{ flexDirection: 'row' }}>
-          {/*<IconButton icon={verified} size={36} color='#e69138' onPress={updateVerification} />*/}
-          {/*<IconButton*/}
-          {/*  icon='qrcode'*/}
-          {/*  size={36}*/}
-          {/*  color='#e69138'*/}
-          {/*  onPress={() =>*/}
-          {/*    goToShowQrCode(navigation, {*/}
-          {/*      encodedSignedCredential: 'dummy_vcEncodedSignedCredential',*/}
-          {/*      proof: {*/}
-          {/*        hash: 'dummy_proofHash',*/}
-          {/*        index: 0,*/}
-          {/*      },*/}
-          {/*    })*/}
-          {/*  }*/}
-          {/*/>*/}
+          <IconButton icon={verified} size={36} iconColor='#e69138' onPress={updateVerification} />
+          <IconButton
+            icon='qrcode'
+            size={36}
+            iconColor='#e69138'
+            onPress={() =>
+              goToShowQrCode(navigation, {
+                encodedSignedCredential: 'dummy_vcEncodedSignedCredential',
+                proof: {
+                  hash: 'dummy_proofHash',
+                  index: 0,
+                },
+              })
+            }
+          />
         </View>
         <Image source={cred.alias === 'DISCORD HANDLE' ? discordLogo : credLogo} style={styles.credLogoStyle} />
         <FlatList

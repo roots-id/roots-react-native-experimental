@@ -52,7 +52,7 @@ export default function ShowQrCodeScreen({ route, navigation }) {
         <IconButton
           icon='close-circle'
           size={36}
-          color='#e69138'
+          iconColor='#e69138'
           onPress={() => navigation.goBack()}
         />
       </View>
