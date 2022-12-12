@@ -64,6 +64,9 @@ async function setupDID(): Promise<string> {
 
     const DIDDOC1 = await DIDFuncionalities.resolveDID(result1);
     console.log('wallet - DIDDOC for ',result1,' is', DIDDOC1);
+
+    const msgpacked = await DIDFuncionalities.createFakeMsg(result,result1);
+    console.log('wallet - msgpacked is', msgpacked);
     return result
 }
 

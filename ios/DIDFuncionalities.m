@@ -31,4 +31,11 @@ RCT_EXTERN_METHOD(
   resolve:(RCTPromiseResolveBlock)resolve
   rejecter:(RCTPromiseRejectBlock)reject
 )
+
+RCT_EXTERN_METHOD(
+  createFakeMsg:(NSString *)from
+  to:(NSString *)to
+  resolve:(RCTPromiseResolveBlock)resolve
+  rejecter:(RCTPromiseRejectBlock)reject
+)
 @end

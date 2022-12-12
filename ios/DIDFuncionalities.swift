@@ -9,10 +9,13 @@ class DIDFuncionalities: NSObject {
   //  private let castor: Castor
   private let castor: Castor
   private let agent: PrismAgent
+  private let mercury: Mercury
   @Published var createdDID: DID?
   @Published var resolvedDID: DIDDocument?
   
   @Published var createdDID1: DID?
+  
+  @Published var packedMessage: String?
 
   override
   init()
@@ -21,6 +24,11 @@ class DIDFuncionalities: NSObject {
       apollo: ApolloBuilder().build()
     ).build()
     self.agent = PrismAgent()
+    self.mercury = MercuryBuilder(
+      apollo: ApolloBuilder().build(),
+      castor:self.castor,
+      pluto: PlutoBuilder().build()
+    ).build()
   }
 
   @objc(addEvent:location:date:)
@@ -33,10 +41,7 @@ class DIDFuncionalities: NSObject {
     rejecter reject: @escaping RCTPromiseRejectBlock
   ) -> Void {
     Task {
-      print("DIDFunctionalities - creating prism DID asynchronously", self.createdDID)
       let did = await createPrismDID()
-      print("DIDFunctionalities - created prism DID asynchronously", self.createdDID)
-      print("DIDFunctionalities - returning prism DID", did)
       resolve(did?.string)
     }
   }
@@ -59,7 +64,7 @@ class DIDFuncionalities: NSObject {
    
          await MainActor.run {
            self.createdDID = did
-           print("DIDFunctionalities - DID is",createdDID ?? "DID unset")
+//           print("DIDFunctionalities - DID is",createdDID ?? "DID unset")
          }
        return did
     }
@@ -71,10 +76,7 @@ class DIDFuncionalities: NSObject {
     rejecter reject: @escaping RCTPromiseRejectBlock
   ) -> Void {
     Task {
-      print("DIDFunctionalities - creating peer DID asynchronously", self.createdDID1)
       let did = await createPeerDID()
-      print("DIDFunctionalities - created peer DID asynchronously", self.createdDID1)
-      print("DIDFunctionalities - returning peer DID", did)
       resolve(did?.string)
     }
   }
@@ -91,7 +93,7 @@ class DIDFuncionalities: NSObject {
    
          await MainActor.run {
            self.createdDID1 = did
-           print("DIDFunctionalities - DID is",createdDID ?? "DID unset")
+//           print("DIDFunctionalities - DID is",createdDID ?? "DID unset")
          }
        return did
     }
@@ -103,10 +105,7 @@ class DIDFuncionalities: NSObject {
     rejecter reject: @escaping RCTPromiseRejectBlock
   ) -> Void {
     Task {
-      print("DIDFunctionalities - resolving... DID asynchronously", self.resolvedDID)
       let didDoc = await resolveDID(did: did)
-      print("DIDFunctionalities - resolving.. DID asynchronously", self.resolvedDID)
-      print("DIDFunctionalities - resolving... DID", didDoc)
       resolve(didDoc)
     }
   }
@@ -117,12 +116,47 @@ class DIDFuncionalities: NSObject {
          let _did = did as String
          print("trying to resolve did ",_did)
          let document = try? await castor.resolveDID(did: DID(string: _did))
+       print("DIDDOC is ", document)
+//       let jsonString = try String(data: JSONEncoder().encode(document), encoding: .utf8)!
+//       print("DIDDOC JSON", jsonString)
+       
    
-         await MainActor.run {
-           self.resolvedDID = document
-           print("DIDFunctionalities - DIDDOCIS is",document ?? "DID unset")
-         }
        return document
+    }
+
+@objc public func createFakeMsg(
+    _ from: NSString,
+    to: NSString,
+    resolve: @escaping RCTPromiseResolveBlock,
+    rejecter reject: @escaping RCTPromiseRejectBlock
+  ) -> Void {
+    Task {
+      let didDoc = await createFakeMsg(from: from, to:to)
+      resolve(didDoc)
+    }
+  }
+
+     func createFakeMsg(from: NSString, to: NSString) async -> String? {
+       print("createFakeMsg -!")
+         // Creates new PRISM DID
+
+       
+       let from = from as String
+       let to = to as String
+       let fromDID = try? DID(string:from)
+       let toDID = try? DID(string: to)
+       let msgtest = Message(
+        piuri: "alex",
+        body: Data()
+       )
+       print("msg is .", msgtest)
+       
+       let packedMessage = try? await mercury.packMessage(msg: msgtest)
+         await MainActor.run {
+           self.packedMessage = packedMessage
+           print("createFakeMsg - MSG is",packedMessage)
+         }
+       return packedMessage
     }
 
 
