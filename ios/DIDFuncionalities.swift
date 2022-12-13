@@ -158,5 +158,36 @@ class DIDFuncionalities: NSObject {
        return ""
     }
 
+@objc public func parseOOBMessage(
+    _ url: NSString,
+    resolve: @escaping RCTPromiseResolveBlock,
+    rejecter reject: @escaping RCTPromiseRejectBlock
+  ) -> Void {
+    Task {
+      let result = await parseOOBMessage(url: url)
+      resolve(result)
+    }
+  }
+
+     func parseOOBMessage(url: NSString) async -> String? {
+       print("parseOOBMessage -!")
+       let url = url as String
+       print(url)
+       
+       do{
+        let message = try await agent.parseOOBInvitation(url: url)
+        print(message)
+//        try await agent.acceptDIDCommInvitation(invitation: message)
+        
+       }
+       catch {
+         print(error)
+       }
+       await MainActor.run {
+        print(agent.state.rawValue)
+        }
+       return ""
+    }
+
 
 }
