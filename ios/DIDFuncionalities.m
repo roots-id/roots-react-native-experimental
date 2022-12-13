@@ -22,8 +22,9 @@ RCT_EXTERN_METHOD(
     rejecter: (RCTPromiseRejectBlock) reject
   )
 RCT_EXTERN_METHOD(
-    createPeerDID: (RCTPromiseResolveBlock) resolve
-    rejecter: (RCTPromiseRejectBlock) reject
+    createPeerDID:(NSString *)updatemediator
+    resolve:(RCTPromiseResolveBlock)resolve
+    rejecter:(RCTPromiseRejectBlock)reject
   )
 
 RCT_EXTERN_METHOD(
@@ -33,8 +34,7 @@ RCT_EXTERN_METHOD(
 )
 
 RCT_EXTERN_METHOD(
-  createFakeMsg:(NSString *)from
-  to:(NSString *)to
+  StartPrismAgent:(NSString *)mediatorDid
   resolve:(RCTPromiseResolveBlock)resolve
   rejecter:(RCTPromiseRejectBlock)reject
 )

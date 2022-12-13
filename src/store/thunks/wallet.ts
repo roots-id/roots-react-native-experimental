@@ -50,27 +50,22 @@ export const createWallet = createAsyncThunk(
 );
 
 async function setupDID(): Promise<string> {
-    console.log('wallet - invoking DIDFunctionalities here');
-    DIDFuncionalities.addEvent('testEvent','testLocation',12334);
-    const result = await DIDFuncionalities.createPrismDID()
-    console.log('wallet - DIDFunctionalities await', result);
 
-    const result1 = await DIDFuncionalities.createPeerDID()
+
+    const result1 = await DIDFuncionalities.createPeerDID('false')
     console.log('wallet - DIDFunctionalities await', result1);
 
-
-    const DIDDOC = await DIDFuncionalities.resolveDID(result);
-    console.log('wallet - DIDDOC for ',result,' is', DIDDOC);
-
-    const DIDDOC1 = await DIDFuncionalities.resolveDID(result1);
+    const DIDDOC1 = await DIDFuncionalities.resolveDID("did:peer:2.Ez6LSdFHEaZqLfkpvT93VkeKu2Eu7xAzNudVqvFsCEVD5Bt1J.Vz6MkrYuSSPrGkir94WpUaTHdvn3DGqhgVjKa2yLbAqfXAvQ9.SeyJyIjpbXSwicyI6ImFsZXgiLCJhIjpbXSwidCI6IkRlbW9UeXBlIn0");
     console.log('wallet - DIDDOC for ',result1,' is', DIDDOC1);
 
-    const result2 = await DIDFuncionalities.createPeerDID()
-
-
-    const msgpacked = await DIDFuncionalities.createFakeMsg(result2,result1);
+    const msgpacked = await DIDFuncionalities.StartPrismAgent(result1);
     console.log('wallet - msgpacked is', msgpacked);
-    return result
+
+    const resultmediated = await DIDFuncionalities.createPeerDID('true')
+    console.log('wallet - DIDFunctionalities mediated', resultmediated);
+    const DIDDOC2 = await DIDFuncionalities.resolveDID(resultmediated);
+    console.log('wallet - DIDDOC for ',resultmediated,' is', DIDDOC2);
+    return result1
 }
 
 export const initiateWalletCreation = createAsyncThunk(

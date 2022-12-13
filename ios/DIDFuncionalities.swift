@@ -6,9 +6,10 @@ import PrismAgent
 
 @objc(DIDFuncionalities)
 class DIDFuncionalities: NSObject {
-  
+  //  private let castor: Castor
   private let castor: Castor
   private let agent: PrismAgent
+  private let mercury: Mercury
   @Published var createdDID: DID?
   @Published var resolvedDID: DIDDocument?
   
@@ -22,8 +23,12 @@ class DIDFuncionalities: NSObject {
     self.castor = CastorBuilder(
       apollo: ApolloBuilder().build()
     ).build()
-
-    self.agent = PrismAgent(mediatorServiceEnpoint: try! DID(string: "did:peer:2.Ez6LScc4S6tTSf5PnB7tWAna8Ee2aL7z2nRgo6aCHQwLds3m4.Vz6MktCyutFBcZcAWBnE2shqqUQDyRdnvcwqMTPqWsGHMnHyT.SeyJpZCI6Im5ldy1pZCIsInQiOiJkbSIsInMiOiJodHRwOi8vcm9vdHNpZC1tZWRpYXRvcjo4MDAwIiwiYSI6WyJkaWRjb21tL3YyIl19"))
+    self.agent = PrismAgent(mediatorServiceEnpoint: try! DID(string: "did:peer:2.Ez6LSms555YhFthn1WV8ciDBpZm86hK9tp83WojJUmxPGk1hZ.Vz6MkmdBjMyB4TS5UbbQw54szm8yvMMf1ftGV2sQVYAxaeWhE.SeyJpZCI6Im5ldy1pZCIsInQiOiJkbSIsInMiOiJodHRwczovL21lZGlhdG9yLnJvb3RzaWQuY2xvdWQiLCJhIjpbImRpZGNvbW0vdjIiXX0"))
+    self.mercury = MercuryBuilder(
+      apollo: ApolloBuilder().build(),
+      castor:self.castor,
+      pluto: PlutoBuilder().build()
+    ).build()
   }
 
   @objc(addEvent:location:date:)
@@ -67,28 +72,30 @@ class DIDFuncionalities: NSObject {
 
 
   @objc public func createPeerDID(
-    _ resolve: @escaping RCTPromiseResolveBlock,
+    _ updatemediator: NSString,
+    resolve: @escaping RCTPromiseResolveBlock,
     rejecter reject: @escaping RCTPromiseRejectBlock
   ) -> Void {
     Task {
-      let did = await createPeerDID()
+      let did = await createPeerDID(updatemediator:updatemediator)
       resolve(did?.string)
     }
   }
 
-     func createPeerDID() async -> DID? {
+     func createPeerDID(updatemediator : NSString ) async -> DID? {
        print("DIDFuncionalities - Called create peer DID!")
          // Creates new peer DID
-       
-       let m_did = try! DID(string: "did:peer:2.Ez6LScc4S6tTSf5PnB7tWAna8Ee2aL7z2nRgo6aCHQwLds3m4.Vz6MktCyutFBcZcAWBnE2shqqUQDyRdnvcwqMTPqWsGHMnHyT.SeyJpZCI6Im5ldy1pZCIsInQiOiJkbSIsInMiOiJodHRwOi8vcm9vdHNpZC1tZWRpYXRvcjo4MDAwIiwiYSI6WyJkaWRjb21tL3YyIl19")
-         let did = try? await agent.createNewPeerDID(services: [ .init(
-          id: "DemoID",
-          type: ["DIDCommMessaging"],          
-          serviceEndpoint: .init(uri: m_did.string)
-      )
-         ], updateMediator: false)
+       let _updatemediator : Bool
+        if updatemediator == "true" {
+           _updatemediator = true
+        }
+        else {
+          _updatemediator = false
+        }
+        print("_updatemediator",_updatemediator)
+        let did = try? await agent.createNewPeerDID(updateMediator: _updatemediator)
    
-         await MainActor.run {
+        await MainActor.run {
            self.createdDID1 = did
 //           print("DIDFunctionalities - DID is",createdDID ?? "DID unset")
          }
@@ -103,7 +110,7 @@ class DIDFuncionalities: NSObject {
   ) -> Void {
     Task {
       let didDoc = await resolveDID(did: did)
-      resolve(didDoc?.services[0].serviceEndpoint.uri)
+      resolve(didDoc?.id.string)
     }
   }
 
@@ -121,49 +128,33 @@ class DIDFuncionalities: NSObject {
        return document
     }
 
-@objc public func createFakeMsg(
-    _ from: NSString,
-    to: NSString,
+@objc public func StartPrismAgent(
+    _ mediatorDid: NSString,
     resolve: @escaping RCTPromiseResolveBlock,
     rejecter reject: @escaping RCTPromiseRejectBlock
   ) -> Void {
     Task {
-      let didDoc = await createFakeMsg(from: from, to:to)
+      let didDoc = await StartPrismAgent(mediatorDid: mediatorDid)
       resolve(didDoc)
     }
   }
 
-     func createFakeMsg(from: NSString, to: NSString) async -> String? {
-       print("createFakeMsg -!")
-         // Creates new PRISM DID
-
+     func StartPrismAgent(mediatorDid: NSString) async -> String? {
+       print("StartPrismAgent -!")
+       let mediatorDid = mediatorDid as String
+       let fromDID = try? DID(string:mediatorDid)
        
-       let from = from as String
-       let to = to as String
-       let fromDID = try? DID(string:from)
-       let toDID = try? DID(string: to)
-       let url_oob = "https://mediator.rootsid.cloud?_oob=eyJ0eXBlIjoiaHR0cHM6Ly9kaWRjb21tLm9yZy9vdXQtb2YtYmFuZC8yLjAvaW52aXRhdGlvbiIsImlkIjoiNzk0Mjc4MzctY2MwNi00ODUzLWJiMzktNjg2ZWFjM2U2YjlhIiwiZnJvbSI6ImRpZDpwZWVyOjIuRXo2TFNtczU1NVloRnRobjFXVjhjaURCcFptODZoSzl0cDgzV29qSlVteFBHazFoWi5WejZNa21kQmpNeUI0VFM1VWJiUXc1NHN6bTh5dk1NZjFmdEdWMnNRVllBeGFlV2hFLlNleUpwWkNJNkltNWxkeTFwWkNJc0luUWlPaUprYlNJc0luTWlPaUpvZEhSd2N6b3ZMMjFsWkdsaGRHOXlMbkp2YjNSemFXUXVZMnh2ZFdRaUxDSmhJanBiSW1ScFpHTnZiVzB2ZGpJaVhYMCIsImJvZHkiOnsiZ29hbF9jb2RlIjoicmVxdWVzdC1tZWRpYXRlIiwiZ29hbCI6IlJlcXVlc3RNZWRpYXRlIiwibGFiZWwiOiJNZWRpYXRvciIsImFjY2VwdCI6WyJkaWRjb21tL3YyIl19fQ"
        do{
          try await agent.start()
-         print("agent state", agent.state.rawValue)
-//         let res = try await agent.parseInvitation(str: url_oob)
        }
        catch {
-         
          print(error)
-         print(error.localizedDescription)
-         print("agent state error", agent.state.rawValue)
-         
-         
        }
+       
+       print(agent.state.rawValue)
        await MainActor.run {
-         print("agent state", agent.state.rawValue)
-
-//           print("DIDFunctionalities - DID is",createdDID ?? "DID unset")
-       }
-       
-       
-       
+        print(agent.state.rawValue)
+        }
        return ""
     }
 
