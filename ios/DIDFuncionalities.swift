@@ -6,10 +6,9 @@ import PrismAgent
 
 @objc(DIDFuncionalities)
 class DIDFuncionalities: NSObject {
-  //  private let castor: Castor
+  
   private let castor: Castor
   private let agent: PrismAgent
-  private let mercury: Mercury
   @Published var createdDID: DID?
   @Published var resolvedDID: DIDDocument?
   
@@ -23,12 +22,8 @@ class DIDFuncionalities: NSObject {
     self.castor = CastorBuilder(
       apollo: ApolloBuilder().build()
     ).build()
-    self.agent = PrismAgent()
-    self.mercury = MercuryBuilder(
-      apollo: ApolloBuilder().build(),
-      castor:self.castor,
-      pluto: PlutoBuilder().build()
-    ).build()
+
+    self.agent = PrismAgent(mediatorServiceEnpoint: try! DID(string: "did:peer:2.Ez6LScc4S6tTSf5PnB7tWAna8Ee2aL7z2nRgo6aCHQwLds3m4.Vz6MktCyutFBcZcAWBnE2shqqUQDyRdnvcwqMTPqWsGHMnHyT.SeyJpZCI6Im5ldy1pZCIsInQiOiJkbSIsInMiOiJodHRwOi8vcm9vdHNpZC1tZWRpYXRvcjo4MDAwIiwiYSI6WyJkaWRjb21tL3YyIl19"))
   }
 
   @objc(addEvent:location:date:)
@@ -84,10 +79,12 @@ class DIDFuncionalities: NSObject {
      func createPeerDID() async -> DID? {
        print("DIDFuncionalities - Called create peer DID!")
          // Creates new peer DID
+       
+       let m_did = try! DID(string: "did:peer:2.Ez6LScc4S6tTSf5PnB7tWAna8Ee2aL7z2nRgo6aCHQwLds3m4.Vz6MktCyutFBcZcAWBnE2shqqUQDyRdnvcwqMTPqWsGHMnHyT.SeyJpZCI6Im5ldy1pZCIsInQiOiJkbSIsInMiOiJodHRwOi8vcm9vdHNpZC1tZWRpYXRvcjo4MDAwIiwiYSI6WyJkaWRjb21tL3YyIl19")
          let did = try? await agent.createNewPeerDID(services: [ .init(
           id: "DemoID",
-          type: ["DemoType"],
-          serviceEndpoint: .init(uri: "alex")
+          type: ["DIDCommMessaging"],          
+          serviceEndpoint: .init(uri: m_did.string)
       )
          ], updateMediator: false)
    
@@ -145,26 +142,29 @@ class DIDFuncionalities: NSObject {
        let to = to as String
        let fromDID = try? DID(string:from)
        let toDID = try? DID(string: to)
-       let msgtest = Message(
-        piuri: "alex",
-        from: fromDID!,
-        to: toDID!,
-        body: Data("{'alex':'andrei'}".utf8),
-        thid: "alex"
-       )
-       print("msg is .", msgtest)
-       
-       do {
-         let packedMessage = try await mercury.packMessage(msg: msgtest)
+       let url_oob = "https://mediator.rootsid.cloud?_oob=eyJ0eXBlIjoiaHR0cHM6Ly9kaWRjb21tLm9yZy9vdXQtb2YtYmFuZC8yLjAvaW52aXRhdGlvbiIsImlkIjoiNzk0Mjc4MzctY2MwNi00ODUzLWJiMzktNjg2ZWFjM2U2YjlhIiwiZnJvbSI6ImRpZDpwZWVyOjIuRXo2TFNtczU1NVloRnRobjFXVjhjaURCcFptODZoSzl0cDgzV29qSlVteFBHazFoWi5WejZNa21kQmpNeUI0VFM1VWJiUXc1NHN6bTh5dk1NZjFmdEdWMnNRVllBeGFlV2hFLlNleUpwWkNJNkltNWxkeTFwWkNJc0luUWlPaUprYlNJc0luTWlPaUpvZEhSd2N6b3ZMMjFsWkdsaGRHOXlMbkp2YjNSemFXUXVZMnh2ZFdRaUxDSmhJanBiSW1ScFpHTnZiVzB2ZGpJaVhYMCIsImJvZHkiOnsiZ29hbF9jb2RlIjoicmVxdWVzdC1tZWRpYXRlIiwiZ29hbCI6IlJlcXVlc3RNZWRpYXRlIiwibGFiZWwiOiJNZWRpYXRvciIsImFjY2VwdCI6WyJkaWRjb21tL3YyIl19fQ"
+       do{
+         try await agent.start()
+         print("agent state", agent.state.rawValue)
+//         let res = try await agent.parseInvitation(str: url_oob)
        }
-       catch  {
+       catch {
+         
          print(error)
+         print(error.localizedDescription)
+         print("agent state error", agent.state.rawValue)
+         
+         
        }
-         await MainActor.run {
-           self.packedMessage = packedMessage
-           print("createFakeMsg - MSG is",packedMessage)
-         }
-       return packedMessage
+       await MainActor.run {
+         print("agent state", agent.state.rawValue)
+
+//           print("DIDFunctionalities - DID is",createdDID ?? "DID unset")
+       }
+       
+       
+       
+       return ""
     }
 
 
