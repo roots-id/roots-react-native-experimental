@@ -54,7 +54,7 @@ export default function ScanQrCodeScreen({
   console.log('Scan QR - route params', route.params);
   const [scanned, setScanned] = useState<boolean>(false);
   const [timeOutId, setTimeOutId] = useState<NodeJS.Timeout>();
-  const [device,setDevice] = useState<CameraDevices>();
+  const [devices,setDevices] = useState<CameraDevices[]>();
   const [error,setError] = useState<string>("");
   const rootsHelper = useSelector(getRootsHelperContact);
   const currentUser = useSelector(getCurrentUserContact);
@@ -121,17 +121,12 @@ export default function ScanQrCodeScreen({
         console.log("req camera permission",reqCamPerm)
         if(reqCamPerm != "authorized") {
           setError(error+"\nAccess to camera denied:\n"+reqCamPerm)
-        } else {
-          setDevice(useCameraDevices())
-          console.log("camera device",device)
         }
       }
       if (cameraPermission != "authorized") {
         setError(error+"\nNo access to camera:\n"+cameraPermission)
-      } else if(!device) {
-        setDevice(useCameraDevices())
-        console.log("camera device",device)
       }
+
       if (microphonePermission === null || microphonePermission == "not-determined") {
         const reqMicPerm = await Camera.requestMicrophonePermission()
         console.log("req mic permission",reqMicPerm)
@@ -145,10 +140,13 @@ export default function ScanQrCodeScreen({
           // if (await configService.getDemo()) {
       //   setTimeOutId(setTimeout(handleDemo, 10000));
       // }
-
+      const devices = await Camera.getAvailableCameraDevices()
+      console.log("available devices",devices)
+      setDevices(devices)
     };
-    //alert("clicked qrcode")
+
     initFunc().catch(console.error);
+
   }, []);
 
   // const handleBarCodeScanned = async ({ type, data }: BarCodeEvent) => {
@@ -185,13 +183,20 @@ export default function ScanQrCodeScreen({
   //     console.log(data.uri);
   //   }
   // };
-
-
-
-  // if (device == null) {
-  //   setError("No device found")
-  // }
-
+  function getDevice(): CameraDevice {
+    // if(!devices) {
+    //   setDevices(useCameraDevices())
+    // }
+    let device
+    devices?.forEach(d => {
+      console.log("device: ",d)
+      if(d) {
+        device = d
+      }
+    }
+    )
+    return device
+  }
     return (
         <View
             style={{
@@ -221,12 +226,12 @@ export default function ScanQrCodeScreen({
                 }}
             >
               <Text>{error}</Text>
-              <Text>{JSON.stringify(device)}</Text>
-              {/*<Camera*/}
-              {/*    style={StyleSheet.absoluteFill}*/}
-              {/*    device={device?.back}*/}
-              {/*    isActive={true}*/}
-              {/*/>*/}
+              <Text>{JSON.stringify(getDevice())}</Text>
+              <Camera
+                  style={StyleSheet.absoluteFill}
+                  device={getDevice()}
+                  isActive={true}
+              />
 
 
               {/*<RNCamera*/}
