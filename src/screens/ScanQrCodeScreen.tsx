@@ -54,7 +54,8 @@ export default function ScanQrCodeScreen({
   console.log('Scan QR - route params', route.params);
   const [scanned, setScanned] = useState<boolean>(false);
   const [timeOutId, setTimeOutId] = useState<NodeJS.Timeout>();
-  const [devices,setDevices] = useState<CameraDevices[]>();
+  const [devices,setDevices] = useState<CameraDevice[]>();
+  const [prefDevice,setPrefDevice] = useState<CameraDevice>();
   const [error,setError] = useState<string>("");
   const rootsHelper = useSelector(getRootsHelperContact);
   const currentUser = useSelector(getCurrentUserContact);
@@ -142,7 +143,10 @@ export default function ScanQrCodeScreen({
       // }
       const devices = await Camera.getAvailableCameraDevices()
       console.log("available devices",devices)
-      setDevices(devices)
+      if(devices) {
+        setDevices(devices)
+        getDevice()
+      }
     };
 
     initFunc().catch(console.error);
@@ -187,15 +191,18 @@ export default function ScanQrCodeScreen({
     // if(!devices) {
     //   setDevices(useCameraDevices())
     // }
-    let device
-    devices?.forEach(d => {
-      console.log("device: ",d)
-      if(d) {
-        device = d
-      }
+    if (!prefDevice) {
+      devices?.every(d => {
+            console.log("device: ", d)
+            if (d) {
+              setPrefDevice(d)
+              return false;
+            }
+            return true;
+          }
+      )
     }
-    )
-    return device
+    return prefDevice as CameraDevice
   }
     return (
         <View
@@ -226,13 +233,15 @@ export default function ScanQrCodeScreen({
                 }}
             >
               <Text>{error}</Text>
-              <Text>{JSON.stringify(getDevice())}</Text>
-              <Camera
-                  style={StyleSheet.absoluteFill}
-                  device={getDevice()}
-                  isActive={true}
-              />
-
+              {
+                prefDevice == undefined ?
+                    <Text>{JSON.stringify(getDevice())}</Text> :
+                    <Camera
+                        style={StyleSheet.absoluteFill}
+                        device={getDevice()}
+                        isActive={true}
+                    />
+              }
 
               {/*<RNCamera*/}
               {/*    ref={ref => {*/}
