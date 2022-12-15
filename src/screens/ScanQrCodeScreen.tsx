@@ -1,4 +1,4 @@
-import {PureComponent, useEffect, useState} from 'react';
+import {PureComponent, useCallback, useEffect, useState} from 'react';
 import {
   Animated,
   View,
@@ -34,8 +34,11 @@ import {
   CameraDevice,
   CameraDevices,
   CameraPermissionStatus,
-  useCameraDevices
+  useCameraDevices, useFrameProcessor
 } from "react-native-vision-camera";
+import 'react-native-reanimated';
+import {runOnJS} from "react-native-reanimated";
+import { useScanBarcodes, BarcodeFormat } from 'vision-camera-code-scanner';
 
 const configService = new ConfigService();
 
@@ -61,6 +64,9 @@ export default function ScanQrCodeScreen({
   const currentUser = useSelector(getCurrentUserContact);
   const dispatch = useDispatch();
   const modelType = route.params.type;
+  // const [frameProcessor, barcodes] = useScanBarcodes([BarcodeFormat.QR_CODE], {
+  //   checkInverted: true,
+  // });
 
   const addDummyCredenial = async () => {
     dispatch(createNewCredential());
@@ -204,6 +210,21 @@ export default function ScanQrCodeScreen({
     }
     return prefDevice as CameraDevice
   }
+
+  const onQRCodeDetected = useCallback((qrCode: string) => {
+    navigation.push("ProductPage", { productId: qrCode })
+  }, [])
+  const [frameProcessor, barcodes] = useScanBarcodes([BarcodeFormat.QR_CODE], {
+    checkInverted: true,
+  });
+  // const frameProcessor = useFrameProcessor((frame) => {
+  //   'worklet'
+  //   const qrCodes = scanQRCodes(frame)
+  //   if (qrCodes.length > 0) {
+  //     runOnJS(onQRCodeDetected)(qrCodes[0])
+  //   }
+  // }, [onQRCodeDetected])
+
     return (
         <View
             style={{
@@ -240,8 +261,18 @@ export default function ScanQrCodeScreen({
                         style={StyleSheet.absoluteFill}
                         device={getDevice()}
                         isActive={true}
+                        frameProcessor={frameProcessor}
+                        frameProcessorFps={5}
                     />
+
               }
+              {
+                barcodes.map((barcode, idx) => (
+                      <Text key={idx} style={localStyles.barcodeTextURL}>
+                        {barcode.displayValue}
+                      </Text>
+                  ))}
+
 
               {/*<RNCamera*/}
               {/*    ref={ref => {*/}
@@ -339,5 +370,10 @@ const localStyles = StyleSheet.create({
   },
   buttonTouchable: {
     padding: 16
-  }
+  },
+  barcodeTextURL: {
+    fontSize: 20,
+    color: 'white',
+    fontWeight: 'bold',
+  },
 })
