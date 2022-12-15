@@ -38,7 +38,7 @@ import {
 } from "react-native-vision-camera";
 import 'react-native-reanimated';
 import {runOnJS} from "react-native-reanimated";
-import { useScanBarcodes, BarcodeFormat } from 'vision-camera-code-scanner';
+import {useScanBarcodes, BarcodeFormat, Barcode} from 'vision-camera-code-scanner';
 
 const configService = new ConfigService();
 
@@ -55,6 +55,7 @@ export default function ScanQrCodeScreen({
   navigation,
 }: CompositeScreenProps<any, any>) {
   console.log('Scan QR - route params', route.params);
+  const [qr, setQr] = useState<string>();
   const [scanned, setScanned] = useState<boolean>(false);
   const [timeOutId, setTimeOutId] = useState<NodeJS.Timeout>();
   const [devices,setDevices] = useState<CameraDevice[]>();
@@ -93,7 +94,7 @@ export default function ScanQrCodeScreen({
         console.log('Scan QR - getting contact demo data');
         // const demoData = getDemoRel();
         // await importContact(demoData);
-        addDummyContact();
+        addDummyContact().catch(console.error);
       } else {
         console.log('Scan QR - getting credential demo data');
         // const did = getDid(getUserId());
@@ -101,7 +102,7 @@ export default function ScanQrCodeScreen({
         //   const demoData = getDemoCred(did).verifiedCredential;
         //   await importVerifiedCredential(demoData);
         // }
-        addDummyCredenial();
+        addDummyCredenial().catch(console.error);
       }
     } else {
       console.log(
@@ -159,31 +160,50 @@ export default function ScanQrCodeScreen({
 
   }, []);
 
-  // const handleBarCodeScanned = async ({ type, data }: BarCodeEvent) => {
-  //   setScanned(true);
-  //   console.log(
-  //     'Scan QR - scan complete but only using dummy data',
-  //     modelType,
-  //     type,
-  //     data
-  //   );
-  //   // const jsonData = JSON.parse(data);
-  //   if (modelType == 'credential') {
-  //     console.log('Scan QR - Importing dummy vc', data);
-  //     addDummyCredenial();
-  //     // await importVerifiedCredential(jsonData);
-  //   } else if (modelType == 'contact') {
-  //     console.log('Scan QR - Importing dummy contact', data);
-  //     addDummyContact();
-  //     // await importContact(jsonData);
-  //   }
-  //   clearAndGoBack();
-  // };
+  function processBarcode(barcode:Barcode): string {
+    if(barcode.displayValue && (qr == undefined || qr.length <= 0)) {
+      //handleBarCodeScanned(barcode).catch(console.error)
+      setQr(barcode.displayValue)
+      return barcode.displayValue
+    } else {
+      return "Already Scanned"+qr
+    }
+  }
+
+  useEffect(() => {
+      if (!scanned && qr) {
+        setScanned(true);
+        console.log(
+            'Scan QR - new qr found',
+            modelType,
+            qr
+        );
+        clearAndGoBack();
+        // // const jsonData = JSON.parse(data);
+        // if (modelType == 'credential') {
+        //   console.log('Scan QR - Importing dummy vc', qr);
+        //   addDummyCredenial().catch(console.error);
+        //   // await importVerifiedCredential(jsonData);
+        // } else if (modelType == 'contact') {
+        //   console.log('Scan QR - Importing dummy contact', qr);
+        //   addDummyContact().catch(console.error);
+        //   // await importContact(jsonData);
+        // }
+      } else {
+        console.log('Scan QR - Scan already completed, skipping processing')
+      }
+
+    }, [qr]);
 
   const clearAndGoBack = () => {
-    setScanned(true);
     if (timeOutId) clearTimeout(timeOutId);
-    if (navigation.canGoBack()) navigation.goBack();
+    if (navigation.canGoBack()) {
+      alert("You scanned "+qr)
+      console.log("Scan QR - navigating back")
+      navigation.goBack();
+    } else {
+      console.log("Scan QR - can't navigate back")
+    }
   };
 
   // const takePicture = async () => {
@@ -211,9 +231,9 @@ export default function ScanQrCodeScreen({
     return prefDevice as CameraDevice
   }
 
-  const onQRCodeDetected = useCallback((qrCode: string) => {
-    navigation.push("ProductPage", { productId: qrCode })
-  }, [])
+  // const onQRCodeDetected = useCallback((qrCode: string) => {
+  //   navigation.push("ProductPage", { productId: qrCode })
+  // }, [])
   const [frameProcessor, barcodes] = useScanBarcodes([BarcodeFormat.QR_CODE], {
     checkInverted: true,
   });
@@ -263,15 +283,17 @@ export default function ScanQrCodeScreen({
                         isActive={true}
                         frameProcessor={frameProcessor}
                         frameProcessorFps={5}
+
                     />
 
               }
               {
                 barcodes.map((barcode, idx) => (
                       <Text key={idx} style={localStyles.barcodeTextURL}>
-                        {barcode.displayValue}
+                        {processBarcode(barcode)}
                       </Text>
-                  ))}
+                ))
+              }
 
 
               {/*<RNCamera*/}
