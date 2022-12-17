@@ -10,7 +10,7 @@ RCT_EXTERN_METHOD(addEvent:(NSString *)name location:(NSString *)location date:(
 //    callback: (RCTResponseSenderBlock)callback
 //  )
 //  RCT_EXTERN_METHOD(
-//    resolvePromise: (RCTPromiseResolveBlock) resolve
+//    createPrismDID: (RCTPromiseResolveBlock) resolve
 //    rejecter: (RCTPromiseRejectBlock) reject
 //  )
 //  RCT_EXTERN_METHOD(rejectPromise:
@@ -18,7 +18,30 @@ RCT_EXTERN_METHOD(addEvent:(NSString *)name location:(NSString *)location date:(
 //    rejecter: (RCTPromiseRejectBlock) reject
 //  )
 RCT_EXTERN_METHOD(
-    resolvePromise: (RCTPromiseResolveBlock) resolve
+    createPrismDID: (RCTPromiseResolveBlock) resolve
     rejecter: (RCTPromiseRejectBlock) reject
   )
+RCT_EXTERN_METHOD(
+    createPeerDID:(NSString *)updatemediator
+    resolve:(RCTPromiseResolveBlock)resolve
+    rejecter:(RCTPromiseRejectBlock)reject
+  )
+
+RCT_EXTERN_METHOD(
+  resolveDID:(NSString *)did
+  resolve:(RCTPromiseResolveBlock)resolve
+  rejecter:(RCTPromiseRejectBlock)reject
+)
+
+RCT_EXTERN_METHOD(
+  StartPrismAgent:(NSString *)mediatorDid
+  resolve:(RCTPromiseResolveBlock)resolve
+  rejecter:(RCTPromiseRejectBlock)reject
+)
+
+RCT_EXTERN_METHOD(
+  parseOOBMessage:(NSString *)url
+  resolve:(RCTPromiseResolveBlock)resolve
+  rejecter:(RCTPromiseRejectBlock)reject
+)
 @end

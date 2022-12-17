@@ -12,13 +12,13 @@ export function Picker({selectedValue, onValueChange, itemList}: IPickerType) {
   if (Platform.OS !== 'ios') {
     pickerStyles['mode'] = 'dropdown'
     pickerStyles['dropdownIconColor'] = '#e69138'
-    viewStyles['backgroundColor'] = '#251520';
+    viewStyles['backgroundColor'] = '#000000';
     PickerComponent = RNPicker
   } else {
     pickerStyles['itemStyle'] = { ...styles.iosPickerItem }
     PickerComponent = PickerIOS;
   }
-  
+
   return (
     <View style={{ ...viewStyles }}>
       <PickerComponent

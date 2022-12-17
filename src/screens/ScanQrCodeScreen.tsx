@@ -1,5 +1,5 @@
 import {PureComponent, useCallback, useEffect, useState} from 'react';
-import {
+import ReactNative, {
   Animated,
   View,
   Text,
@@ -9,6 +9,8 @@ import {
   Platform, TouchableOpacity, Linking,
 } from 'react-native';
 import { IconButton } from 'react-native-paper';
+const { DIDFuncionalities } = ReactNative.NativeModules;
+
 // import { BarCodeScanner } from 'expo-barcode-scanner';
 // import { BarCodeEvent } from 'expo-barcode-scanner/src/BarCodeScanner';
 // import { Camera } from 'expo-camera';
@@ -170,7 +172,14 @@ export default function ScanQrCodeScreen({
     }
   }
 
+  async function parseOob(oobUrl: string) {
+    console.log("Parsing OOB",oobUrl)
+    const result = DIDFuncionalities.parseOOBMessage(oobUrl)
+    console.log("Parsed OOB",result)
+  }
+
   useEffect(() => {
+
       if (!scanned && qr) {
         setScanned(true);
         console.log(
@@ -178,9 +187,15 @@ export default function ScanQrCodeScreen({
             modelType,
             qr
         );
+        alert("You scanned "+qr)
+        if(qr.match("_oob")) {
+          parseOob(qr).catch(console.error)
+        } else {
+          console.error("Unknown QR scanned")
+        }
         clearAndGoBack();
-        // // const jsonData = JSON.parse(data);
-        // if (modelType == 'credential') {
+        // const jsonData = JSON.parse(data);
+        //if (modelType == 'credential') {
         //   console.log('Scan QR - Importing dummy vc', qr);
         //   addDummyCredenial().catch(console.error);
         //   // await importVerifiedCredential(jsonData);
@@ -192,13 +207,11 @@ export default function ScanQrCodeScreen({
       } else {
         console.log('Scan QR - Scan already completed, skipping processing')
       }
-
     }, [qr]);
 
   const clearAndGoBack = () => {
     if (timeOutId) clearTimeout(timeOutId);
     if (navigation.canGoBack()) {
-      alert("You scanned "+qr)
       console.log("Scan QR - navigating back")
       navigation.goBack();
     } else {

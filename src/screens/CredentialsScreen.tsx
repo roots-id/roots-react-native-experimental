@@ -24,7 +24,15 @@ const CredentialsScreen = ({
   const creds = useSelector(getVerifiedCredentials);
   return (
     <View style={styles.container}>
-      <SafeAreaView style={styles.container}>
+        <SafeAreaView
+            style={{
+                ...styles.container,
+                borderColor: "#DE984F",
+                borderWidth: 1,
+                borderRadius: 20,
+                margin: 16,
+            }}
+        >
         <FlatList
           data={creds}
           extraData={refresh}

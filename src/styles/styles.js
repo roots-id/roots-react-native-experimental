@@ -32,8 +32,8 @@ export const styles = StyleSheet.create({
         color: '#c66108',
     },
     clickableListTitle: {
-        fontSize: 22,
-        color: '#e69138',
+        fontSize: 18,
+        color: '#ffffff',
     },
     closeButtonContainer: {
         flexDirection: "row",
@@ -41,12 +41,12 @@ export const styles = StyleSheet.create({
         justifyContent: "flex-end"
     },
     container: {
-        backgroundColor: '#251520',
+        backgroundColor: '#000000',
         flex: 1,
         justifyContent: 'center',
     },
     containerCenter: {
-        backgroundColor: '#251520',
+        backgroundColor: '#000000',
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
@@ -59,6 +59,11 @@ export const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-around",
         width: "100%",
+    },
+    credDetailLogoStyle: {
+        width: 100,
+        height: 100,
+        resizeMode: 'contain',
     },
     credLogoStyle: {
         width: 65,
@@ -173,7 +178,7 @@ export const styles = StyleSheet.create({
         color: 'pink',
     },
     centeredContainer: {
-        backgroundColor: '#251520',
+        backgroundColor: '#000000',
         flex: 1,
         padding: 16,
         borderRadius: 3,
@@ -232,7 +237,7 @@ export const styles = StyleSheet.create({
         maxWidth: 350,
         maxHeight: 250,
         borderRadius: 3,
-        backgroundColor: '#cfbfca',
+        backgroundColor: '#140A0F',
     },
     subText: {
         fontSize: 16,
@@ -277,12 +282,11 @@ export const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     viewAnimated: {
-        padding: 16,
         maxWidth: '90%',
         maxHeight: '85%',
         borderRadius: 3,
-        backgroundColor: '#cfbfca',
-        alignItems: "center",
+        backgroundColor: '#140A0F',
+        alignItems: 'flex-start',
         justifyContent: 'space-around',
         alignContent: 'space-around',
     },

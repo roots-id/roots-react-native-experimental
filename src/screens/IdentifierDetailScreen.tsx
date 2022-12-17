@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {
   Animated,
   FlatList,
@@ -14,6 +14,7 @@ import { styles } from '../styles/styles';
 import { CompositeScreenProps } from '@react-navigation/core/src/types';
 import { goToShowQrCode } from '../navigation/helper/navigate-to';
 import { useDispatch } from 'react-redux';
+import BottomSheet from "@gorhom/bottom-sheet";
 const atalaLogo = require('../assets/ATALAPRISM.png');
 const discordLogo = require('../assets/discord.png');
 
@@ -25,29 +26,59 @@ export default function IdentifierDetailScreen({
   const dispatch = useDispatch();
   const [id, setId] = useState<models.identifier>(route.params.identifier);
 
+    // ref
+    const bottomSheetRef = useRef<BottomSheet>(null);
+
+    // variables
+    const snapPoints = useMemo(() => ["50%", "75%"], []);
+
+    // callbacks
+    const handleSheetChanges = useCallback((index: number) => {
+        console.log("handleSheetChanges", index);
+    }, []);
+
     useEffect(() => {
       console.log('id details - initially setting id', id);
       setId(route.params.identifier);
     }, []);
 
   return (
-    <View
-      style={{
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-      }}
-    >
-      <Pressable style={styles.pressable} onPress={navigation.goBack} />
-      <View style={styles.closeButtonContainer}>
-        <IconButton
-          icon='close-circle'
-          size={36}
-          iconColor='#e69138'
-          onPress={() => navigation.goBack()}
-        />
-      </View>
-      <Animated.View style={styles.viewAnimated}>
+      <BottomSheet
+          ref={bottomSheetRef}
+          index={1}
+          snapPoints={snapPoints}
+          onChange={handleSheetChanges}
+          backgroundStyle={{backgroundColor: '#140A0F', borderWidth: 1, borderColor: '#DE984F'}}
+      >
+          <View
+              style={{
+                  flex: 1,
+                  alignItems: "center",
+                  justifyContent: "center",
+                  paddingHorizontal: 16
+              }}
+          >
+              <View style={styles.closeButtonContainer}>
+                  <IconButton
+                      icon="close-circle"
+                      size={28}
+                      iconColor="#C5C8D1"
+                      onPress={() => navigation.goBack()}
+                      style={{borderWidth: 1, borderColor: '#FFA149', borderRadius: 10 }}
+                  />
+                  <IconButton
+                      icon="qrcode"
+                      size={28}
+                      iconColor="#C5C8D1"
+                      style={{borderWidth: 1, borderColor: '#FFA149', borderRadius: 10 }}
+                      onPress={() =>
+                          goToShowQrCode(navigation, {
+                              identifier: "TODO"
+                          })
+                      }
+                  />
+              </View>
+              <Animated.View style={styles.viewAnimated}>
         <Image source={atalaLogo} style={styles.credLogoStyle} />
         <FlatList
           data={Object.entries(id)}
@@ -56,7 +87,7 @@ export default function IdentifierDetailScreen({
           renderItem={(item) => {
             return (
               <ScrollView style={styles.scrollableModal}>
-                <Text style={{ color: 'black' }}>
+                <Text style={{ color: 'white' }}>
                   {item.item[0] + ': ' + item.item[1]}
                 </Text>
               </ScrollView>
@@ -64,6 +95,7 @@ export default function IdentifierDetailScreen({
           }}
         />
       </Animated.View>
-    </View>
+          </View>
+      </BottomSheet>
   );
 }

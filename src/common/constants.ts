@@ -3,7 +3,8 @@ const USER_AUTH = 'USER_AUTH';
 const BOTS_NAMES = {
   PRISM_BOT: 'PrismBot',
   ROOTS_HELPER: 'RootsHelper',
-  DISCORD_SOCIAL_ISSUER: 'Discord Social Issuer'
+  DISCORD_SOCIAL_ISSUER: 'Discord Social Issuer',
+  PRISM_DEMO: 'Prism Demonstration'
 };
 
 const BOTS_MSGS = [

@@ -49,12 +49,109 @@ export const createWallet = createAsyncThunk(
   }
 );
 
-async function setupDID(): Promise<string> {
-    console.log('wallet - invoking DIDFunctionalities here');
-    DIDFuncionalities.addEvent('testEvent','testLocation',12334);
-    const result = await DIDFuncionalities.resolvePromise()
-    console.log('wallet - DIDFunctionalities await', result);
-    return result
+async function setupDiscordDemo(thunkAPI: any, rootsHelperId: unknown,today: Date) {
+    const discordSocialIssuerId = (
+        await thunkAPI.dispatch(
+            createContact({
+                displayPictureUrl:
+                    'https://avatars.githubusercontent.com/u/1965106?s=200&v=4', //https://cdn.logojoy.com/wp-content/uploads/20210422095037/discord-mascot.png
+                displayName: BOTS_NAMES.DISCORD_SOCIAL_ISSUER,
+            })
+        )
+    ).payload;
+    console.log('discordSocialIssuerId', discordSocialIssuerId);
+    thunkAPI.dispatch(initiateChat({ chatId: discordSocialIssuerId }));
+
+    const discordCreds = {
+        alias: 'DISCORD HANDLE',
+        issuerId: discordSocialIssuerId,
+        credSub: {
+            HANDLE: `@${faker.internet.userName()}`,
+            'MEMBER SINCE': new Date(faker.date.past(2)).toLocaleString(),
+            EMAIL: faker.internet.email(),
+            'MESSAGE ID': discordSocialIssuerId,
+            'CHANNEL ID': discordSocialIssuerId,
+            'SERVER ID': discordSocialIssuerId,
+            'ISSUED AT': today.toLocaleString(),
+        },
+        revoked: false,
+    };
+    console.log('discordCreds', discordCreds);
+    const cred = (await thunkAPI.dispatch(createCredential(discordCreds)))
+        .payload;
+    thunkAPI.dispatch(
+        addMessage({
+            chatId: discordSocialIssuerId,
+            message: sendMessage(
+                discordSocialIssuerId,
+                rootsHelperId,
+                `A Discord Social credential has been created for you`,
+                MessageType.PROMPT_PREVIEW_ACCEPT_DENY_CREDENTIAL,
+                false,
+                { credential: cred }
+            ),
+        })
+    );
+}
+
+async function setupPrismDemo(thunkAPI: any, rootsHelperId: unknown,today: Date) {
+    const prismDemoId = (
+        await thunkAPI.dispatch(
+            createContact({
+                displayPictureUrl:
+                    'https://raw.githubusercontent.com/roots-id/roots-react-native/simple-android-ios-web/src/assets/ATALAPRISM.png', //https://cdn.logojoy.com/wp-content/uploads/20210422095037/discord-mascot.png
+                displayName: BOTS_NAMES.PRISM_DEMO,
+            })
+        )
+    ).payload;
+
+    console.log('prismDemo', prismDemoId);
+    thunkAPI.dispatch(initiateChat({ chatId: prismDemoId }));
+
+    console.log('wallet - invoking calendar example here');
+    CalendarModuleFoo.createCalendarEvent('testName', 'testLocation');
+
+    const result1 = await DIDFuncionalities.createPeerDID('false')
+    console.log('wallet - DIDFunctionalities await peerDID', result1);
+    const didObj = {
+        _id: result1,
+        alias: "prism peer did " + result1,
+        published: false
+    }
+    const prismDid = (await thunkAPI.dispatch(createDid(didObj)))
+        .payload;
+    if(prismDid) {
+        console.log('wallet - created new did');
+        thunkAPI.dispatch(
+            addMessage({
+                chatId: prismDemoId,
+                message: sendMessage(
+                    prismDemoId,
+                    rootsHelperId,
+                    BOTS_MSGS[3],
+                    MessageType.PROMPT_DISPLAY_IDENTIFIER,
+                    false,
+                    {identifier: {identifier: prismDid}}
+                ),
+            })
+        )
+    }
+
+    const DIDDOC1 = await DIDFuncionalities.resolveDID("did:peer:2.Ez6LSdFHEaZqLfkpvT93VkeKu2Eu7xAzNudVqvFsCEVD5Bt1J.Vz6MkrYuSSPrGkir94WpUaTHdvn3DGqhgVjKa2yLbAqfXAvQ9.SeyJyIjpbXSwicyI6ImFsZXgiLCJhIjpbXSwidCI6IkRlbW9UeXBlIn0");
+    console.log('wallet - DIDDOC for ',result1,' is', DIDDOC1);
+
+    const msgpacked = await DIDFuncionalities.StartPrismAgent(result1);
+    console.log('wallet - msgpacked is', msgpacked);
+
+    const resultmediated = await DIDFuncionalities.createPeerDID('true')
+    console.log('wallet - DIDFunctionalities mediated', resultmediated);
+
+    const DIDDOC2 = await DIDFuncionalities.resolveDID(resultmediated);
+    console.log('wallet - DIDDOC for ',resultmediated,' is', DIDDOC2);
+    let url = 'https://domain.com/path?_oob=eyJpZCI6IjhkYzY3MTRjLTJiNmEtNGZkOS1iYzg3LWJiODhlYTk1NmFiNyIsInR5cGUiOiJodHRwczovL2RpZGNvbW0ub3JnL291dC1vZi1iYW5kLzIuMC9pbnZpdGF0aW9uIiwiZnJvbSI6ImRpZDpwZWVyOjIuRXo2TFNxQWlIZWRIRmZiZW14UnpyUjV0ZTQ2VUdzdHhkcW0yMXpFelVjd3dGaVhwcC5WejZNa2ljRWh6NHRoQlZMWVRlc3VEWkJOOTdLRTdoTHdYRVR0UWppajJrcWl3N3Q0LlNleUowSWpvaVpHMGlMQ0p6SWpvaWFIUjBjRG92TDJodmMzUXVaRzlqYTJWeUxtbHVkR1Z5Ym1Gc09qZ3dPREF2Wkdsa1kyOXRiU0lzSW5JaU9sdGRMQ0poSWpwYkltUnBaR052YlcwdmRqSWlYWDAiLCJib2R5Ijp7ImdvYWxfY29kZSI6ImNvbm5lY3QiLCJnb2FsIjoiRXN0YWJsaXNoIGEgdHJ1c3QgY29ubmVjdGlvbiBiZXR3ZWVuIHR3byBwZWVycyIsImFjY2VwdCI6W119fQ=='
+
+    // const msgpacked2 = await DIDFuncionalities.parseOOBMessage(url);
+
 }
 
 export const initiateWalletCreation = createAsyncThunk(
@@ -173,86 +270,10 @@ export const initiateWalletCreation = createAsyncThunk(
     //     ),
     //   })
     // );
-
-    const discordSocialIssuerId = (
-      await thunkAPI.dispatch(
-        createContact({
-          displayPictureUrl:
-            'https://avatars.githubusercontent.com/u/1965106?s=200&v=4', //https://cdn.logojoy.com/wp-content/uploads/20210422095037/discord-mascot.png
-          displayName: BOTS_NAMES.DISCORD_SOCIAL_ISSUER,
-        })
-      )
-    ).payload;
-    console.log('discordSocialIssuerId', discordSocialIssuerId);
-    thunkAPI.dispatch(initiateChat({ chatId: discordSocialIssuerId }));
     const today = new Date(Date.now());
-    const discordCreds = {
-      alias: 'DISCORD HANDLE',
-      issuerId: discordSocialIssuerId,
-      credSub: {
-        HANDLE: `@${faker.internet.userName()}`,
-        'MEMBER SINCE': new Date(faker.date.past(2)).toLocaleString(),
-        EMAIL: faker.internet.email(),
-        'MESSAGE ID': discordSocialIssuerId,
-        'CHANNEL ID': discordSocialIssuerId,
-        'SERVER ID': discordSocialIssuerId,
-        'ISSUED AT': today.toLocaleString(),
-      },
-      revoked: false,
-    };
-    console.log('discordCreds', discordCreds);
-    const cred = (await thunkAPI.dispatch(createCredential(discordCreds)))
-      .payload;
-    thunkAPI.dispatch(
-      addMessage({
-        chatId: discordSocialIssuerId,
-        message: sendMessage(
-          discordSocialIssuerId,
-          rootsHelperId,
-          `A Discord Social credential has been created for you`,
-          MessageType.PROMPT_PREVIEW_ACCEPT_DENY_CREDENTIAL,
-          false,
-          { credential: cred }
-        ),
-      })
-    );
+    await setupDiscordDemo(thunkAPI,rootsHelperId,today)
+    await setupPrismDemo(thunkAPI,rootsHelperId,today)
 
-    console.log('wallet - invoking calendar example here');
-    CalendarModuleFoo.createCalendarEvent('testName', 'testLocation');
-    const prismDid = await setupDID()
-    console.log('wallet - prism did is',prismDid);
-      //const response = DIDFuncionalities.create.createPrismDID();
-    // if(response) {
-    //     console.log('async call response',response);
-    // }
-    console.log('wallet - creating fake dids');
-    const fakeDid: string = "did:fake:"+today.getMilliseconds()
-    console.log('wallet - fake DID is', fakeDid);
-
-      const didObj = {
-          _id: fakeDid,
-          alias: "fake did " + fakeDid,
-          published: false
-      }
-      const newDid = (await thunkAPI.dispatch(createDid(didObj)))
-          .payload;
-      if(prismDid) {
-          console.log('wallet - created new did, from fake did string', newDid);
-          thunkAPI.dispatch(
-              addMessage({
-                  chatId: userId,
-                  message: sendMessage(
-                      userId,
-                      rootsHelperId,
-                      BOTS_MSGS[3],
-                      MessageType.PROMPT_DISPLAY_IDENTIFIER,
-                      false,
-                      {identifier: {identifier: prismDid}}
-                  ),
-              })
-          );
-          console.log('wallet - created new fake DID', newDid);
-      }
     return WALLET_CREATED_SUCCESS;
   }
 );

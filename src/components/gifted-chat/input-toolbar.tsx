@@ -13,9 +13,9 @@ export const renderInputToolbar = (props: InputToolbarProps<IMessage>) => (
   <InputToolbar
     {...props}
     containerStyle={{
-      backgroundColor: '#604050',
+      backgroundColor: '#140A0F',
       borderTopColor: '#dddddd',
-      borderTopWidth: 1,
+      borderTopWidth: .2,
       padding: 1,
     }}
   />
