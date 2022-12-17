@@ -121,7 +121,7 @@ async function setupPrismDemo(thunkAPI: any, rootsHelperId: unknown,today: Date)
     const prismDid = (await thunkAPI.dispatch(createDid(didObj)))
         .payload;
     if(prismDid) {
-        console.log('wallet - created new did');
+        console.log('wallet - created new did',prismDid);
         thunkAPI.dispatch(
             addMessage({
                 chatId: prismDemoId,
@@ -131,7 +131,7 @@ async function setupPrismDemo(thunkAPI: any, rootsHelperId: unknown,today: Date)
                     BOTS_MSGS[3],
                     MessageType.PROMPT_DISPLAY_IDENTIFIER,
                     false,
-                    {identifier: {identifier: prismDid}}
+                    {identifier: prismDid}
                 ),
             })
         )

@@ -15,7 +15,7 @@ import { CompositeScreenProps } from '@react-navigation/core/src/types';
 import { goToShowQrCode } from '../navigation/helper/navigate-to';
 import { useDispatch } from 'react-redux';
 import BottomSheet from "@gorhom/bottom-sheet";
-const atalaLogo = require('../assets/ATALAPRISM.png');
+const atalaLogo = require('../assets/atala2.png');
 const discordLogo = require('../assets/discord.png');
 
 export default function IdentifierDetailScreen({
@@ -79,23 +79,23 @@ export default function IdentifierDetailScreen({
                   />
               </View>
               <Animated.View style={styles.viewAnimated}>
-        <Image source={atalaLogo} style={styles.credLogoStyle} />
-        <FlatList
-          data={Object.entries(id)}
-          keyExtractor={([key, val]) => key}
-          ItemSeparatorComponent={() => <Divider />}
-          renderItem={(item) => {
-            return (
-              <ScrollView style={styles.scrollableModal}>
-                <Text style={{ color: 'white' }}>
-                  {item.item[0] + ': ' + item.item[1]}
-                </Text>
-              </ScrollView>
-            );
-          }}
-        />
-      </Animated.View>
-          </View>
-      </BottomSheet>
+            <Image source={atalaLogo} style={styles.credLogoStyle} />
+            <FlatList
+              data={Object.entries(id)}
+              keyExtractor={([key, val]) => key}
+              ItemSeparatorComponent={() => <Divider />}
+              renderItem={(item) => {
+                return (
+                  <ScrollView style={styles.scrollableModal}>
+                    <Text style={{ color: 'white' }}>
+                      {item.item[0] + ': ' + item.item[1]}
+                    </Text>
+                  </ScrollView>
+                );
+              }}
+            />
+        </Animated.View>
+      </View>
+    </BottomSheet>
   );
 }
