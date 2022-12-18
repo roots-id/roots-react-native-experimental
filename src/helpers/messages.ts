@@ -31,7 +31,7 @@ export function formatMessage(
 function addQuickReply(msg: message) {
   if (msg.type === MessageType.PROMPT_PUBLISH) {
     msg.quickReplies = {
-      type: 'checkbox',
+      type: 'radio',
       keepIt: true,
       values: [
         {
@@ -44,7 +44,7 @@ function addQuickReply(msg: message) {
   }
   if (msg.type === MessageType.PROMPT_DISPLAY_IDENTIFIER) {
     msg.quickReplies = {
-      type: 'checkbox',
+      type: 'radio',
       keepIt: false,
       values: [
         {
@@ -57,7 +57,7 @@ function addQuickReply(msg: message) {
   }
   if (msg.type === MessageType.PROMPT_OWN_DID) {
     msg.quickReplies = {
-      type: 'checkbox',
+      type: 'radio',
       keepIt: true,
       values: [
         {
@@ -70,7 +70,7 @@ function addQuickReply(msg: message) {
   }
   if (msg.type === MessageType.PROMPT_ACCEPTED_CREDENTIAL) {
     msg.quickReplies = {
-      type: 'checkbox',
+      type: 'radio',
       keepIt: true,
       values: [
         {
@@ -83,7 +83,7 @@ function addQuickReply(msg: message) {
   }
   if (msg.type === MessageType.PROMPT_ISSUED_CREDENTIAL) {
     msg.quickReplies = {
-      type: 'checkbox',
+      type: 'radio',
       keepIt: true,
       values: [
         {
@@ -101,7 +101,7 @@ function addQuickReply(msg: message) {
   }
   if (msg.type === MessageType.PROMPT_OWN_CREDENTIAL) {
     msg.quickReplies = {
-      type: 'checkbox',
+      type: 'radio',
       keepIt: true,
       values: [
         {
@@ -114,7 +114,7 @@ function addQuickReply(msg: message) {
   }
   if (msg.type === MessageType.PROMPT_RETRY_PROCESS) {
     msg.quickReplies = {
-      type: 'checkbox',
+      type: 'radio',
       keepIt: true,
       values: [
         {
@@ -127,7 +127,7 @@ function addQuickReply(msg: message) {
   }
   if (msg.type === MessageType.PROMPT_PREVIEW_ACCEPT_DENY_CREDENTIAL) {
     msg.quickReplies = {
-      type: 'checkbox',
+      type: 'radio',
       keepIt: true,
       values: [
         {

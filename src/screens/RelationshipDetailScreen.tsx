@@ -1,4 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, {
+    useEffect,
+    useState,
+    useRef,
+    useMemo,
+    useCallback,
+} from "react";
 import {
   Animated,
   Image,
@@ -10,7 +16,7 @@ import {
 import { Divider, IconButton } from 'react-native-paper';
 import { CompositeScreenProps } from '@react-navigation/core/src/types';
 import { styles } from '../styles/styles';
-
+import BottomSheet from "@gorhom/bottom-sheet";
 import * as models from '../models';
 import { goToShowQrCode } from '../navigation/helper/navigate-to';
 // import { showQR } from '../qrcode';
@@ -26,34 +32,53 @@ export default function RelationshipDetailScreen({
     JSON.stringify(route.params)
   );
   const [rel, setRel] = useState<any>(route.params.user);
+    // ref
+    const bottomSheetRef = useRef<BottomSheet>(null);
+
+    // variables
+    const snapPoints = useMemo(() => ["50%", "75%"], []);
+
+    // callbacks
+    const handleSheetChanges = useCallback((index: number) => {
+        console.log("handleSheetChanges", index);
+    }, []);
 
   useEffect(() => {
     console.log('RelDetailScreen - rel changed', rel);
   }, [rel]);
 
   return (
+      <BottomSheet
+          ref={bottomSheetRef}
+          index={1}
+          snapPoints={snapPoints}
+          onChange={handleSheetChanges}
+          backgroundStyle={{
+              backgroundColor: "#140A0F",
+              borderWidth: 1,
+              borderColor: "#DE984F",
+          }}
+      >
     <View
       style={{
         flex: 1,
         alignItems: 'center',
-        justifyContent: 'center',
+        paddingHorizontal: 16,
       }}
     >
       <Pressable style={styles.pressable} onPress={navigation.goBack} />
       <View style={styles.closeButtonContainer}>
         <IconButton
-          icon='close-circle'
-          size={36}
-          iconColor='#e69138'
+            icon="keyboard-backspace"
+            size={28}
+            iconColor="#C5C8D1"
           onPress={() => navigation.goBack()}
+            style={{ borderWidth: 1, borderColor: "#FFA149", borderRadius: 10 }}
         />
-      </View>
-      <Animated.View style={styles.viewAnimated}>
-        <View style={{ flexDirection: 'row' }}>
           <IconButton
             icon='text-box'
-            size={36}
-            iconColor='#e69138'
+            size={28}
+            iconColor="#C5C8D1"
             onPress={async () => {
               if (rel) {
                 console.log('RelDetailScreen - setting rel', rel);
@@ -65,11 +90,12 @@ export default function RelationshipDetailScreen({
                 );
               }
             }}
+            style={{ borderWidth: 1, borderColor: "#FFA149", borderRadius: 10 }}
           />
           <IconButton
             icon='qrcode'
-            size={36}
-            iconColor='#e69138'
+            size={28}
+            iconColor="#C5C8D1"
             onPress={() => {
               if (rel) {
                 console.log('RelDetailScreen - show QR for rel', rel);
@@ -81,8 +107,13 @@ export default function RelationshipDetailScreen({
                 );
               }
             }}
+            style={{ borderWidth: 1, borderColor: "#FFA149", borderRadius: 10 }}
           />
         </View>
+          <Animated.View style={styles.viewAnimated}>
+              <View
+                  style={{ display: "flex", flexDirection: "row", marginTop: 10 }}
+              >
         <Image
           source={{ uri: rel.displayPictureUrl }}
           style={{
@@ -95,7 +126,10 @@ export default function RelationshipDetailScreen({
             height: 75,
           }}
         />
-        <Text style={styles.subText}>{rel.displayName}</Text>
+                  <Text style={{ ...styles.subText, fontWeight: "700" }}>
+                      {rel.displayName}
+                  </Text>
+              </View>
         <Divider />
         <ScrollView style={styles.scrollableModal}>
           <Text style={styles.subText}>{rel?.did}</Text>
@@ -106,5 +140,6 @@ export default function RelationshipDetailScreen({
         </ScrollView>
       </Animated.View>
     </View>
+  </BottomSheet>
   );
 }

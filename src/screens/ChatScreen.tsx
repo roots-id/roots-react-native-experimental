@@ -10,18 +10,13 @@ import {
   User,
 } from 'react-native-gifted-chat';
 
-import { renderInputToolbar, renderBubble } from '../components/gifted-chat';
-// import * as contacts from '../relationships';
-import * as models from '../models';
-// import { showQR } from '../qrcode';
-// import {
-//   asContactShareable,
-//   getContactByAlias,
-//   getContactByDid,
-//   showRel,
-// } from '../relationships';
-// import * as roots from '../roots';
-import Loading from '../components/Loading';
+import {
+  renderInputToolbar,
+      renderBubble,
+      renderComposer,
+      renderSend,
+} from "../components/gifted-chat";
+import * as models from '../models';;
 import { styles } from '../styles/styles';
 import { CompositeScreenProps } from '@react-navigation/core/src/types';
 import { BubbleProps } from 'react-native-gifted-chat/lib/Bubble';
@@ -38,6 +33,7 @@ import {
   getCurrentUserContact,
 } from '../store/selectors/contact';
 import { sendMessageToChat } from '../store/thunks/chat';
+import { updateMessageQuickReplyStatus } from "../store/slices/chat";
 
 export default function ChatScreen({
   route,
@@ -161,9 +157,6 @@ export default function ChatScreen({
           );
           if (reply.value.endsWith(MessageType.CRED_PREVIEW)) {
             console.log('ChatScreen - quick reply preview credential');
-            const msgCurrentChat = currentChat?.messages.find(
-              (message) => message._id === reply.messageId
-            );
             navigation.navigate(ROUTE_NAMES.CREDENTIAL_DETAILS, {
               cred: msgCurrentChat?.data?.credential,
             });
@@ -173,6 +166,13 @@ export default function ChatScreen({
           } else if (reply.value.endsWith(MessageType.CRED_DENY)) {
             console.log('ChatScreen - quick reply deny imported credential');
             dispatch(denyCredentialAndNotify(msgCurrentChat?.data?.credential));
+            dispatch(
+                updateMessageQuickReplyStatus({
+                  chatId: currentChat?._id,
+                  messageId: msgCurrentChat?._id,
+                  keepIt: false,
+                })
+            );
           }
         } else if (
           reply.value.startsWith(MessageType.PROMPT_ACCEPTED_CREDENTIAL)
@@ -181,7 +181,7 @@ export default function ChatScreen({
             'ChatScreen - process quick reply for accepted credential'
           );
           if (reply.value.endsWith(MessageType.CRED_VIEW)) {
-            console.log('ChatScreen - quick reply preview credential');
+            console.log('ChatScreen - quick reply view credential');
             const msgCurrentChat = currentChat?.messages.find(
               (message) => message._id === reply.messageId
             );
@@ -282,12 +282,22 @@ export default function ChatScreen({
           },
         ]}
         renderAvatarOnTop={true}
+        renderComposer={renderComposer}
         renderInputToolbar={renderInputToolbar}
         renderBubble={renderBubble}
-        // renderQuickReplySend={() => (
-        //   <Text style={{ color: '#e69138', fontSize: 18 }}>Confirm</Text>
-        // )}
-        // quickReplyStyle={{backgroundColor: '#e69138',borderColor: '#e69138',elevation: 3}}
+        renderSend={renderSend}
+        quickReplyStyle={{
+          backgroundColor: "#140A0F",
+          borderRadius: 4,
+          borderWidth: 0,
+          elevation: 3,
+          marginRight: 4,
+          marginTop: 6,
+        }}
+        quickReplyTextStyle={{
+          color: "#DE984F",
+          fontSize: 12,
+        }}
         showAvatarForEveryMessage={true}
         onPressAvatar={(u) => openRelationshipDetailScreen(getUserById(u._id))}
       />

@@ -11,8 +11,6 @@ import IconActions from "../components/IconActions";
 import RelationshipsScreen from "../screens/RelationshipsScreen";
 import RelationshipDetailScreen from "../screens/RelationshipDetailScreen";
 import CredentialsScreen from "../screens/CredentialsScreen";
-import DeveloperScreen from "../screens/DeveloperScreen";
-import WalletScreen from "../screens/WalletScreen";
 import ChatScreen from "../screens/ChatScreen";
 import CredentialDetailScreen from "../screens/CredentialDetailScreen";
 import SettingsScreen from "../screens/SettingsScreen";
@@ -189,6 +187,10 @@ export default function MainStack() {
                 <Stack.Screen
                     name={ROUTE_NAMES.CREDENTIAL_DETAILS}
                     component={CredentialDetailScreen}
+                />
+                <Stack.Screen
+                    name={ROUTE_NAMES.DID_DOCUMENT}
+                    component={IdentifierDetailScreen}
                 />
                 <Stack.Screen
                     name={ROUTE_NAMES.IDENTIFIER_DETAILS}

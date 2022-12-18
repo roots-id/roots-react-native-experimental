@@ -242,7 +242,7 @@ export const styles = StyleSheet.create({
     subText: {
         fontSize: 16,
         marginBottom: 10,
-        color: '#111111',
+        color: '#C5C8D1',
         fontWeight: 'normal',
         alignSelf: "flex-start",
         justifyContent: "flex-start"

@@ -12,8 +12,10 @@ const idSlice = createSlice({
     updateId(state, action: PayloadAction<any>) {
       state.identifiers[action.payload.index] = action.payload.identifier;
     },
+    updateDidDocument(state, action: PayloadAction<any>) {
+      state.identifiers[action.payload.index].didDocument = action.payload.didDocument
+    }
   },
 });
 
-export const { addId, updateId } = idSlice.actions;
-export const credentialReducer = idSlice.reducer;
+export const { addId, updateId, updateDidDocument} = idSlice.actions;

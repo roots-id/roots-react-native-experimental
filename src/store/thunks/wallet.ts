@@ -18,7 +18,9 @@ import {
   getRootsHelperContact,
 } from '../selectors/contact';
 import { updateContact } from '../slices/contact';
-import {createDid} from "./identifier";
+import {createAndAddDid, resolveAndAddDidDocument} from "./identifier";
+import * as models from "../../models";
+import thunk from "redux-thunk";
 
 const { DIDFuncionalities, CalendarModuleFoo } = ReactNative.NativeModules;
 
@@ -34,6 +36,8 @@ const ADD_CREDENTIAL_AND_NOTIFY = `${BASE_WALLET}addCredentialAndNotify`;
 const DENY_CREDENTIAL_AND_NOTIFY = `${BASE_WALLET}denyCredentialAndNotify`;
 const UPDATE_PROFILE_AND_NOTIFY = `${BASE_WALLET}updateProfileAndNotify`;
 
+let discordSocialIssuerId
+let rootsHelperId: any;
 
 interface CreateWalletDto {
   name: string;
@@ -72,7 +76,7 @@ async function setupDiscordDemo(thunkAPI: any, rootsHelperId: unknown,today: Dat
             'MESSAGE ID': discordSocialIssuerId,
             'CHANNEL ID': discordSocialIssuerId,
             'SERVER ID': discordSocialIssuerId,
-            'ISSUED AT': today.toLocaleString(),
+            'ISSUED AT': new Date(Date.now()).toLocaleString(),
         },
         revoked: false,
     };
@@ -118,7 +122,7 @@ async function setupPrismDemo(thunkAPI: any, rootsHelperId: unknown,today: Date)
         alias: "prism peer did " + result1,
         published: false
     }
-    const prismDid = (await thunkAPI.dispatch(createDid(didObj)))
+    const prismDid = (await thunkAPI.dispatch(createAndAddDid(didObj)))
         .payload;
     if(prismDid) {
         console.log('wallet - created new did',prismDid);
@@ -136,9 +140,6 @@ async function setupPrismDemo(thunkAPI: any, rootsHelperId: unknown,today: Date)
             })
         )
     }
-
-    const DIDDOC1 = await DIDFuncionalities.resolveDID("did:peer:2.Ez6LSdFHEaZqLfkpvT93VkeKu2Eu7xAzNudVqvFsCEVD5Bt1J.Vz6MkrYuSSPrGkir94WpUaTHdvn3DGqhgVjKa2yLbAqfXAvQ9.SeyJyIjpbXSwicyI6ImFsZXgiLCJhIjpbXSwidCI6IkRlbW9UeXBlIn0");
-    console.log('wallet - DIDDOC for ',result1,' is', DIDDOC1);
 
     const msgpacked = await DIDFuncionalities.StartPrismAgent(result1);
     console.log('wallet - msgpacked is', msgpacked);
@@ -187,9 +188,9 @@ export const initiateWalletCreation = createAsyncThunk(
         })
       )
     ).payload;
-    thunkAPI.dispatch(addProfile({ _id: userId, displayPictureUrl: 'https://avatars.githubusercontent.com/u/95590918?s=200&v=4', displayName: '' }))
-    thunkAPI.dispatch(initiateChat({ chatId: userId }));
-    thunkAPI.dispatch(
+      thunkAPI.dispatch(addProfile({ _id: userId, displayPictureUrl: 'https://avatars.githubusercontent.com/u/95590918?s=200&v=4', displayName: '' }))
+      thunkAPI.dispatch(initiateChat({ chatId: userId }));
+      thunkAPI.dispatch(
       addMessage({
         chatId: userId,
         message: sendMessage(
@@ -200,7 +201,7 @@ export const initiateWalletCreation = createAsyncThunk(
         ),
       })
     );
-    thunkAPI.dispatch(
+      thunkAPI.dispatch(
       addMessage({
         chatId: userId,
         message: sendMessage(
@@ -211,7 +212,7 @@ export const initiateWalletCreation = createAsyncThunk(
         ),
       })
     );
-    thunkAPI.dispatch(
+      thunkAPI.dispatch(
       addMessage({
         chatId: userId,
         message: sendMessage(
@@ -437,3 +438,8 @@ export const updateProfileInfo = createAsyncThunk(
     );
   }
 );
+
+export function updateIdWithDIDDocument(id: models.identifier,callback: ((arg0: models.identifier) => void) | undefined) {
+    //thunkAPI.dispatch(resolveAndAddDidDocument(id.identifier))
+    callback(id)
+}

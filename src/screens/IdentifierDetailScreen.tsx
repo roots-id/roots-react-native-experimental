@@ -15,8 +15,14 @@ import { CompositeScreenProps } from '@react-navigation/core/src/types';
 import { goToShowQrCode } from '../navigation/helper/navigate-to';
 import { useDispatch } from 'react-redux';
 import BottomSheet from "@gorhom/bottom-sheet";
+import {ROUTE_NAMES} from "../navigation";
+import {addMessage} from "../store/slices/chat";
+import {sendMessage} from "../helpers/messages";
+import {MessageType} from "../models/constants";
+import {didDocument} from "../models";
+import {resolveAndAddDidDocument} from "../store/thunks/identifier";
+import {updateIdWithDIDDocument} from "../store/thunks/wallet";
 const atalaLogo = require('../assets/atala2.png');
-const discordLogo = require('../assets/discord.png');
 
 export default function IdentifierDetailScreen({
   route,
@@ -25,6 +31,7 @@ export default function IdentifierDetailScreen({
   console.log('id details - route params are', JSON.stringify(route.params));
   const dispatch = useDispatch();
   const [id, setId] = useState<models.identifier>(route.params.identifier);
+    const [refresh, setRefresh] = useState(true)
 
     // ref
     const bottomSheetRef = useRef<BottomSheet>(null);
@@ -41,6 +48,11 @@ export default function IdentifierDetailScreen({
       console.log('id details - initially setting id', id);
       setId(route.params.identifier);
     }, []);
+
+    function setAndRefreshId(id: models.identifier) {
+        setId(id)
+        setRefresh(!refresh)
+    }
 
   return (
       <BottomSheet
@@ -67,6 +79,12 @@ export default function IdentifierDetailScreen({
                       style={{borderWidth: 1, borderColor: '#FFA149', borderRadius: 10 }}
                   />
                   <IconButton
+                      icon={"file-document-move-outline"}
+                      size={28}
+                      iconColor={"#C5C8D1"}
+                      onPress={() => updateIdWithDIDDocument(id,setAndRefreshId)}
+                  />
+                  <IconButton
                       icon="qrcode"
                       size={28}
                       iconColor="#C5C8D1"
@@ -79,23 +97,29 @@ export default function IdentifierDetailScreen({
                   />
               </View>
               <Animated.View style={styles.viewAnimated}>
-            <Image source={atalaLogo} style={styles.credLogoStyle} />
-            <FlatList
-              data={Object.entries(id)}
-              keyExtractor={([key, val]) => key}
-              ItemSeparatorComponent={() => <Divider />}
-              renderItem={(item) => {
-                return (
-                  <ScrollView style={styles.scrollableModal}>
-                    <Text style={{ color: 'white' }}>
-                      {item.item[0] + ': ' + item.item[1]}
-                    </Text>
-                  </ScrollView>
-                );
-              }}
-            />
-        </Animated.View>
-      </View>
+                <Image source={atalaLogo} style={{
+                    width: 130,
+                    height: 150,
+                    resizeMode: 'contain',
+                    margin: 8
+                }} />
+                <FlatList
+                  data={Object.entries(id)}
+                  extraData={refresh}
+                  keyExtractor={([key, val]) => key}
+                  ItemSeparatorComponent={() => <Divider />}
+                  renderItem={(item) => {
+                    return (
+                      <ScrollView style={styles.scrollableModal}>
+                        <Text style={{ color: 'white' }}>
+                          {item.item[0] + ': ' + item.item[1]}
+                        </Text>
+                      </ScrollView>
+                    );
+                  }}
+                />
+            </Animated.View>
+        </View>
     </BottomSheet>
   );
 }

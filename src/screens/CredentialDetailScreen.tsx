@@ -76,13 +76,12 @@ export default function CredentialDetailScreen({
             style={{
               flex: 1,
               alignItems: "center",
-              justifyContent: "center",
               paddingHorizontal: 16
             }}
         >
           <View style={styles.closeButtonContainer}>
             <IconButton
-                icon="close-circle"
+                icon="keyboard-backspace"
                 size={28}
                 iconColor="#C5C8D1"
                 onPress={() => navigation.goBack()}
