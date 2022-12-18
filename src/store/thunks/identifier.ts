@@ -35,9 +35,8 @@ export const createAndAddId = createAsyncThunk(
 
 async function resolveId(id: identifier) {
     console.log("thunk/identifiers - resolving DID document for id",id)
-    const didDoc = await DIDFunctionalities.resolveDID("did:peer:2.Ez6LSdFHEaZqLfkpvT93VkeKu2Eu7xAzNudVqvFsCEVD5Bt1J.Vz6MkrYuSSPrGkir94WpUaTHdvn3DGqhgVjKa2yLbAqfXAvQ9.SeyJyIjpbXSwicyI6ImFsZXgiLCJhIjpbXSwidCI6IkRlbW9UeXBlIn0");
-    // const didDoc = {fake: "fake did doc"}
-    console.log('thunk/identifiers - resolved DID document for',id,'is', didDoc);
+    const didDoc = await DIDFunctionalities.resolveDID(id._id);
+    console.log('thunk/identifiers - resolved DID document for',id._id,'is', didDoc);
     return didDoc
 }
 
