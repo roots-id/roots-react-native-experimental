@@ -59,22 +59,42 @@ async function waitAndGetMessages() {
 
 }
 
+//create async function called generateOOB() that returns a string
+async function generateOOB(): Promise<string> {
+  const resultmediated = await DIDFuncionalities.createPeerDID('true')
+  //create a json with type, id from and body
+  const msg = {
+    type: 'https://didcomm.org/out-of-band/2.0/invitation',
+    id: faker.random.uuid(),
+    from: resultmediated,
+    body: {
+      'accept': ['didcomm/v2'],
+    }
+  }
+  console.log("OOB message is: ", msg)
+  //convert json to string
+  const msgString = JSON.stringify(msg);
+  //convert string to base64
+  const msgBase64 = Buffer.from(msgString).toString('base64');
+
+
+  //return string
+  return msgBase64;
+}
+
 async function setupDID(): Promise<string> {
 
     const msgpacked = await DIDFuncionalities.StartPrismAgent('did:peer:2.Ez6LSms555YhFthn1WV8ciDBpZm86hK9tp83WojJUmxPGk1hZ.Vz6MkmdBjMyB4TS5UbbQw54szm8yvMMf1ftGV2sQVYAxaeWhE.SeyJpZCI6Im5ldy1pZCIsInQiOiJkbSIsInMiOiJodHRwczovL21lZGlhdG9yLnJvb3RzaWQuY2xvdWQiLCJhIjpbImRpZGNvbW0vdjIiXX0');
     console.log('wallet - msgpacked is', msgpacked);
 
-    const resultmediated = await DIDFuncionalities.createPeerDID('true')
-    console.log('wallet - did for peer', resultmediated);
-
-    const DIDDOC2 = await DIDFuncionalities.resolveDID(resultmediated);
-    console.log('wallet - DIDDOC for peer ',resultmediated,' is', DIDDOC2);
+    const oobdata = await generateOOB()
+    console.log('wallet - did for peer', oobdata);
 
 
-    let url = 'https://domain.com/path?_oob=eyJpZCI6IjhkYzY3MTRjLTJiNmEtNGZkOS1iYzg3LWJiODhlYTk1NmFiNyIsInR5cGUiOiJodHRwczovL2RpZGNvbW0ub3JnL291dC1vZi1iYW5kLzIuMC9pbnZpdGF0aW9uIiwiZnJvbSI6ImRpZDpwZWVyOjIuRXo2TFNxQWlIZWRIRmZiZW14UnpyUjV0ZTQ2VUdzdHhkcW0yMXpFelVjd3dGaVhwcC5WejZNa2ljRWh6NHRoQlZMWVRlc3VEWkJOOTdLRTdoTHdYRVR0UWppajJrcWl3N3Q0LlNleUowSWpvaVpHMGlMQ0p6SWpvaWFIUjBjRG92TDJodmMzUXVaRzlqYTJWeUxtbHVkR1Z5Ym1Gc09qZ3dPREF2Wkdsa1kyOXRiU0lzSW5JaU9sdGRMQ0poSWpwYkltUnBaR052YlcwdmRqSWlYWDAiLCJib2R5Ijp7ImdvYWxfY29kZSI6ImNvbm5lY3QiLCJnb2FsIjoiRXN0YWJsaXNoIGEgdHJ1c3QgY29ubmVjdGlvbiBiZXR3ZWVuIHR3byBwZWVycyIsImFjY2VwdCI6W119fQ=='
+    let url = 'https://mediator.rootsid.cloud/?_oob=eyJ0eXBlIjoiaHR0cHM6Ly9kaWRjb21tLm9yZy9vdXQtb2YtYmFuZC8yLjAvaW52aXRhdGlvbiIsImlkIjoiNTkyYWYzZWEtNjAyOS00YmNiLTg1NzYtMWUzNjkzYjQ5MTU3IiwiZnJvbSI6ImRpZDpwZWVyOjIuRXo2TFNqZnY5OGNHbzFrcHdNYmpzNG90YzExdTlpeXJNNDFYYXczSmdDSnE1b3oyMy5WejZNa3FHMVRuaFdXcmMyWUdvQ0Z2dmN5WWt6VnRkcVNIMlRqMkJCam1HNlJneTNMLlNleUpwWkNJNkltNWxkeTFwWkNJc0luUWlPaUprYlNJc0luTWlPaUprYVdRNmNHVmxjam95TGtWNk5reFRha05WYWtkR2RYQTFZVnB1TkdoMFZraE1jR3BvVVhwMlVXOURaVk14ZDFKck5HSnZjMlUzYWpaRVdsRXVWbm8yVFd0cFVFeG9kVFU1UVZKUlZVSllOV2RHVFRKS1oyVlhia2hNV0dJMWRFZE9NbFJ2VUhRelNEVm1jWHBYZVM1VFpYbEtjRnBEU1RaSmJUVnNaSGt4Y0ZwRFNYTkpibEZwVDJsS2EySlRTWE5KYmsxcFQybEtiMlJJVW5kamVtOTJUREl4YkZwSGJHaGtSemw1VEc1S2RtSXpVbnBoVjFGMVdUSjRkbVJYVVdsTVEwcG9TV3B3WWtsdFVuQmFSMDUyWWxjd2RtUnFTV2xZV0RBaUxDSmhJanBiSW1ScFpHTnZiVzB2ZGpJaVhYMCIsImJvZHkiOnsiYWNjZXB0IjpbImRpZGNvbW0vdjIiXSwibGFiZWwiOiJhbGV4In19'
 
-    // const msgpacked2 = await DIDFuncionalities.parseOOBMessage(url);
-    // console.log('wallet - parseOOBMessage is', msgpacked2);
+    const msgpacked2 = await DIDFuncionalities.parseOOBMessage(url);
+    console.log('wallet - parseOOBMessage is', msgpacked2);
     //wait 1 minutes and then call getMessages
 
     const messages =  await waitAndGetMessages()
