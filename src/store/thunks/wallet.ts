@@ -49,27 +49,37 @@ export const createWallet = createAsyncThunk(
   }
 );
 
+async function waitAndGetMessages() {
+  // Wait for 1 minute (60,000 milliseconds)
+  await new Promise(resolve => setTimeout(resolve, 20000));
+
+  // Call the getMessages function
+  const messages =  DIDFuncionalities.getMessages();    
+  // console.log('wallet - messages is', messages);
+
+}
+
 async function setupDID(): Promise<string> {
 
-
-    const result1 = await DIDFuncionalities.createPeerDID('false')
-    console.log('wallet - DIDFunctionalities await', result1);
-
-    const DIDDOC1 = await DIDFuncionalities.resolveDID("did:peer:2.Ez6LSdFHEaZqLfkpvT93VkeKu2Eu7xAzNudVqvFsCEVD5Bt1J.Vz6MkrYuSSPrGkir94WpUaTHdvn3DGqhgVjKa2yLbAqfXAvQ9.SeyJyIjpbXSwicyI6ImFsZXgiLCJhIjpbXSwidCI6IkRlbW9UeXBlIn0");
-    console.log('wallet - DIDDOC for ',result1,' is', DIDDOC1);
-
-    const msgpacked = await DIDFuncionalities.StartPrismAgent(result1);
+    const msgpacked = await DIDFuncionalities.StartPrismAgent('did:peer:2.Ez6LSms555YhFthn1WV8ciDBpZm86hK9tp83WojJUmxPGk1hZ.Vz6MkmdBjMyB4TS5UbbQw54szm8yvMMf1ftGV2sQVYAxaeWhE.SeyJpZCI6Im5ldy1pZCIsInQiOiJkbSIsInMiOiJodHRwczovL21lZGlhdG9yLnJvb3RzaWQuY2xvdWQiLCJhIjpbImRpZGNvbW0vdjIiXX0');
     console.log('wallet - msgpacked is', msgpacked);
 
     const resultmediated = await DIDFuncionalities.createPeerDID('true')
-    console.log('wallet - DIDFunctionalities mediated', resultmediated);
+    console.log('wallet - did for peer', resultmediated);
 
     const DIDDOC2 = await DIDFuncionalities.resolveDID(resultmediated);
-    console.log('wallet - DIDDOC for ',resultmediated,' is', DIDDOC2);
+    console.log('wallet - DIDDOC for peer ',resultmediated,' is', DIDDOC2);
+
+
     let url = 'https://domain.com/path?_oob=eyJpZCI6IjhkYzY3MTRjLTJiNmEtNGZkOS1iYzg3LWJiODhlYTk1NmFiNyIsInR5cGUiOiJodHRwczovL2RpZGNvbW0ub3JnL291dC1vZi1iYW5kLzIuMC9pbnZpdGF0aW9uIiwiZnJvbSI6ImRpZDpwZWVyOjIuRXo2TFNxQWlIZWRIRmZiZW14UnpyUjV0ZTQ2VUdzdHhkcW0yMXpFelVjd3dGaVhwcC5WejZNa2ljRWh6NHRoQlZMWVRlc3VEWkJOOTdLRTdoTHdYRVR0UWppajJrcWl3N3Q0LlNleUowSWpvaVpHMGlMQ0p6SWpvaWFIUjBjRG92TDJodmMzUXVaRzlqYTJWeUxtbHVkR1Z5Ym1Gc09qZ3dPREF2Wkdsa1kyOXRiU0lzSW5JaU9sdGRMQ0poSWpwYkltUnBaR052YlcwdmRqSWlYWDAiLCJib2R5Ijp7ImdvYWxfY29kZSI6ImNvbm5lY3QiLCJnb2FsIjoiRXN0YWJsaXNoIGEgdHJ1c3QgY29ubmVjdGlvbiBiZXR3ZWVuIHR3byBwZWVycyIsImFjY2VwdCI6W119fQ=='
 
-    const msgpacked2 = await DIDFuncionalities.parseOOBMessage(url);
-    return result1
+    // const msgpacked2 = await DIDFuncionalities.parseOOBMessage(url);
+    // console.log('wallet - parseOOBMessage is', msgpacked2);
+    //wait 1 minutes and then call getMessages
+
+    const messages =  await waitAndGetMessages()
+    console.log('wallet - messages is', messages);
+    return url
 }
 
 export const initiateWalletCreation = createAsyncThunk(

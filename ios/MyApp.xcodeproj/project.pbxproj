@@ -731,8 +731,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/input-output-hk/atala-prism-swift-sdk";
 			requirement = {
-				branch = main;
-				kind = branch;
+				kind = revision;
+				revision = e1c88d950dae3669b440a49560368261b9f9d562;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
