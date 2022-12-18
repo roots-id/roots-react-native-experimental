@@ -136,7 +136,7 @@ class DIDFunctionalities: NSObject {
     Task {
       let didDoc = await resolveDID(did: did)
       print("DIDFunctionalities - resolved did document",didDoc)
-      resolve(didDoc?.id.string)
+      resolve(didDoc.debugDescription)
     }
   }
 
