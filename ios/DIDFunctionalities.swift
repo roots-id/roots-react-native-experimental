@@ -1,11 +1,11 @@
-// DIDFuncionalities.swift
+// DIDFunctionalities.swift
 import Builders
 import Domain
 import Foundation
 import PrismAgent
 
-@objc(DIDFuncionalities)
-class DIDFuncionalities: NSObject {
+@objc(DIDFunctionalities)
+class DIDFunctionalities: NSObject {
   //  private let castor: Castor
   private let castor: Castor
   private let agent: PrismAgent
@@ -49,7 +49,7 @@ class DIDFuncionalities: NSObject {
     }
   }
      func createPeerDID() async -> DID? {
-       print("DIDFuncionalities - Called create peer DID!")
+       print("DIDFunctionalities - Called create peer DID!")
          // Creates new PRISM DID
        let did = try? await agent.createNewPeerDID(
              // Add this if you want to provide a IndexPath
@@ -72,7 +72,7 @@ class DIDFuncionalities: NSObject {
     }
 
      func createPrismDID() async -> DID? {
-       print("DIDFuncionalities - Called create prism DID!")
+       print("DIDFunctionalities - Called create prism DID!")
          // Creates new PRISM DID
          let did = try? await agent.createNewPrismDID(
              // Add this if you want to provide a IndexPath
@@ -108,7 +108,7 @@ class DIDFuncionalities: NSObject {
   }
 
      func createPeerDID(updatemediator : NSString ) async -> DID? {
-       print("DIDFuncionalities - Called create peer DID!")
+       print("DIDFunctionalities - Called create peer DID!")
          // Creates new peer DID
        let _updatemediator : Bool
         if updatemediator == "true" {
@@ -135,20 +135,20 @@ class DIDFuncionalities: NSObject {
   ) -> Void {
     Task {
       let didDoc = await resolveDID(did: did)
+      print("DIDFunctionalities - resolved did document",didDoc)
       resolve(didDoc?.id.string)
     }
   }
 
      func resolveDID(did: NSString) async -> DIDDocument? {
-       print("DIDFuncionalities - RESOLVING DID!")
+       print("DIDFunctionalities - RESOLVING DID!")
          // Creates new PRISM DID
          let _did = did as String
-         print("trying to resolve did ",_did)
+         print("DIDFunctionalities - trying to resolve did ",_did)
          let document = try? await castor.resolveDID(did: DID(string: _did))
-       print("DIDDOC is ", document)
+       print("DIDFunctionalities - DIDDOC is ", document)
 //      let jsonString = try String(data: JSONEncoder().encode(document), encoding: .utf8)!
-      print("DIDDOC JSON", document)
-
+      print("DIDFunctionalities - DIDDOC JSON", document)
 
        return document
     }

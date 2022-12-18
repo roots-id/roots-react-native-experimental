@@ -20,8 +20,7 @@ import {addMessage} from "../store/slices/chat";
 import {sendMessage} from "../helpers/messages";
 import {MessageType} from "../models/constants";
 import {didDocument} from "../models";
-import {resolveAndAddDidDocument} from "../store/thunks/identifier";
-import {updateIdWithDIDDocument} from "../store/thunks/wallet";
+import {idDTO, resolveAndAdd} from "../store/thunks/identifier";
 const atalaLogo = require('../assets/atala2.png');
 
 export default function IdentifierDetailScreen({
@@ -50,7 +49,9 @@ export default function IdentifierDetailScreen({
     }, []);
 
     function setAndRefreshId(id: models.identifier) {
+        console.log("IdentifierDetailScreen - setting id",id)
         setId(id)
+        console.log("IdentifierDetailScreen - setting refresh",!refresh)
         setRefresh(!refresh)
     }
 
@@ -79,10 +80,14 @@ export default function IdentifierDetailScreen({
                       style={{borderWidth: 1, borderColor: '#FFA149', borderRadius: 10 }}
                   />
                   <IconButton
-                      icon={"file-document-move-outline"}
+                      icon="text-box-search-outline"
                       size={28}
-                      iconColor={"#C5C8D1"}
-                      onPress={() => updateIdWithDIDDocument(id,setAndRefreshId)}
+                      iconColor="#C5C8D1"
+                      onPress={() => {
+                          const idDTO: idDTO = {id: id,callback: setAndRefreshId};
+                          dispatch(resolveAndAdd(idDTO))}
+                      }
+                      style={{borderWidth: 1, borderColor: '#FFA149', borderRadius: 10 }}
                   />
                   <IconButton
                       icon="qrcode"

@@ -1,6 +1,6 @@
 #import "React/RCTBridgeModule.h"
-#import "DIDFunctionalities.h"
-@interface RCT_EXTERN_MODULE(DIDFuncionalities, NSObject)
+
+@interface RCT_EXTERN_MODULE(DIDFunctionalities, NSObject)
 RCT_EXTERN_METHOD(addEvent:(NSString *)name location:(NSString *)location date:(nonnull NSNumber *)date);
 //  RCT_EXTERN_METHOD(simpleMethodReturns:
 //    (RCTResponseSenderBlock) callback

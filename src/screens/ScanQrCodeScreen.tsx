@@ -9,7 +9,7 @@ import ReactNative, {
   Platform, TouchableOpacity, Linking,
 } from 'react-native';
 import { IconButton } from 'react-native-paper';
-const { DIDFuncionalities } = ReactNative.NativeModules;
+const { DIDFunctionalities } = ReactNative.NativeModules;
 
 // import { BarCodeScanner } from 'expo-barcode-scanner';
 // import { BarCodeEvent } from 'expo-barcode-scanner/src/BarCodeScanner';
@@ -174,7 +174,7 @@ export default function ScanQrCodeScreen({
 
   async function parseOob(oobUrl: string) {
     console.log("Parsing OOB",oobUrl)
-    const result = DIDFuncionalities.parseOOBMessage(oobUrl)
+    const result = DIDFunctionalities.parseOOBMessage(oobUrl)
     console.log("Parsed OOB",result)
   }
 

@@ -13,7 +13,7 @@ const idSlice = createSlice({
       state.identifiers[action.payload.index] = action.payload.identifier;
     },
     updateDidDocument(state, action: PayloadAction<any>) {
-      state.identifiers[action.payload.index].didDocument = action.payload.didDocument
+      state.identifiers[action.payload.index].resolution = action.payload.didDocument
     }
   },
 });

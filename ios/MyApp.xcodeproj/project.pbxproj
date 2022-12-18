@@ -31,8 +31,8 @@
 		A21F93F02947B75400F38952 /* SimpleLineIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A21F93E02947B75400F38952 /* SimpleLineIcons.ttf */; };
 		A21F93F12947B75400F38952 /* MaterialIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A21F93E12947B75400F38952 /* MaterialIcons.ttf */; };
 		A2EE66D6293A48AD005BF08C /* RCTCalendarModule.m in Sources */ = {isa = PBXBuildFile; fileRef = A2EE66D5293A48AD005BF08C /* RCTCalendarModule.m */; };
-		A2EE66D9293A5223005BF08C /* DIDFuncionalities.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2EE66D8293A5223005BF08C /* DIDFuncionalities.swift */; };
-		A2EE66DB293A970D005BF08C /* DIDFuncionalities.m in Sources */ = {isa = PBXBuildFile; fileRef = A2EE66DA293A970D005BF08C /* DIDFuncionalities.m */; };
+		A2EE66D9293A5223005BF08C /* DIDFunctionalities.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2EE66D8293A5223005BF08C /* DIDFunctionalities.swift */; };
+		A2EE66DB293A970D005BF08C /* DIDFunctionalities.m in Sources */ = {isa = PBXBuildFile; fileRef = A2EE66DA293A970D005BF08C /* DIDFunctionalities.m */; };
 		A2EE66E0293AA7C5005BF08C /* PrismAgent in Frameworks */ = {isa = PBXBuildFile; productRef = A2EE66DF293AA7C5005BF08C /* PrismAgent */; };
 /* End PBXBuildFile section */
 
@@ -80,8 +80,8 @@
 		A2EE66D4293A4825005BF08C /* RCTCalendarModule.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RCTCalendarModule.h; sourceTree = "<group>"; };
 		A2EE66D5293A48AD005BF08C /* RCTCalendarModule.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RCTCalendarModule.m; sourceTree = "<group>"; };
 		A2EE66D7293A5222005BF08C /* MyApp-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MyApp-Bridging-Header.h"; sourceTree = "<group>"; };
-		A2EE66D8293A5223005BF08C /* DIDFuncionalities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DIDFuncionalities.swift; sourceTree = "<group>"; };
-		A2EE66DA293A970D005BF08C /* DIDFuncionalities.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DIDFuncionalities.m; sourceTree = "<group>"; };
+		A2EE66D8293A5223005BF08C /* DIDFunctionalities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DIDFunctionalities.swift; sourceTree = "<group>"; };
+		A2EE66DA293A970D005BF08C /* DIDFunctionalities.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DIDFunctionalities.m; sourceTree = "<group>"; };
 		C4911E025E37F5715CF83FE4 /* Pods-MyApp-MyAppTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MyApp-MyAppTests.debug.xcconfig"; path = "Target Support Files/Pods-MyApp-MyAppTests/Pods-MyApp-MyAppTests.debug.xcconfig"; sourceTree = "<group>"; };
 		E747661859776C37C5D41F0F /* libPods-MyApp.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-MyApp.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E75AFF03C0534332933EB2AB /* Pods-MyApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MyApp.debug.xcconfig"; path = "Target Support Files/Pods-MyApp/Pods-MyApp.debug.xcconfig"; sourceTree = "<group>"; };
@@ -129,7 +129,7 @@
 		13B07FAE1A68108700A75B9A /* MyApp */ = {
 			isa = PBXGroup;
 			children = (
-				A2EE66D8293A5223005BF08C /* DIDFuncionalities.swift */,
+				A2EE66D8293A5223005BF08C /* DIDFunctionalities.swift */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.mm */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
@@ -139,7 +139,7 @@
 				A2EE66D5293A48AD005BF08C /* RCTCalendarModule.m */,
 				13B07FB71A68108700A75B9A /* main.m */,
 				A2EE66D7293A5222005BF08C /* MyApp-Bridging-Header.h */,
-				A2EE66DA293A970D005BF08C /* DIDFuncionalities.m */,
+				A2EE66DA293A970D005BF08C /* DIDFunctionalities.m */,
 			);
 			name = MyApp;
 			sourceTree = "<group>";
@@ -506,9 +506,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A2EE66DB293A970D005BF08C /* DIDFuncionalities.m in Sources */,
+				A2EE66DB293A970D005BF08C /* DIDFunctionalities.m in Sources */,
 				A2EE66D6293A48AD005BF08C /* RCTCalendarModule.m in Sources */,
-				A2EE66D9293A5223005BF08C /* DIDFuncionalities.swift in Sources */,
+				A2EE66D9293A5223005BF08C /* DIDFunctionalities.swift in Sources */,
 				13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
 			);

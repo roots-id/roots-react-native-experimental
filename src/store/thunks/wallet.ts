@@ -18,11 +18,12 @@ import {
   getRootsHelperContact,
 } from '../selectors/contact';
 import { updateContact } from '../slices/contact';
-import {createAndAddDid, resolveAndAddDidDocument} from "./identifier";
+import {createAndAddId} from "./identifier";
 import * as models from "../../models";
 import thunk from "redux-thunk";
+import {identifier} from "../../models";
 
-const { DIDFuncionalities, CalendarModuleFoo } = ReactNative.NativeModules;
+const { DIDFunctionalities, CalendarModuleFoo } = ReactNative.NativeModules;
 
 const WALLET_NAME_STORAGE_KEY = 'primaryRootsWalletStorageNameKey';
 
@@ -115,15 +116,16 @@ async function setupPrismDemo(thunkAPI: any, rootsHelperId: unknown,today: Date)
     console.log('wallet - invoking calendar example here');
     CalendarModuleFoo.createCalendarEvent('testName', 'testLocation');
 
-    const result1 = await DIDFuncionalities.createPeerDID('false')
+    const result1 = await DIDFunctionalities.createPeerDID('false')
     console.log('wallet - DIDFunctionalities await peerDID', result1);
-    const didObj = {
+    const didObj: identifier = {
         _id: result1,
         alias: "prism peer did " + result1,
         published: false
     }
-    const prismDid = (await thunkAPI.dispatch(createAndAddDid(didObj)))
+    const prismDid = (await thunkAPI.dispatch(createAndAddId(didObj)))
         .payload;
+    console.log("")
     if(prismDid) {
         console.log('wallet - created new did',prismDid);
         thunkAPI.dispatch(
@@ -141,17 +143,17 @@ async function setupPrismDemo(thunkAPI: any, rootsHelperId: unknown,today: Date)
         )
     }
 
-    const msgpacked = await DIDFuncionalities.StartPrismAgent(result1);
-    console.log('wallet - msgpacked is', msgpacked);
+    // const msgpacked = await DIDFunctionalities.StartPrismAgent(result1);
+    // console.log('wallet - msgpacked is', msgpacked);
+    //
+    // const resultmediated = await DIDFunctionalities.createPeerDID('true')
+    // console.log('wallet - DIDFunctionalities mediated', resultmediated);
+    //
+    // const DIDDOC2 = await DIDFunctionalities.resolveDID(resultmediated);
+    // console.log('wallet - DIDDOC for ',resultmediated,' is', DIDDOC2);
+    // let url = 'https://domain.com/path?_oob=eyJpZCI6IjhkYzY3MTRjLTJiNmEtNGZkOS1iYzg3LWJiODhlYTk1NmFiNyIsInR5cGUiOiJodHRwczovL2RpZGNvbW0ub3JnL291dC1vZi1iYW5kLzIuMC9pbnZpdGF0aW9uIiwiZnJvbSI6ImRpZDpwZWVyOjIuRXo2TFNxQWlIZWRIRmZiZW14UnpyUjV0ZTQ2VUdzdHhkcW0yMXpFelVjd3dGaVhwcC5WejZNa2ljRWh6NHRoQlZMWVRlc3VEWkJOOTdLRTdoTHdYRVR0UWppajJrcWl3N3Q0LlNleUowSWpvaVpHMGlMQ0p6SWpvaWFIUjBjRG92TDJodmMzUXVaRzlqYTJWeUxtbHVkR1Z5Ym1Gc09qZ3dPREF2Wkdsa1kyOXRiU0lzSW5JaU9sdGRMQ0poSWpwYkltUnBaR052YlcwdmRqSWlYWDAiLCJib2R5Ijp7ImdvYWxfY29kZSI6ImNvbm5lY3QiLCJnb2FsIjoiRXN0YWJsaXNoIGEgdHJ1c3QgY29ubmVjdGlvbiBiZXR3ZWVuIHR3byBwZWVycyIsImFjY2VwdCI6W119fQ=='
 
-    const resultmediated = await DIDFuncionalities.createPeerDID('true')
-    console.log('wallet - DIDFunctionalities mediated', resultmediated);
-
-    const DIDDOC2 = await DIDFuncionalities.resolveDID(resultmediated);
-    console.log('wallet - DIDDOC for ',resultmediated,' is', DIDDOC2);
-    let url = 'https://domain.com/path?_oob=eyJpZCI6IjhkYzY3MTRjLTJiNmEtNGZkOS1iYzg3LWJiODhlYTk1NmFiNyIsInR5cGUiOiJodHRwczovL2RpZGNvbW0ub3JnL291dC1vZi1iYW5kLzIuMC9pbnZpdGF0aW9uIiwiZnJvbSI6ImRpZDpwZWVyOjIuRXo2TFNxQWlIZWRIRmZiZW14UnpyUjV0ZTQ2VUdzdHhkcW0yMXpFelVjd3dGaVhwcC5WejZNa2ljRWh6NHRoQlZMWVRlc3VEWkJOOTdLRTdoTHdYRVR0UWppajJrcWl3N3Q0LlNleUowSWpvaVpHMGlMQ0p6SWpvaWFIUjBjRG92TDJodmMzUXVaRzlqYTJWeUxtbHVkR1Z5Ym1Gc09qZ3dPREF2Wkdsa1kyOXRiU0lzSW5JaU9sdGRMQ0poSWpwYkltUnBaR052YlcwdmRqSWlYWDAiLCJib2R5Ijp7ImdvYWxfY29kZSI6ImNvbm5lY3QiLCJnb2FsIjoiRXN0YWJsaXNoIGEgdHJ1c3QgY29ubmVjdGlvbiBiZXR3ZWVuIHR3byBwZWVycyIsImFjY2VwdCI6W119fQ=='
-
-    // const msgpacked2 = await DIDFuncionalities.parseOOBMessage(url);
+    // const msgpacked2 = await DIDFunctionalities.parseOOBMessage(url);
 
 }
 
@@ -438,8 +440,3 @@ export const updateProfileInfo = createAsyncThunk(
     );
   }
 );
-
-export function updateIdWithDIDDocument(id: models.identifier,callback: ((arg0: models.identifier) => void) | undefined) {
-    //thunkAPI.dispatch(resolveAndAddDidDocument(id.identifier))
-    callback(id)
-}

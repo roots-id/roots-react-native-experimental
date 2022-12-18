@@ -1,11 +1,11 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import {addId, updateDidDocument, updateId} from '../slices/identifier';
-import {did} from "../../models";
+import {identifier} from "../../models";
 import {addMessage} from "../slices/chat";
 import {sendMessage} from "../../helpers/messages";
 import {MessageType} from "../../models/constants";
 import ReactNative from "react-native";
-const { DIDFuncionalities, CalendarModuleFoo } = ReactNative.NativeModules;
+const { DIDFunctionalities } = ReactNative.NativeModules;
 
 const BASE_ID = 'ids/';
 const BASE_DID = `${BASE_ID}did/`;
@@ -14,53 +14,68 @@ const CREATE_ADD_DID = `${BASE_DID}createAndAdd`;
 const DID_DOCUMENT = `${BASE_DID}document/`;
 const RESOLVE_DID_DOCUMENT = `${DID_DOCUMENT}resolve`;
 
-function createDid (did) {
-    const newDid = {
-        _id: did._id,
-        alias: did.alias,
-        published: did.published,
+export function createId (id: string, alias: string = "no alias supplied "+id, published: boolean = false) {
+    const newId = {
+        _id: id,
+        alias: alias,
+        published: published,
     };
-    console.log("thunks/identifiers - Created did", newDid)
-    return newDid;
+    console.log("thunks/identifiers - Created id", newId)
+    return newId;
 }
 
-export const createAndAddDid = createAsyncThunk(
+export const createAndAddId = createAsyncThunk(
     CREATE_ADD_DID,
-    async (did: any, thunkAPI: any) => {
-        const newDid = (await thunkAPI.dispatch(createDid(did)))
-            .payload;
-        thunkAPI.dispatch(addId(newDid));
-        console.log("thunks/identifiers - created and added did",newDID)
-        return newDid;
+    async (id: identifier, thunkAPI: any) => {
+        thunkAPI.dispatch(addId(id));
+        console.log("thunks/identifiers - created and added id",id)
+        return id;
     }
 );
 
-async function resolveDidDocument(did) {
-    console.log("DID document",did)
-    const didDoc = await DIDFuncionalities.resolveDID("did:peer:2.Ez6LSdFHEaZqLfkpvT93VkeKu2Eu7xAzNudVqvFsCEVD5Bt1J.Vz6MkrYuSSPrGkir94WpUaTHdvn3DGqhgVjKa2yLbAqfXAvQ9.SeyJyIjpbXSwicyI6ImFsZXgiLCJhIjpbXSwidCI6IkRlbW9UeXBlIn0");
-    console.log('wallet - DID document for ',did,' is', didDoc);
+async function resolveId(id: identifier) {
+    console.log("thunk/identifiers - resolving DID document for id",id)
+    const didDoc = await DIDFunctionalities.resolveDID("did:peer:2.Ez6LSdFHEaZqLfkpvT93VkeKu2Eu7xAzNudVqvFsCEVD5Bt1J.Vz6MkrYuSSPrGkir94WpUaTHdvn3DGqhgVjKa2yLbAqfXAvQ9.SeyJyIjpbXSwicyI6ImFsZXgiLCJhIjpbXSwidCI6IkRlbW9UeXBlIn0");
+    // const didDoc = {fake: "fake did doc"}
+    console.log('thunk/identifiers - resolved DID document for',id,'is', didDoc);
     return didDoc
 }
 
-export const resolveAndAddDidDocument = createAsyncThunk(
+export interface idDTO {
+    id: identifier;
+    callback: (id: identifier)=>void;
+}
+
+export const resolveAndAdd = createAsyncThunk(
     RESOLVE_DID_DOCUMENT,
-    async (did: string, thunkAPI: any) => {
-        const didDoc = (await thunkAPI.dispatch(resolveDidDocument(did)))
-            .payload;
-        thunkAPI.dispatch(updateDidDocument(didDoc));
-        // thunkAPI.dispatch(
-        //     addMessage({
-        //         chatId: prismDemoId,
-        //         message: sendMessage(
-        //             prismDemoId,
-        //             rootsHelperId,
-        //             "DID Document ",
-        //             MessageType.PROMPT_DISPLAY_IDENTIFIER,
-        //             false,
-        //             {identifier: prismDid}
-        //         ),
-        //     })
-        // )
-        return didDoc;
+    async (idAndCallback: idDTO, thunkAPI: any) => {
+        const id = idAndCallback.id
+        console.log("thunk/identifier - resolve and add did document",id)
+        const didDoc = await resolveId(id)
+        if(didDoc) {
+            thunkAPI.dispatch(updateDidDocument(didDoc));
+            // thunkAPI.dispatch(
+            //     addMessage({
+            //         chatId: prismDemoId,
+            //         message: sendMessage(
+            //             prismDemoId,
+            //             rootsHelperId,
+            //             "DID Document ",
+            //             MessageType.PROMPT_DISPLAY_IDENTIFIER,
+            //             false,
+            //             {identifier: prismDid}
+            //         ),
+            //     })
+            // )
+            // id.didDoc = didDoc
+            console.log("thunks/identifier - adding resolution to id", didDoc)
+            const newId = {_id: id._id,alias: id.alias,published: id.published,resolution: didDoc}
+            console.log("thunks/identifier - added resolution to id", newId)
+            idAndCallback.callback(newId)
+            console.log("thunks/identifier - callback complete for added did doc")
+            return newId;
+        } else {
+            console.error("Could not add resolution to id",id)
+        }
     }
 );
