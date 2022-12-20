@@ -22,6 +22,7 @@ import {createAndAddId} from "./identifier";
 import * as models from "../../models";
 import thunk from "redux-thunk";
 import {identifier} from "../../models";
+import uuid from "react-native-uuid";
 
 const { DIDFunctionalities, CalendarModuleFoo } = ReactNative.NativeModules;
 
@@ -36,11 +37,17 @@ const CREATE_NEW_DID = `${BASE_WALLET}createNewDID`;
 const ADD_CREDENTIAL_AND_NOTIFY = `${BASE_WALLET}addCredentialAndNotify`;
 const DENY_CREDENTIAL_AND_NOTIFY = `${BASE_WALLET}denyCredentialAndNotify`;
 const UPDATE_PROFILE_AND_NOTIFY = `${BASE_WALLET}updateProfileAndNotify`;
+const PRISM = `${BASE_WALLET}/prism/`
+const PRISM_DEMO = `${PRISM}/prismDemo/`;
+const PRISM_DEMO_START = `${PRISM_DEMO}startDemo`;
+const PRISM_CREATE_ID = `${PRISM}/id/`;
+const PRISM_CREATE_PEER_DID = `${PRISM_CREATE_ID}createPeerID`;
 
 let discordSocialIssuerId
 let rootsHelperId: any;
+let prismDemoId: any;
 
-interface CreateWalletDto {
+    interface CreateWalletDto {
   name: string;
   mnemonic: string;
   password: string;
@@ -99,52 +106,167 @@ async function setupDiscordDemo(thunkAPI: any, rootsHelperId: unknown,today: Dat
     );
 }
 
-async function setupPrismDemo(thunkAPI: any, rootsHelperId: unknown,today: Date) {
-    const prismDemoId = (
-        await thunkAPI.dispatch(
-            createContact({
-                displayPictureUrl:
-                    'https://raw.githubusercontent.com/roots-id/roots-react-native/simple-android-ios-web/src/assets/ATALAPRISM.png', //https://cdn.logojoy.com/wp-content/uploads/20210422095037/discord-mascot.png
-                displayName: BOTS_NAMES.PRISM_DEMO,
-            })
-        )
-    ).payload;
+//create async function called generateOOB() that returns a string
+async function generateOOB(mediatorPeerDID: string): Promise<string> {
 
-    console.log('prismDemo', prismDemoId);
-    thunkAPI.dispatch(initiateChat({ chatId: prismDemoId }));
-
-    console.log('wallet - invoking calendar example here');
-    CalendarModuleFoo.createCalendarEvent('testName', 'testLocation');
-
-    const result1 = await DIDFunctionalities.createPeerDID('false')
-    console.log('wallet - DIDFunctionalities await peerDID', result1);
-    const didObj: identifier = {
-        _id: result1,
-        alias: "prism peer did " + result1,
-        published: false
+    //create a json with type, id from and body
+    const msg = {
+        type: 'https://didcomm.org/out-of-band/2.0/invitation',
+        id: faker.datatype.uuid(),
+        from: mediatorPeerDID,
+        body: {
+            'accept': ['didcomm/v2'],
+        }
     }
-    const prismDid = (await thunkAPI.dispatch(createAndAddId(didObj)))
-        .payload;
-    console.log("")
-    if(prismDid) {
-        console.log('wallet - created new did',prismDid);
-        thunkAPI.dispatch(
-            addMessage({
-                chatId: prismDemoId,
-                message: sendMessage(
-                    prismDemoId,
-                    rootsHelperId,
-                    BOTS_MSGS[3],
-                    MessageType.PROMPT_DISPLAY_IDENTIFIER,
-                    false,
-                    {identifier: prismDid}
-                ),
-            })
-        )
-    }
+    console.log("OOB message is: ", msg)
+    //convert json to string
+    const msgString = JSON.stringify(msg);
+    //convert string to base64
+    const msgBase64 = Buffer.from(msgString).toString('base64');
 
-    // const msgpacked = await DIDFunctionalities.StartPrismAgent(result1);
-    // console.log('wallet - msgpacked is', msgpacked);
+
+    //return string
+    return msgBase64;
+}
+
+export const startPrismDemo = createAsyncThunk(
+    PRISM_DEMO_START,
+    async (args,thunkAPI) => {
+        if(!prismDemoId) {
+            prismDemoId = (
+                await thunkAPI.dispatch(
+                    createContact({
+                        displayPictureUrl:
+                            'https://raw.githubusercontent.com/roots-id/roots-react-native/simple-android-ios-web/src/assets/ATALAPRISM.png', //https://cdn.logojoy.com/wp-content/uploads/20210422095037/discord-mascot.png
+                        displayName: BOTS_NAMES.PRISM_DEMO,
+                    })
+                )
+            ).payload
+
+            console.log('wallet - prismDemo contact name', prismDemoId);
+            thunkAPI.dispatch(initiateChat({chatId: prismDemoId}));
+        }
+        // const result1 = await DIDFunctionalities.createPeerDID('false')
+        // console.log('wallet - DIDFunctionalities await peerDID', result1);
+        // const didObj: identifier = {
+        //     _id: result1,
+        //     alias: "prism peer did " + result1,
+        //     published: false
+        // }
+        // const prismDid = (await thunkAPI.dispatch(createAndAddId(didObj)))
+        //     .payload;
+        // console.log("")
+
+        const error = await DIDFunctionalities.StartPrismAgent('did:peer:2.Ez6LSms555YhFthn1WV8ciDBpZm86hK9tp83WojJUmxPGk1hZ.Vz6MkmdBjMyB4TS5UbbQw54szm8yvMMf1ftGV2sQVYAxaeWhE.SeyJpZCI6Im5ldy1pZCIsInQiOiJkbSIsInMiOiJodHRwczovL21lZGlhdG9yLnJvb3RzaWQuY2xvdWQiLCJhIjpbImRpZGNvbW0vdjIiXX0').catch(console.error)
+        if(!error || error.length<=0) {
+            console.log('wallet - prism agent started');
+            thunkAPI.dispatch(
+                addMessage({
+                    chatId: prismDemoId,
+                    message: sendMessage(
+                        prismDemoId,
+                        rootsHelperId,
+                        "Started Prism agent w/mediation",
+                        MessageType.TEXT,
+                        false,
+                    ),
+                })
+            )
+
+            const mediatorPeerDid = await DIDFunctionalities.createPeerDID('true')
+            console.log("created peer did from mediator",mediatorPeerDid)
+
+            if(mediatorPeerDid) {
+                thunkAPI.dispatch(
+                    addMessage({
+                        chatId: prismDemoId,
+                        message: sendMessage(
+                            prismDemoId,
+                            rootsHelperId,
+                            "Prism created your identifier",
+                            MessageType.PROMPT_DISPLAY_IDENTIFIER,
+                            false,
+                            {identifier: mediatorPeerDid}
+                        ),
+                    })
+                )
+            } else {
+                console.error("Could not create Prism peer did",mediatorPeerDid)
+                thunkAPI.dispatch(
+                    addMessage({
+                        chatId: prismDemoId,
+                        message: sendMessage(
+                            prismDemoId,
+                            rootsHelperId,
+                            "Failed to generate your identifier",
+                            MessageType.TEXT,
+                            false,
+                        ),
+                    })
+                )
+            }
+
+            // const oobdata = await generateOOB(mediatorPeerDid)
+            // console.log('wallet - did for peer', oobdata);
+            // thunkAPI.dispatch(
+            //     addMessage({
+            //         chatId: prismDemoId,
+            //         message: sendMessage(
+            //             prismDemoId,
+            //             rootsHelperId,
+            //             "Your Out-of-Band connection is now available",
+            //             MessageType.PROMPT_DISPLAY_OOB,
+            //             false,
+            //             {identifier: mediatorPeerDid}
+            //         ),
+            //     })
+            // )
+            //
+            // let url = 'https://mediator.rootsid.cloud/?_oob=eyJ0eXBlIjoiaHR0cHM6Ly9kaWRjb21tLm9yZy9vdXQtb2YtYmFuZC8yLjAvaW52aXRhdGlvbiIsImlkIjoiNTkyYWYzZWEtNjAyOS00YmNiLTg1NzYtMWUzNjkzYjQ5MTU3IiwiZnJvbSI6ImRpZDpwZWVyOjIuRXo2TFNqZnY5OGNHbzFrcHdNYmpzNG90YzExdTlpeXJNNDFYYXczSmdDSnE1b3oyMy5WejZNa3FHMVRuaFdXcmMyWUdvQ0Z2dmN5WWt6VnRkcVNIMlRqMkJCam1HNlJneTNMLlNleUpwWkNJNkltNWxkeTFwWkNJc0luUWlPaUprYlNJc0luTWlPaUprYVdRNmNHVmxjam95TGtWNk5reFRha05WYWtkR2RYQTFZVnB1TkdoMFZraE1jR3BvVVhwMlVXOURaVk14ZDFKck5HSnZjMlUzYWpaRVdsRXVWbm8yVFd0cFVFeG9kVFU1UVZKUlZVSllOV2RHVFRKS1oyVlhia2hNV0dJMWRFZE9NbFJ2VUhRelNEVm1jWHBYZVM1VFpYbEtjRnBEU1RaSmJUVnNaSGt4Y0ZwRFNYTkpibEZwVDJsS2EySlRTWE5KYmsxcFQybEtiMlJJVW5kamVtOTJUREl4YkZwSGJHaGtSemw1VEc1S2RtSXpVbnBoVjFGMVdUSjRkbVJYVVdsTVEwcG9TV3B3WWtsdFVuQmFSMDUyWWxjd2RtUnFTV2xZV0RBaUxDSmhJanBiSW1ScFpHTnZiVzB2ZGpJaVhYMCIsImJvZHkiOnsiYWNjZXB0IjpbImRpZGNvbW0vdjIiXSwibGFiZWwiOiJhbGV4In19'
+            //
+            // const msgpacked2 = await DIDFunctionalities.parseOOBMessage(url);
+            // console.log('wallet - parseOOBMessage is', msgpacked2);
+            // //wait 1 minutes and then call getMessages
+            //
+            // // Wait for 1 minute (60,000 milliseconds)
+            // await new Promise(resolve => setTimeout(resolve, 20000));
+            //
+            // thunkAPI.dispatch(
+            //     addMessage({
+            //         chatId: prismDemoId,
+            //         message: sendMessage(
+            //             prismDemoId,
+            //             rootsHelperId,
+            //             "Waiting for new messages...",
+            //             MessageType.TEXT,
+            //             false,
+            //         ),
+            //     })
+            // )
+            //
+            // // Call the getMessages function
+            // const messages =  DIDFunctionalities.getMessages();
+            // // console.log('wallet - messages is', messages);
+            // console.log('wallet - messages is', messages);
+            // return url
+        } else {
+            console.error("wallet - prism agent failed to start",error)
+            thunkAPI.dispatch(
+                addMessage({
+                    chatId: prismDemoId,
+                    message: sendMessage(
+                        prismDemoId,
+                        rootsHelperId,
+                        "Error starting Prism agent: "+error,
+                        MessageType.PROMPT_RETRY_PROCESS,
+                        false,
+                        {callback: startPrismDemo}
+                    ),
+                })
+            )
+        }
+
+    //console.log('wallet - msgpacked is', msgpacked);
     //
     // const resultmediated = await DIDFunctionalities.createPeerDID('true')
     // console.log('wallet - DIDFunctionalities mediated', resultmediated);
@@ -156,12 +278,13 @@ async function setupPrismDemo(thunkAPI: any, rootsHelperId: unknown,today: Date)
     // const msgpacked2 = await DIDFunctionalities.parseOOBMessage(url);
 
 }
+);
 
 export const initiateWalletCreation = createAsyncThunk(
   INITIATE_ACCOUNT,
   async (wallet: CreateWalletDto, thunkAPI) => {
     await thunkAPI.dispatch(createWallet(wallet));
-    const rootsHelperId = (
+    rootsHelperId = (
       await thunkAPI.dispatch(
         createContact({
           displayPictureUrl:
@@ -179,7 +302,7 @@ export const initiateWalletCreation = createAsyncThunk(
           displayName: BOTS_NAMES.PRISM_BOT,
         })
       )
-    ).payload;
+    ).payload
 
     const userId = (
       await thunkAPI.dispatch(
@@ -275,7 +398,6 @@ export const initiateWalletCreation = createAsyncThunk(
     // );
     const today = new Date(Date.now());
     await setupDiscordDemo(thunkAPI,rootsHelperId,today)
-    await setupPrismDemo(thunkAPI,rootsHelperId,today)
 
     return WALLET_CREATED_SUCCESS;
   }
@@ -287,11 +409,12 @@ export const initiateNewContact = createAsyncThunk(
     const { dispatch, getState } = thunkAPI;
     const rootsHelper = getRootsHelperContact(getState());
     const currentUser = getCurrentUserContact(getState());
+    const userName =  faker.internet.userName()
     const newContactId = (
       await dispatch(
         createContact({
           displayPictureUrl: faker.internet.avatar(),
-          displayName: faker.internet.userName(),
+          displayName: userName,
         })
       )
     ).payload;
@@ -309,6 +432,19 @@ export const initiateNewContact = createAsyncThunk(
         ),
       })
     );
+      dispatch(
+          addMessage({
+              chatId: currentUser._id,
+              message: sendMessage(
+                  currentUser._id,
+                  rootsHelper?._id,
+                  `You added a demo contact ${userName}`,
+                  MessageType.PROMPT_NEW_CONTACT,
+                  false,
+                  { contact: newContactId }
+              ),
+          })
+      );
     const today = new Date(Date.now());
     const credsObject = {
       alias: `${faker.word.adjective()} Credential`,

@@ -27,7 +27,7 @@ export default function IdentifierDetailScreen({
   route,
   navigation,
 }: CompositeScreenProps<any, any>) {
-  console.log('id details - route params are', JSON.stringify(route.params));
+  console.log('IdDetailScreen - route params are', JSON.stringify(route.params));
   const dispatch = useDispatch();
   const [id, setId] = useState<models.identifier>(route.params.identifier);
     const [refresh, setRefresh] = useState(true)

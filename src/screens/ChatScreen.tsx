@@ -41,10 +41,8 @@ export default function ChatScreen({
 }: CompositeScreenProps<any, any>) {
   console.log('ChatScreen - route params', route.params);
   const user = route.params.user;
-  const [chat, setChat] = useState<models.chat>();
   // roots.getChatItem(route.params.chatId)
   const [contact, setContact] = useState<models.contact>();
-  console.log('ChatScreen - got chatItem ', chat);
   const [loading, setLoading] = useState<boolean>(true);
   const [processing, setProcessing] = useState<boolean>(false);
   const currentChat = useSelector((state) => getChatById(state, user._id));
@@ -196,7 +194,15 @@ export default function ChatScreen({
           navigation.navigate(ROUTE_NAMES.IDENTIFIER_DETAILS, {
             identifier: msg?.data?.identifier,
           });
-        }
+        } else if (reply.value.startsWith(MessageType.PROMPT_RETRY_PROCESS)) {
+          console.log('ChatScreen - process quick reply for retry');
+
+            const msgCurrentChat = currentChat?.messages.find(
+                (message) => message._id === reply.messageId
+            );
+            console.log('ChatScreen - retrying',msgCurrentChat?.data?.callback)
+            dispatch(msgCurrentChat?.data?.callback())
+          }
         else {
           console.log(
             'ChatScreen - reply value not recognized, was',
@@ -268,7 +274,7 @@ export default function ChatScreen({
           name: currentUser.displayName,
           avatar: currentUser.displayPictureUrl,
         }}
-        showUserAvatar={ true }
+        showUserAvatar={ false }
         renderUsernameOnMessage={ true }
         parsePatterns={(linkStyle) => [
           {

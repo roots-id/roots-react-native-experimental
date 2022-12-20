@@ -23,6 +23,7 @@ class DIDFunctionalities: NSObject {
     self.castor = CastorBuilder(
       apollo: ApolloBuilder().build()
     ).build()
+
     self.agent = PrismAgent(mediatorServiceEnpoint: try! DID(string: "did:peer:2.Ez6LSms555YhFthn1WV8ciDBpZm86hK9tp83WojJUmxPGk1hZ.Vz6MkmdBjMyB4TS5UbbQw54szm8yvMMf1ftGV2sQVYAxaeWhE.SeyJpZCI6Im5ldy1pZCIsInQiOiJkbSIsInMiOiJodHRwczovL21lZGlhdG9yLnJvb3RzaWQuY2xvdWQiLCJhIjpbImRpZGNvbW0vdjIiXX0"))
     self.mercury = MercuryBuilder(
       apollo: ApolloBuilder().build(),
@@ -41,38 +42,13 @@ class DIDFunctionalities: NSObject {
     rejecter reject: @escaping RCTPromiseRejectBlock
   ) -> Void {
     Task {
-      print("DIDFunctionalities - creating prism DID asynchronously", self.createdDID)
-      let did = await createPeerDID()
-      print("DIDFunctionalities - created prism DID asynchronously", self.createdDID)
-      print("DIDFunctionalities - returning prism DID", did)
+      let did = await createPrismDID()
       resolve(did?.string)
     }
   }
-     func createPeerDID() async -> DID? {
-       print("DIDFunctionalities - Called create peer DID!")
-         // Creates new PRISM DID
-       let did = try? await agent.createNewPeerDID(
-             // Add this if you want to provide a IndexPath
-             // keyPathIndex: <#T##Int?#>
-             // Add this if you want to provide an alias for this DID
-             // alias: <#T##String?#>
-             // Add any services available in the DID
-             services: [ .init(
-                 id: "DemoID",
-                 type: ["DemoType"],
-                 serviceEndpoint: .init(uri: "DemoServiceEndpoint")
-             )],updateMediator: false
-        )
-
-         await MainActor.run {
-           self.createdDID = did
-           print("DIDFunctionalities - DID is",createdDID ?? "DID unset")
-         }
-       return did
-    }
 
      func createPrismDID() async -> DID? {
-       print("DIDFunctionalities - Called create prism DID!")
+       print("DIDFuncionalities - Called create prism DID!")
          // Creates new PRISM DID
          let did = try? await agent.createNewPrismDID(
              // Add this if you want to provide a IndexPath
@@ -89,7 +65,7 @@ class DIDFunctionalities: NSObject {
 
          await MainActor.run {
            self.createdDID = did
-//           print("DIDFunctionalities - DID is",createdDID ?? "DID unset")
+           print("DIDFunctionalities - DID is",createdDID)
          }
        return did
     }
@@ -108,7 +84,7 @@ class DIDFunctionalities: NSObject {
   }
 
      func createPeerDID(updatemediator : NSString ) async -> DID? {
-       print("DIDFunctionalities - Called create peer DID!")
+       print("DIDFuncionalities - Called create peer DID!")
          // Creates new peer DID
        let _updatemediator : Bool
         if updatemediator == "true" {
@@ -117,12 +93,20 @@ class DIDFunctionalities: NSObject {
         else {
           _updatemediator = false
         }
-        print("_updatemediator",_updatemediator)
-        let did = try? await agent.createNewPeerDID(updateMediator: _updatemediator)
+        print("DIDFunctionalities - _updatemediator",_updatemediator)
+        let did = try? await agent.createNewPeerDID(
+          services: [.init(
+            id: "#didcomm-1",
+            type: ["DIDCommMessaging"],
+            serviceEndpoint: .init(uri: "did:peer:2.Ez6LSms555YhFthn1WV8ciDBpZm86hK9tp83WojJUmxPGk1hZ.Vz6MkmdBjMyB4TS5UbbQw54szm8yvMMf1ftGV2sQVYAxaeWhE.SeyJpZCI6Im5ldy1pZCIsInQiOiJkbSIsInMiOiJodHRwczovL21lZGlhdG9yLnJvb3RzaWQuY2xvdWQiLCJhIjpbImRpZGNvbW0vdjIiXX0")
+        )],
+          updateMediator: _updatemediator)
+
+       print("DIDFunctionalities - new peer did is",did?.string)
 
         await MainActor.run {
            self.createdDID1 = did
-//           print("DIDFunctionalities - DID is",createdDID ?? "DID unset")
+           print("DIDFunctionalities - DID is",createdDID ?? "DID unset")
          }
        return did
     }
@@ -159,13 +143,14 @@ class DIDFunctionalities: NSObject {
     rejecter reject: @escaping RCTPromiseRejectBlock
   ) -> Void {
     Task {
+
       let didDoc = await StartPrismAgent(mediatorDid: mediatorDid)
       resolve(didDoc)
     }
   }
 
      func StartPrismAgent(mediatorDid: NSString) async -> String? {
-       print("StartPrismAgent -!")
+       print("StartPrismAgent -!",mediatorDid)
        let mediatorDid = mediatorDid as String
        let fromDID = try? DID(string:mediatorDid)
 
@@ -173,9 +158,19 @@ class DIDFunctionalities: NSObject {
          try await agent.start()
        }
        catch {
-         print(error)
+         print("starting agent error",error)
+         print(error.localizedDescription)
+         return(error.localizedDescription)
        }
 
+       do {
+        try agent.startFetchingMessages()
+         print("started fetching messages")
+       }
+        catch {
+          print("startFetchingMessages error",error)
+          return error.localizedDescription
+        }
        print(agent.state.rawValue)
        await MainActor.run {
         print(agent.state.rawValue)
@@ -200,19 +195,50 @@ class DIDFunctionalities: NSObject {
        print(url)
 
        do{
-        let message = try await agent.parseOOBInvitation(url: url)
+        let message = try await agent.parseInvitation(str: url)
+         print("parsing invitations")
         print(message)
-//        try await agent.acceptDIDCommInvitation(invitation: message)
-
        }
        catch {
          print(error)
        }
        await MainActor.run {
-        print(agent.state.rawValue)
+         print("message")
         }
        return ""
     }
 
+@objc public func getMessages(
+    _ resolve: @escaping RCTPromiseResolveBlock,
+    rejecter reject: @escaping RCTPromiseRejectBlock
+  ) -> Void {
+    Task {
+      let result = getMessages()
+      resolve(result)
+    }
+  }
+
+     func getMessages() -> String? {
+       print("getMessages -!")
+
+       do{
+            agent.handleMessagesEvents().sink {
+              switch $0 {
+              case .finished:
+                  print("Finished message retrieval")
+              case .failure(let error):
+                  print(error.localizedDescription)
+              }
+          } receiveValue: {
+            let jsonString = try! String(data: JSONEncoder().encode($0.body), encoding: .utf8)!
+            print("Received message: \($0.id) | jsonString \(jsonString)")
+          }
+         print("no messages")
+       }
+       catch {
+         print(error)
+       }
+       return ""
+    }
 
 }

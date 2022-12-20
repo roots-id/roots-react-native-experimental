@@ -55,6 +55,19 @@ function addQuickReply(msg: message) {
       ],
     };
   }
+  if (msg.type === MessageType.PROMPT_DISPLAY_OOB) {
+    msg.quickReplies = {
+      type: 'radio',
+      keepIt: false,
+      values: [
+        {
+          title: 'Display OOB',
+          value: MessageType.PROMPT_DISPLAY_IDENTIFIER,
+          messageId: msg._id,
+        },
+      ],
+    };
+  }
   if (msg.type === MessageType.PROMPT_OWN_DID) {
     msg.quickReplies = {
       type: 'radio',
@@ -118,7 +131,7 @@ function addQuickReply(msg: message) {
       keepIt: true,
       values: [
         {
-          title: 'Retry(Coming Soon)',
+          title: 'Retry',
           value: MessageType.PROMPT_RETRY_PROCESS,
           messageId: msg._id,
         },

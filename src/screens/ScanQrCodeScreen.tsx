@@ -11,26 +11,14 @@ import ReactNative, {
 import { IconButton } from 'react-native-paper';
 const { DIDFunctionalities } = ReactNative.NativeModules;
 
-// import { BarCodeScanner } from 'expo-barcode-scanner';
-// import { BarCodeEvent } from 'expo-barcode-scanner/src/BarCodeScanner';
-// import { Camera } from 'expo-camera';
 import { faker } from '@faker-js/faker';
-// import { getDemoCred } from '../credentials';
-// import { getDemoRel, getUserId } from '../relationships';
-// import {
-//   getDid,
-//   importContact,
-//   importVerifiedCredential,
-// } from '../roots';
 import React from 'react';
 import { CompositeScreenProps } from '@react-navigation/core/src/types';
 import { styles } from '../styles/styles';
 import { ConfigService } from '../services';
 import { useDispatch, useSelector } from 'react-redux';
 import { getCurrentUserContact, getRootsHelperContact } from '../store/selectors/contact';
-import { createNewCredential, initiateNewContact } from '../store/thunks/wallet';
-// import QRCodeScanner from 'react-native-qrcode-scanner';
-// import {RNCamera} from "react-native-camera";
+import {createNewCredential, initiateNewContact, startPrismDemo} from '../store/thunks/wallet';
 import {
   Camera,
   CameraDevice,
@@ -71,7 +59,7 @@ export default function ScanQrCodeScreen({
   //   checkInverted: true,
   // });
 
-  const addDummyCredenial = async () => {
+  const addDummyCredential = async () => {
     dispatch(createNewCredential());
   };
 
@@ -88,15 +76,14 @@ export default function ScanQrCodeScreen({
 
   const handleDemo = async () => {
     if (!scanned && await configService.getDemo()) {
-      setScanned(true);
       console.log('Scan QR - pretending to scan with demo data');
-      alert('No data scanned, using demo data instead.');
+      alert('Adding demo data.');
 
       if (modelType === 'contact') {
         console.log('Scan QR - getting contact demo data');
         // const demoData = getDemoRel();
         // await importContact(demoData);
-        addDummyContact().catch(console.error);
+        addDummyContact().then(clearAndGoBack).catch(console.error);
       } else {
         console.log('Scan QR - getting credential demo data');
         // const did = getDid(getUserId());
@@ -104,7 +91,7 @@ export default function ScanQrCodeScreen({
         //   const demoData = getDemoCred(did).verifiedCredential;
         //   await importVerifiedCredential(demoData);
         // }
-        addDummyCredenial().catch(console.error);
+        addDummyCredential().then(clearAndGoBack).catch(console.error);
       }
     } else {
       console.log(
@@ -113,7 +100,6 @@ export default function ScanQrCodeScreen({
         configService.getDemo()
       );
     }
-    clearAndGoBack();
   };
 
   useEffect(() => {
@@ -174,8 +160,9 @@ export default function ScanQrCodeScreen({
 
   async function parseOob(oobUrl: string) {
     console.log("Parsing OOB",oobUrl)
-    const result = DIDFunctionalities.parseOOBMessage(oobUrl)
-    console.log("Parsed OOB",result)
+//    const result = DIDFunctionalities.parseOOBMessage(oobUrl)
+    dispatch(startPrismDemo())
+    // console.log("Parsed OOB",result)
   }
 
   useEffect(() => {
@@ -187,13 +174,13 @@ export default function ScanQrCodeScreen({
             modelType,
             qr
         );
-        alert("You scanned "+qr)
+        // alert("You scanned "+qr)
         if(qr.match("_oob")) {
-          parseOob(qr).catch(console.error)
+          parseOob(qr).then(clearAndGoBack).catch(console.error)
         } else {
-          console.error("Unknown QR scanned")
+          console.log("Scan QR - Unknown QR scanned, running demo")
+          handleDemo().catch(console.error)
         }
-        clearAndGoBack();
         // const jsonData = JSON.parse(data);
         //if (modelType == 'credential') {
         //   console.log('Scan QR - Importing dummy vc', qr);

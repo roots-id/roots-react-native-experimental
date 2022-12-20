@@ -12,7 +12,8 @@ const chatSlice = createSlice({
       const newChat = {
         _id: action.payload.chatId,
         messages: [],
-      };
+      }
+      console.log("Created chat",newChat._id)
       state.chats[action.payload.chatId] = newChat;
     },
     addMessage(state, action: PayloadAction<any>) {
