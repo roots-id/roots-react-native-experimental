@@ -107,7 +107,7 @@ async function setupDiscordDemo(thunkAPI: any, rootsHelperId: unknown,today: Dat
 }
 
 //create async function called generateOOB() that returns a string
-async function generateOOB(mediatorPeerDID: string): Promise<string> {
+function generateOOB(mediatorPeerDID: string): string {
 
     //create a json with type, id from and body
     const msg = {
@@ -118,15 +118,15 @@ async function generateOOB(mediatorPeerDID: string): Promise<string> {
             'accept': ['didcomm/v2'],
         }
     }
-    console.log("OOB message is: ", msg)
+
     //convert json to string
     const msgString = JSON.stringify(msg);
+    console.log("wallet - OOB message is", msgString);
     //convert string to base64
-    const msgBase64 = Buffer.from(msgString).toString('base64');
+    // const msgBase64 = Buffer.from(msgString).toString('base64');
+    // console.log("wallet - OOB encoded message is", msgBase64)
 
-
-    //return string
-    return msgBase64;
+    return msgString;
 }
 
 export const startPrismDemo = createAsyncThunk(
@@ -173,20 +173,29 @@ export const startPrismDemo = createAsyncThunk(
                 })
             )
 
-            const mediatorPeerDid = await DIDFunctionalities.createPeerDID('true')
-            console.log("created peer did from mediator",mediatorPeerDid)
+            const mediatorPeerDid = await DIDFunctionalities.createPeerDID('false')
+            console.log("wallet - created peer did from mediator",mediatorPeerDid)
 
             if(mediatorPeerDid) {
+                const oob = generateOOB(mediatorPeerDid)
+                console.log("wallet - encoded oob",oob)
+                // const decodedOob = atob(oob)
+                // console.log("wallet - created oob",decodedOob);
                 thunkAPI.dispatch(
                     addMessage({
                         chatId: prismDemoId,
                         message: sendMessage(
                             prismDemoId,
                             rootsHelperId,
-                            "Prism created your identifier",
+                            "Prism created your identifier and corresponding Out-of-Band (OOB) invitation",
                             MessageType.PROMPT_DISPLAY_IDENTIFIER,
                             false,
-                            {identifier: mediatorPeerDid}
+                            {identifier:
+                                    {
+                                        identifier: mediatorPeerDid,
+                                        oob: oob
+                                    }
+                            }
                         ),
                     })
                 )
@@ -206,21 +215,8 @@ export const startPrismDemo = createAsyncThunk(
                 )
             }
 
-            // const oobdata = await generateOOB(mediatorPeerDid)
-            // console.log('wallet - did for peer', oobdata);
-            // thunkAPI.dispatch(
-            //     addMessage({
-            //         chatId: prismDemoId,
-            //         message: sendMessage(
-            //             prismDemoId,
-            //             rootsHelperId,
-            //             "Your Out-of-Band connection is now available",
-            //             MessageType.PROMPT_DISPLAY_OOB,
-            //             false,
-            //             {identifier: mediatorPeerDid}
-            //         ),
-            //     })
-            // )
+
+
             //
             // let url = 'https://mediator.rootsid.cloud/?_oob=eyJ0eXBlIjoiaHR0cHM6Ly9kaWRjb21tLm9yZy9vdXQtb2YtYmFuZC8yLjAvaW52aXRhdGlvbiIsImlkIjoiNTkyYWYzZWEtNjAyOS00YmNiLTg1NzYtMWUzNjkzYjQ5MTU3IiwiZnJvbSI6ImRpZDpwZWVyOjIuRXo2TFNqZnY5OGNHbzFrcHdNYmpzNG90YzExdTlpeXJNNDFYYXczSmdDSnE1b3oyMy5WejZNa3FHMVRuaFdXcmMyWUdvQ0Z2dmN5WWt6VnRkcVNIMlRqMkJCam1HNlJneTNMLlNleUpwWkNJNkltNWxkeTFwWkNJc0luUWlPaUprYlNJc0luTWlPaUprYVdRNmNHVmxjam95TGtWNk5reFRha05WYWtkR2RYQTFZVnB1TkdoMFZraE1jR3BvVVhwMlVXOURaVk14ZDFKck5HSnZjMlUzYWpaRVdsRXVWbm8yVFd0cFVFeG9kVFU1UVZKUlZVSllOV2RHVFRKS1oyVlhia2hNV0dJMWRFZE9NbFJ2VUhRelNEVm1jWHBYZVM1VFpYbEtjRnBEU1RaSmJUVnNaSGt4Y0ZwRFNYTkpibEZwVDJsS2EySlRTWE5KYmsxcFQybEtiMlJJVW5kamVtOTJUREl4YkZwSGJHaGtSemw1VEc1S2RtSXpVbnBoVjFGMVdUSjRkbVJYVVdsTVEwcG9TV3B3WWtsdFVuQmFSMDUyWWxjd2RtUnFTV2xZV0RBaUxDSmhJanBiSW1ScFpHTnZiVzB2ZGpJaVhYMCIsImJvZHkiOnsiYWNjZXB0IjpbImRpZGNvbW0vdjIiXSwibGFiZWwiOiJhbGV4In19'
             //

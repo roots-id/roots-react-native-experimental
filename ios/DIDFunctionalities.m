@@ -22,7 +22,7 @@ RCT_EXTERN_METHOD(
     rejecter: (RCTPromiseRejectBlock) reject
   )
 RCT_EXTERN_METHOD(
-    createPeerDID:(NSString *)updatemediator
+    createPeerDID:(NSString *)updateMediator
     resolve:(RCTPromiseResolveBlock)resolve
     rejecter:(RCTPromiseRejectBlock)reject
   )

@@ -52,6 +52,11 @@ function addQuickReply(msg: message) {
           value: MessageType.PROMPT_DISPLAY_IDENTIFIER,
           messageId: msg._id,
         },
+        {
+          title: 'Invitation',
+          value: MessageType.PROMPT_DISPLAY_OOB,
+          messageId: msg._id,
+        },
       ],
     };
   }

@@ -73,34 +73,36 @@ class DIDFunctionalities: NSObject {
 
 
   @objc public func createPeerDID(
-    _ updatemediator: NSString,
+    _ updateMediator: NSString,
     resolve: @escaping RCTPromiseResolveBlock,
     rejecter reject: @escaping RCTPromiseRejectBlock
   ) -> Void {
     Task {
-      let did = await createPeerDID(updatemediator:updatemediator)
+      print("DIDFunctionalities - creating peer did w/update mediator",updateMediator)
+      let did = await createPeerDID(updateMediator:updateMediator)
+      print("DIDFunctionalities - peer did w/update mediator",did)
       resolve(did?.string)
     }
   }
 
-     func createPeerDID(updatemediator : NSString ) async -> DID? {
-       print("DIDFuncionalities - Called create peer DID!")
+     func createPeerDID(updateMediator : NSString ) async -> DID? {
+       print("DIDFunctionalities - Called create peer DID!")
          // Creates new peer DID
-       let _updatemediator : Bool
-        if updatemediator == "true" {
-           _updatemediator = true
+       let _updateMediator : Bool
+        if updateMediator == "true" {
+           _updateMediator = true
         }
         else {
-          _updatemediator = false
+          _updateMediator = false
         }
-        print("DIDFunctionalities - _updatemediator",_updatemediator)
+        print("DIDFunctionalities - _updateMediator",_updateMediator)
         let did = try? await agent.createNewPeerDID(
           services: [.init(
             id: "#didcomm-1",
             type: ["DIDCommMessaging"],
             serviceEndpoint: .init(uri: "did:peer:2.Ez6LSms555YhFthn1WV8ciDBpZm86hK9tp83WojJUmxPGk1hZ.Vz6MkmdBjMyB4TS5UbbQw54szm8yvMMf1ftGV2sQVYAxaeWhE.SeyJpZCI6Im5ldy1pZCIsInQiOiJkbSIsInMiOiJodHRwczovL21lZGlhdG9yLnJvb3RzaWQuY2xvdWQiLCJhIjpbImRpZGNvbW0vdjIiXX0")
         )],
-          updateMediator: _updatemediator)
+          updateMediator: _updateMediator)
 
        print("DIDFunctionalities - new peer did is",did?.string)
 

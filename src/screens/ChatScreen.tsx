@@ -192,8 +192,15 @@ export default function ChatScreen({
           const msg = currentChat?.messages.find(
               (message) => message._id === reply.messageId)
           navigation.navigate(ROUTE_NAMES.IDENTIFIER_DETAILS, {
-            identifier: msg?.data?.identifier,
+            identifier: msg?.data?.identifier
+
           });
+        } else if (reply.value.startsWith(MessageType.PROMPT_DISPLAY_OOB)) {
+          console.log('ChatScreen - quick reply display oob');
+          const msg = currentChat?.messages.find(
+              (message) => message._id === reply.messageId)
+          console.log('ChatScreen - reply msg data is',msg?.data);
+          navigation.navigate(ROUTE_NAMES.SHOW_QR_CODE, {qrdata: msg?.data?.identifier.oob});
         } else if (reply.value.startsWith(MessageType.PROMPT_RETRY_PROCESS)) {
           console.log('ChatScreen - process quick reply for retry');
 
