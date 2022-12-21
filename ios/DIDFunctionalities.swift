@@ -235,14 +235,11 @@ class DIDFunctionalities: NSObject {
           } receiveValue: {
             let str = String(data: $0.body, encoding: .utf8)!
             if latestTime == nil || $0.createdTime > latestTime {
-              latestMessage = str
+              messages = str
               latestTime = $0.createdTime
           }
-            print("Received message: \($0.id) | jsonString \(jsonString)")
-            messages = messages+"\n"+jsonString
+            print("Received message: \($0.id) | jsonString \(str)")
           }
-         print("no messages")
-         messages = messages
        }
        catch {
          print(error)
