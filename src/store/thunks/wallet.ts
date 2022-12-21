@@ -42,7 +42,8 @@ const PRISM_DEMO = `${PRISM}/prismDemo/`;
 const PRISM_DEMO_START = `${PRISM_DEMO}startDemo`;
 const PRISM_CREATE_ID = `${PRISM}/id/`;
 const PRISM_CREATE_PEER_DID = `${PRISM_CREATE_ID}createPeerID`;
-
+const MEDIATOR_CHECK_MESSAGES = `${PRISM}checkMessages`;
+const PRISM_PARSE_OOB = `${PRISM}parseOob`;
 let discordSocialIssuerId
 let rootsHelperId: any;
 let prismDemoId: any;
@@ -129,6 +130,53 @@ function generateOOB(mediatorPeerDID: string): string {
     return msgString;
 }
 
+export const checkMessages = createAsyncThunk(
+    MEDIATOR_CHECK_MESSAGES,
+    async (wallet: CreateWalletDto, thunkAPI) => {
+    const messages =  await DIDFunctionalities.getMessages();
+    console.log('wallet - check messages', messages);
+    thunkAPI.dispatch(
+        addMessage({
+            chatId: prismDemoId,
+            message: sendMessage(
+                prismDemoId,
+                rootsHelperId,
+                messages,
+                MessageType.TEXT,
+                false,
+            ),
+        })
+    )
+    }
+)
+
+export const parseOob = createAsyncThunk(
+    PRISM_PARSE_OOB,
+    async (wallet: CreateWalletDto, thunkAPI) => {
+        let url = 'https://mediator.rootsid.cloud/?_oob=eyJ0eXBlIjoiaHR0cHM6Ly9kaWRjb21tLm9yZy9vdXQtb2YtYmFuZC8yLjAvaW52aXRhdGlvbiIsImlkIjoiNTkyYWYzZWEtNjAyOS00YmNiLTg1NzYtMWUzNjkzYjQ5MTU3IiwiZnJvbSI6ImRpZDpwZWVyOjIuRXo2TFNqZnY5OGNHbzFrcHdNYmpzNG90YzExdTlpeXJNNDFYYXczSmdDSnE1b3oyMy5WejZNa3FHMVRuaFdXcmMyWUdvQ0Z2dmN5WWt6VnRkcVNIMlRqMkJCam1HNlJneTNMLlNleUpwWkNJNkltNWxkeTFwWkNJc0luUWlPaUprYlNJc0luTWlPaUprYVdRNmNHVmxjam95TGtWNk5reFRha05WYWtkR2RYQTFZVnB1TkdoMFZraE1jR3BvVVhwMlVXOURaVk14ZDFKck5HSnZjMlUzYWpaRVdsRXVWbm8yVFd0cFVFeG9kVFU1UVZKUlZVSllOV2RHVFRKS1oyVlhia2hNV0dJMWRFZE9NbFJ2VUhRelNEVm1jWHBYZVM1VFpYbEtjRnBEU1RaSmJUVnNaSGt4Y0ZwRFNYTkpibEZwVDJsS2EySlRTWE5KYmsxcFQybEtiMlJJVW5kamVtOTJUREl4YkZwSGJHaGtSemw1VEc1S2RtSXpVbnBoVjFGMVdUSjRkbVJYVVdsTVEwcG9TV3B3WWtsdFVuQmFSMDUyWWxjd2RtUnFTV2xZV0RBaUxDSmhJanBiSW1ScFpHTnZiVzB2ZGpJaVhYMCIsImJvZHkiOnsiYWNjZXB0IjpbImRpZGNvbW0vdjIiXSwibGFiZWwiOiJhbGV4In19'
+
+        const msgpacked2 = await DIDFunctionalities.parseOOBMessage(url);
+        console.log('wallet - parseOOBMessage is', msgpacked2);
+// //wait 1 minutes and then call getMessages
+//
+// // Wait for 1 minute (60,000 milliseconds)
+// await new Promise(resolve => setTimeout(resolve, 20000));
+//
+        thunkAPI.dispatch(
+            addMessage({
+                chatId: prismDemoId,
+                message: sendMessage(
+                    prismDemoId,
+                    rootsHelperId,
+                    "You have new messages available",
+                    MessageType.PROMPT_GET_MESSAGES,
+                    false,
+                ),
+            })
+        )
+    }
+)
+
 export const startPrismDemo = createAsyncThunk(
     PRISM_DEMO_START,
     async (args,thunkAPI) => {
@@ -199,6 +247,7 @@ export const startPrismDemo = createAsyncThunk(
                         ),
                     })
                 )
+
             } else {
                 console.error("Could not create Prism peer did",mediatorPeerDid)
                 thunkAPI.dispatch(
@@ -215,35 +264,6 @@ export const startPrismDemo = createAsyncThunk(
                 )
             }
 
-
-
-            //
-            // let url = 'https://mediator.rootsid.cloud/?_oob=eyJ0eXBlIjoiaHR0cHM6Ly9kaWRjb21tLm9yZy9vdXQtb2YtYmFuZC8yLjAvaW52aXRhdGlvbiIsImlkIjoiNTkyYWYzZWEtNjAyOS00YmNiLTg1NzYtMWUzNjkzYjQ5MTU3IiwiZnJvbSI6ImRpZDpwZWVyOjIuRXo2TFNqZnY5OGNHbzFrcHdNYmpzNG90YzExdTlpeXJNNDFYYXczSmdDSnE1b3oyMy5WejZNa3FHMVRuaFdXcmMyWUdvQ0Z2dmN5WWt6VnRkcVNIMlRqMkJCam1HNlJneTNMLlNleUpwWkNJNkltNWxkeTFwWkNJc0luUWlPaUprYlNJc0luTWlPaUprYVdRNmNHVmxjam95TGtWNk5reFRha05WYWtkR2RYQTFZVnB1TkdoMFZraE1jR3BvVVhwMlVXOURaVk14ZDFKck5HSnZjMlUzYWpaRVdsRXVWbm8yVFd0cFVFeG9kVFU1UVZKUlZVSllOV2RHVFRKS1oyVlhia2hNV0dJMWRFZE9NbFJ2VUhRelNEVm1jWHBYZVM1VFpYbEtjRnBEU1RaSmJUVnNaSGt4Y0ZwRFNYTkpibEZwVDJsS2EySlRTWE5KYmsxcFQybEtiMlJJVW5kamVtOTJUREl4YkZwSGJHaGtSemw1VEc1S2RtSXpVbnBoVjFGMVdUSjRkbVJYVVdsTVEwcG9TV3B3WWtsdFVuQmFSMDUyWWxjd2RtUnFTV2xZV0RBaUxDSmhJanBiSW1ScFpHTnZiVzB2ZGpJaVhYMCIsImJvZHkiOnsiYWNjZXB0IjpbImRpZGNvbW0vdjIiXSwibGFiZWwiOiJhbGV4In19'
-            //
-            // const msgpacked2 = await DIDFunctionalities.parseOOBMessage(url);
-            // console.log('wallet - parseOOBMessage is', msgpacked2);
-            // //wait 1 minutes and then call getMessages
-            //
-            // // Wait for 1 minute (60,000 milliseconds)
-            // await new Promise(resolve => setTimeout(resolve, 20000));
-            //
-            // thunkAPI.dispatch(
-            //     addMessage({
-            //         chatId: prismDemoId,
-            //         message: sendMessage(
-            //             prismDemoId,
-            //             rootsHelperId,
-            //             "Waiting for new messages...",
-            //             MessageType.TEXT,
-            //             false,
-            //         ),
-            //     })
-            // )
-            //
-            // // Call the getMessages function
-            // const messages =  DIDFunctionalities.getMessages();
-            // // console.log('wallet - messages is', messages);
-            // console.log('wallet - messages is', messages);
             // return url
         } else {
             console.error("wallet - prism agent failed to start",error)
@@ -394,7 +414,7 @@ export const initiateWalletCreation = createAsyncThunk(
     // );
     const today = new Date(Date.now());
     await setupDiscordDemo(thunkAPI,rootsHelperId,today)
-
+    await thunkAPI.dispatch(startPrismDemo())
     return WALLET_CREATED_SUCCESS;
   }
 );

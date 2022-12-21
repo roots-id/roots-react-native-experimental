@@ -222,7 +222,7 @@ class DIDFunctionalities: NSObject {
 
      func getMessages() -> String? {
        print("getMessages -!")
-
+       var messages = ""
        do{
             agent.handleMessagesEvents().sink {
               switch $0 {
@@ -234,13 +234,17 @@ class DIDFunctionalities: NSObject {
           } receiveValue: {
             let jsonString = try! String(data: JSONEncoder().encode($0.body), encoding: .utf8)!
             print("Received message: \($0.id) | jsonString \(jsonString)")
+            messages = messages+"\n"+jsonString
           }
          print("no messages")
+         messages = messages+"\n"+"no messages"
        }
        catch {
          print(error)
+         messages = messages+"\n"+error.localizedDescription
        }
-       return ""
+       
+       return messages
     }
 
 }

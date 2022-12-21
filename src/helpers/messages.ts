@@ -60,14 +60,14 @@ function addQuickReply(msg: message) {
       ],
     };
   }
-  if (msg.type === MessageType.PROMPT_DISPLAY_OOB) {
+  if (msg.type === MessageType.PROMPT_GET_MESSAGES) {
     msg.quickReplies = {
       type: 'radio',
       keepIt: false,
       values: [
         {
-          title: 'Display OOB',
-          value: MessageType.PROMPT_DISPLAY_IDENTIFIER,
+          title: 'Check Messages',
+          value: MessageType.PROMPT_GET_MESSAGES,
           messageId: msg._id,
         },
       ],

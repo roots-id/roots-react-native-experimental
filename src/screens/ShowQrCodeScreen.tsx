@@ -7,8 +7,9 @@ import { IconButton, ToggleButton } from 'react-native-paper';
 import { styles } from '../styles/styles';
 import QRCode from "react-native-qrcode-svg";
 import BottomSheet from "@gorhom/bottom-sheet";
+import {CompositeScreenProps} from "@react-navigation/core/src/types";
 
-export default function ShowQrCodeScreen({ route, navigation }) {
+export default function ShowQrCodeScreen({ route, navigation }: CompositeScreenProps<any, any>) {
   console.log('showQR - params are', route.params);
   const jsonData = route.params.qrdata;
   //console.log('showQR - raw qr data', data);
@@ -61,6 +62,14 @@ export default function ShowQrCodeScreen({ route, navigation }) {
           onChange={handleSheetChanges}
           backgroundStyle={{backgroundColor: '#140A0F', borderWidth: 1, borderColor: '#DE984F'}}
       >
+        <View
+            style={{
+              flex: 1,
+              alignItems: "center",
+              justifyContent: "center",
+              paddingHorizontal: 16
+            }}
+        >
         <View style={styles.closeButtonContainer}>
           <IconButton
               icon={viewIcon}
@@ -78,13 +87,6 @@ export default function ShowQrCodeScreen({ route, navigation }) {
           />
 
         </View>
-    <View
-      style={{
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-      }}
-    >
       <Animated.View style={styles.viewAnimated}>
         {viewOut}
       </Animated.View>

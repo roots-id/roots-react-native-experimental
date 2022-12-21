@@ -11,6 +11,7 @@ export enum MessageType {
   PROMPT_PUBLISH = 'rootsPromptPublishMsgType',
   PROMPT_DISPLAY_IDENTIFIER = 'rootsPromptDisplayIdentifier',
   PROMPT_DISPLAY_OOB = 'rootsPromptDisplayOOB',
+  PROMPT_GET_MESSAGES = 'rootsPromptGetMessages',
   PROMPT_ISSUED_CREDENTIAL = 'rootsIssuedCredentialMsgType',
   STATUS = 'statusMsgType',
   TEXT = 'textMsgType',

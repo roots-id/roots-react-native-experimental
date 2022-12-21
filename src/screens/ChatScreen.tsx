@@ -25,8 +25,8 @@ import { ROUTE_NAMES } from '../navigation';
 import { useDispatch, useSelector } from 'react-redux';
 import { getChatById } from '../store/selectors/chat';
 import {
-  addCredentialAndNotify,
-  denyCredentialAndNotify,
+  addCredentialAndNotify, checkMessages,
+  denyCredentialAndNotify, parseOob,
 } from '../store/thunks/wallet';
 import {
   getContactById,
@@ -197,6 +197,7 @@ export default function ChatScreen({
           });
         } else if (reply.value.startsWith(MessageType.PROMPT_DISPLAY_OOB)) {
           console.log('ChatScreen - quick reply display oob');
+          dispatch(parseOob())
           const msg = currentChat?.messages.find(
               (message) => message._id === reply.messageId)
           console.log('ChatScreen - reply msg data is',msg?.data);
@@ -209,6 +210,9 @@ export default function ChatScreen({
             );
             console.log('ChatScreen - retrying',msgCurrentChat?.data?.callback)
             dispatch(msgCurrentChat?.data?.callback())
+          } else if (reply.value.startsWith(MessageType.PROMPT_GET_MESSAGES)) {
+              console.log('ChatScreen - process quick reply for check messages');
+              dispatch(checkMessages())
           }
         else {
           console.log(

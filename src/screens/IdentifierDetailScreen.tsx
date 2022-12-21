@@ -89,17 +89,6 @@ export default function IdentifierDetailScreen({
                       }
                       style={{borderWidth: 1, borderColor: '#FFA149', borderRadius: 10 }}
                   />
-                  <IconButton
-                      icon="qrcode"
-                      size={28}
-                      iconColor="#C5C8D1"
-                      style={{borderWidth: 1, borderColor: '#FFA149', borderRadius: 10 }}
-                      onPress={() =>
-                          goToShowQrCode(navigation, {
-                              identifier: "TODO"
-                          })
-                      }
-                  />
               </View>
               <Animated.View style={styles.viewAnimated}>
                 <Image source={atalaLogo} style={{

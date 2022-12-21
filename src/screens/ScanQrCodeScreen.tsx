@@ -75,7 +75,6 @@ export default function ScanQrCodeScreen({
   };
 
   const handleDemo = async () => {
-    if (!scanned && await configService.getDemo()) {
       console.log('Scan QR - pretending to scan with demo data');
       alert('Adding demo data.');
 
@@ -93,13 +92,6 @@ export default function ScanQrCodeScreen({
         // }
         addDummyCredential().then(clearAndGoBack).catch(console.error);
       }
-    } else {
-      console.log(
-        'Scan QR - Demo interval triggered, but scanned or not demo',
-        scanned,
-        configService.getDemo()
-      );
-    }
   };
 
   useEffect(() => {
@@ -152,17 +144,17 @@ export default function ScanQrCodeScreen({
     if(barcode.displayValue && (qr == undefined || qr.length <= 0)) {
       //handleBarCodeScanned(barcode).catch(console.error)
       setQr(barcode.displayValue)
-      return barcode.displayValue
+      console.log("ScanQR - Scanned"+qr)
     } else {
-      return "Already Scanned"+qr
+      console.log("ScanQR - Already Scanned"+qr)
     }
+    return""
   }
 
   async function parseOob(oobUrl: string) {
     console.log("Parsing OOB",oobUrl)
-//    const result = DIDFunctionalities.parseOOBMessage(oobUrl)
-    dispatch(startPrismDemo())
-    // console.log("Parsed OOB",result)
+    const result = DIDFunctionalities.parseOOBMessage(oobUrl)
+    console.log("Parsed OOB",result)
   }
 
   useEffect(() => {
