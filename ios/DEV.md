@@ -22,5 +22,8 @@ reanimated::ErrorHandler::raise()::'lambda'()::operator()()
 decltype(static_cast<reanimated::ErrorHandler::raise()::'lambda'()&>(fp)()) std::__1::__invoke<reanimated::ErrorHandler::raise()::'lambda'()&>(reanimated::ErrorHandler::raise()::'lambda'()&)
 void std::__1::__invoke_void_return_wrapper<void, true>::__call<reanimated::ErrorHandler::raise()::'lambda'()&>(reanimat
 ```
-Then run your metro server before starting your iPhone simulator
+Then run your metro server before starting your iPhone simulator:
+```
+yarn start ios --reset-cache
+```
 * Here is a tour of the interface as of today: https://www.youtube.com/watch?v=YwLbjOrIwas
