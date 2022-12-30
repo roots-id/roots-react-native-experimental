@@ -10,4 +10,17 @@ https://developer.apple.com/forums/thread/64973
 * You should also import the workspace or project file into XCode and it should look like:
 ![image](https://user-images.githubusercontent.com/681493/208785290-1a6bbbd6-9ded-4616-ad54-70f915dde6ec.png)
 * You can run the app on an iOS simulator or iPhone by hitting the play button (it will take some time for the app to build and deploy)
+* If you are getting an error: 
+```
+Value is undefined, expected an Object
+
+@[native code]
+
+reanimated::REAIOSErrorHandler::raiseSpec()
+    REAIOSErrorHandler.mm:18
+reanimated::ErrorHandler::raise()::'lambda'()::operator()()
+decltype(static_cast<reanimated::ErrorHandler::raise()::'lambda'()&>(fp)()) std::__1::__invoke<reanimated::ErrorHandler::raise()::'lambda'()&>(reanimated::ErrorHandler::raise()::'lambda'()&)
+void std::__1::__invoke_void_return_wrapper<void, true>::__call<reanimated::ErrorHandler::raise()::'lambda'()&>(reanimat
+```
+Then run your metro server before starting your iPhone simulator
 * Here is a tour of the interface as of today: https://www.youtube.com/watch?v=YwLbjOrIwas
