@@ -3,6 +3,8 @@
 https://developer.apple.com/forums/thread/64973
 ## Notes
 * In order to run native code on iPhone, you need this iOS directory and the associated files.
+* rbenv for your local ruby env is helpful for the CocoaPods reqs (see https://reactnative.dev/docs/next/environment-setup)
+```rbenv local 2.7.6```
 * Before building the iOS specific files please do the follow from the main directory:
 ```rm -Rf node_modules;arch -x86_64 yarn cache clean;arch -x86_64 yarn install;```
 * Then from this iOS directory you can do something like:
