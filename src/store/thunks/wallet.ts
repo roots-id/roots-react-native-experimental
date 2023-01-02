@@ -23,6 +23,8 @@ import * as models from "../../models";
 import thunk from "redux-thunk";
 import {identifier} from "../../models";
 import uuid from "react-native-uuid";
+import base64 from 'react-native-base64'
+
 
 const { DIDFunctionalities, CalendarModuleFoo } = ReactNative.NativeModules;
 
@@ -106,6 +108,9 @@ async function setupDiscordDemo(thunkAPI: any, rootsHelperId: unknown,today: Dat
         })
     );
 }
+const btoa = (data: string) => {
+  return Buffer.from(data, 'utf8').toString('base64');
+};
 
 //create async function called generateOOB() that returns a string
 function generateOOB(mediatorPeerDID: string): string {
@@ -117,6 +122,7 @@ function generateOOB(mediatorPeerDID: string): string {
         from: mediatorPeerDID,
         body: {
             'accept': ['didcomm/v2'],
+            'label': 'Prism Demo'
         }
     }
 
@@ -125,9 +131,11 @@ function generateOOB(mediatorPeerDID: string): string {
     console.log("wallet - OOB message is", msgString);
     //convert string to base64
     // const msgBase64 = Buffer.from(msgString).toString('base64');
-    // console.log("wallet - OOB encoded message is", msgBase64)
+    const msgBase64 = base64.encode(msgString)
+    console.log("wallet - OOB encoded message is", msgBase64)
+    const url = 'https://www.domain.com/path?_oob=' + msgBase64;
 
-    return msgString;
+    return url;
 }
 
 export const checkMessages = createAsyncThunk(
@@ -221,7 +229,7 @@ export const startPrismDemo = createAsyncThunk(
                 })
             )
 
-            const mediatorPeerDid = await DIDFunctionalities.createPeerDID('false')
+            const mediatorPeerDid = await DIDFunctionalities.createPeerDID('true')
             console.log("wallet - created peer did from mediator",mediatorPeerDid)
 
             if(mediatorPeerDid) {

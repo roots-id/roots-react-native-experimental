@@ -222,7 +222,7 @@ class DIDFunctionalities: NSObject {
 
      func getMessages() -> String? {
        print("getMessages -!")
-       var messages = "no messages"
+       var messages = ""
        var latestTime: Date!
        do{
             agent.handleMessagesEvents().sink {
@@ -234,11 +234,13 @@ class DIDFunctionalities: NSObject {
               }
           } receiveValue: {
             let str = String(data: $0.body, encoding: .utf8)!
-            if latestTime == nil || $0.createdTime > latestTime {
-              messages = str
-              latestTime = $0.createdTime
+             if latestTime == nil || $0.createdTime > latestTime {
+               messages = str
+               latestTime = $0.createdTime
           }
-            print("Received message: \($0.id) | jsonString \(str)")
+//            messages = messages+"\n"+str
+
+            print("Received message: \($0.id) | messages \(messages)")
           }
        }
        catch {

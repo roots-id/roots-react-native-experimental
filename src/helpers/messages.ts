@@ -45,7 +45,7 @@ function addQuickReply(msg: message) {
   if (msg.type === MessageType.PROMPT_DISPLAY_IDENTIFIER) {
     msg.quickReplies = {
       type: 'radio',
-      keepIt: false,
+      keepIt: true,
       values: [
         {
           title: 'View',
@@ -63,7 +63,7 @@ function addQuickReply(msg: message) {
   if (msg.type === MessageType.PROMPT_GET_MESSAGES) {
     msg.quickReplies = {
       type: 'radio',
-      keepIt: false,
+      keepIt: true,
       values: [
         {
           title: 'Check Messages',
