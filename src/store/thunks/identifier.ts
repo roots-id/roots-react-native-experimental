@@ -5,7 +5,6 @@ import {addMessage} from "../slices/chat";
 import {sendMessage} from "../../helpers/messages";
 import {MessageType} from "../../models/constants";
 import ReactNative from "react-native";
-const { DIDFunctionalities } = ReactNative.NativeModules;
 
 const BASE_ID = 'ids/';
 const BASE_DID = `${BASE_ID}did/`;
@@ -33,11 +32,11 @@ export const createAndAddId = createAsyncThunk(
     }
 );
 
-async function resolveId(id: identifier) {
-    console.log("thunk/identifiers - resolving DID document for id",id)
-    const didDoc = await DIDFunctionalities.resolveDID(id._id);
-    console.log('thunk/identifiers - resolved DID document for',id._id,'is', didDoc);
-    return didDoc
+async function resolveId(id: identifier): Promise<string> {
+    console.log("thunk/identifiers - resolving id",id)
+    const result = await fireResolveIdEvent(id);
+    console.log('thunk/identifiers - resolved ',id._id,'is', result);
+    return result
 }
 
 export interface idDTO {
