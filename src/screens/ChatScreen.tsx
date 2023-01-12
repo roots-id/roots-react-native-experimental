@@ -34,6 +34,10 @@ import {
 } from '../store/selectors/contact';
 import { sendMessageToChat } from '../store/thunks/chat';
 import { updateMessageQuickReplyStatus } from "../store/slices/chat";
+import { agent } from '../../setup'
+import { IIdentifier } from '@veramo/core'
+
+import { loadAllContacts } from '../store/thunks/contact';
 
 export default function ChatScreen({
   route,
@@ -45,13 +49,60 @@ export default function ChatScreen({
   const [contact, setContact] = useState<models.contact>();
   const [loading, setLoading] = useState<boolean>(true);
   const [processing, setProcessing] = useState<boolean>(false);
+  const [veramoID, setVeramoID] = useState<IIdentifier>(null);
+
   const currentChat = useSelector((state) => getChatById(state, user._id));
   const currentUser = useSelector(getCurrentUserContact);
   const getUserById = useSelector(getContactById);
   const dispatch = useDispatch();
-  // useEffect(() => {
-  //   setMessages(messages);
-  // }, []);
+  useEffect(() => {
+
+
+    const loadChatsAndMessages = async () => {
+      console.log('ChatScreen - loading messages');
+      await dispatch(loadAllContacts());
+    };
+
+    const createIdentifier = async () => {
+      //print calling
+      console.log('ChatScreen - creating identifier');
+      const _id = await agent.didManagerCreate({
+        provider: 'did:key',
+      })
+      console.log('ChatScreen - created identifier', _id);
+
+      const result = await agent.resolveDid({ didUrl: 'did:web:verifiable.ink' })
+      console.log('ChatScreen - resolved identifier', result);
+
+    }
+
+
+    const createCredential = async (_id : IIdentifier) => {
+      if (_id.did) {
+        const verifiableCredential = await agent.createVerifiableCredential({
+          credential: {
+            issuer: { id: _id.did },
+            issuanceDate: new Date().toISOString(),
+            credentialSubject: {
+              id: 'did:prism:zcg87zg76cf6zhx8g78zgx78ogui7as8796',
+              you: 'Rock',
+            },
+          },
+          save: false,
+          proofFormat: 'jwt',
+        })
+        console.log('ChatScreen - created credential', verifiableCredential)
+
+      }
+    }
+
+    
+    const _id = createIdentifier();
+    createCredential(_id)
+    setVeramoID(_id)
+    loadChatsAndMessages()
+
+  }, []);
   //   useEffect(() => {
   //     console.log('ChatScreen - chat set', chat);
   //     const chatSession = roots.startChatSession(chat.id, {
