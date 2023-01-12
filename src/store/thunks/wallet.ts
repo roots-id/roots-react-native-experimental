@@ -23,6 +23,7 @@ import * as models from "../../models";
 import thunk from "redux-thunk";
 import {identifier} from "../../models";
 import uuid from "react-native-uuid";
+import { LocalPlaintextStore } from '../../services';
 
 const { DIDFunctionalities, CalendarModuleFoo } = ReactNative.NativeModules;
 
@@ -48,7 +49,7 @@ let discordSocialIssuerId
 let rootsHelperId: any;
 let prismDemoId: any;
 
-    interface CreateWalletDto {
+interface CreateWalletDto {
   name: string;
   mnemonic: string;
   password: string;
@@ -58,7 +59,19 @@ export const createWallet = createAsyncThunk(
   CREATE_WALLET,
   async (wallet: CreateWalletDto, thunkAPI) => {
     const createdWallet = { ...wallet, key: WALLET_NAME_STORAGE_KEY };
+    const wallet_saved = await LocalPlaintextStore.fetch('wallet');
+    console.log('wallet_saved', wallet_saved)
+    if (wallet_saved) {
+      const wallet = JSON.parse(wallet_saved);
+      thunkAPI.dispatch(addWallet(wallet));
+      return;
+    }
     thunkAPI.dispatch(addWallet(createdWallet));
+    console.log('saving wallet,', JSON.stringify(createdWallet))
+    await LocalPlaintextStore.persist('wallet',JSON.stringify(createdWallet));
+    console.log('wallet saved')
+
+
   }
 );
 
@@ -92,17 +105,20 @@ async function setupDiscordDemo(thunkAPI: any, rootsHelperId: unknown,today: Dat
     console.log('discordCreds', discordCreds);
     const cred = (await thunkAPI.dispatch(createCredential(discordCreds)))
         .payload;
+
+    let msg = sendMessage(
+      discordSocialIssuerId,
+      rootsHelperId,
+      `A Discord Social credential has been created for you`,
+      MessageType.PROMPT_PREVIEW_ACCEPT_DENY_CREDENTIAL,
+      false,
+      { credential: cred }
+  )
+  LocalPlaintextStore.storeMessage(msg)
     thunkAPI.dispatch(
         addMessage({
             chatId: discordSocialIssuerId,
-            message: sendMessage(
-                discordSocialIssuerId,
-                rootsHelperId,
-                `A Discord Social credential has been created for you`,
-                MessageType.PROMPT_PREVIEW_ACCEPT_DENY_CREDENTIAL,
-                false,
-                { credential: cred }
-            ),
+            message: msg
         })
     );
 }
@@ -144,7 +160,7 @@ export const checkMessages = createAsyncThunk(
                 messages,
                 MessageType.TEXT,
                 false,
-            ),
+            )
         })
     )
     }
@@ -296,10 +312,14 @@ export const startPrismDemo = createAsyncThunk(
 }
 );
 
+
+
 export const initiateWalletCreation = createAsyncThunk(
   INITIATE_ACCOUNT,
   async (wallet: CreateWalletDto, thunkAPI) => {
+
     await thunkAPI.dispatch(createWallet(wallet));
+
     rootsHelperId = (
       await thunkAPI.dispatch(
         createContact({
@@ -324,97 +344,81 @@ export const initiateWalletCreation = createAsyncThunk(
       await thunkAPI.dispatch(
         createContact({
           displayPictureUrl: 'https://avatars.githubusercontent.com/u/95590918?s=200&v=4',
-          displayName: '',
+          displayName: 'alex',
           isCurrentUser: true,
         })
       )
     ).payload;
+
+
+      const does_profile_exist_locally = await LocalPlaintextStore.fetch('profile/'+userId);
+      if (does_profile_exist_locally) {
+        console.log('found contacts in local storage', does_profile_exist_locally)
+        thunkAPI.dispatch(addProfile(JSON.parse(does_profile_exist_locally)))
+      } else {
+        console.log('creating new profile', { _id: userId, displayPictureUrl: 'https://avatars.githubusercontent.com/u/95590918?s=200&v=4', displayName: '' })
       thunkAPI.dispatch(addProfile({ _id: userId, displayPictureUrl: 'https://avatars.githubusercontent.com/u/95590918?s=200&v=4', displayName: '' }))
-      thunkAPI.dispatch(initiateChat({ chatId: userId }));
+      }
+
+
+      
+      const does_chat_exist_locally = await LocalPlaintextStore.fetch('chat'+userId);
+      console.log('does_chat_exist_locally', does_chat_exist_locally)
+      if (does_chat_exist_locally == null ) {
+        console.log('found chat for ', userId,' in local storage', does_chat_exist_locally)
+        await LocalPlaintextStore.persist('chat'+userId, JSON.stringify({ _id: userId, messages: [] }))
+        thunkAPI.dispatch(initiateChat({ chatId: userId }));
+
+      
+      const msg_0 = sendMessage(
+        userId,
+        rootsHelperId,
+        BOTS_MSGS[0],
+        MessageType.TEXT
+      );
+      await LocalPlaintextStore.storeMessage(msg_0)
+      thunkAPI.dispatch(
+
+      addMessage({
+        chatId: userId,
+        message: msg_0,
+      })
+
+    );
+      const msg_1 = sendMessage(
+        userId,
+        rootsHelperId,
+        BOTS_MSGS[1],
+        MessageType.TEXT
+      )
+
+      // await LocalPlaintextStore.persist('chat/'+userId+"/"+msg_1._id, JSON.stringify(msg_1));
+      await LocalPlaintextStore.storeMessage(msg_1)
+
       thunkAPI.dispatch(
       addMessage({
         chatId: userId,
-        message: sendMessage(
-          userId,
-          rootsHelperId,
-          BOTS_MSGS[0],
-          MessageType.TEXT
-        ),
+        message: msg_1
       })
     );
+    const msg_2 = sendMessage(
+      userId,
+      rootsHelperId,
+      BOTS_MSGS[2],
+      MessageType.TEXT
+    )
+    await LocalPlaintextStore.storeMessage(msg_2)
+    console.log('saved msg2 to local storage', msg_2)
       thunkAPI.dispatch(
       addMessage({
         chatId: userId,
-        message: sendMessage(
-          userId,
-          rootsHelperId,
-          BOTS_MSGS[1],
-          MessageType.TEXT
-        ),
+        message: msg_2
       })
     );
-      thunkAPI.dispatch(
-      addMessage({
-        chatId: userId,
-        message: sendMessage(
-          userId,
-          rootsHelperId,
-          BOTS_MSGS[2],
-          MessageType.TEXT
-        ),
-      })
-    );
-    // thunkAPI.dispatch(
-    //   addMessage({
-    //     chatId: userId,
-    //     message: sendMessage(
-    //       userId,
-    //       prismBotId,
-    //       BOTS_MSGS[3],
-    //       MessageType.TEXT
-    //     ),
-    //   })
-    // );
-    // thunkAPI.dispatch(
-    //   addMessage({
-    //     chatId: userId,
-    //     message: sendMessage(
-    //       userId,
-    //       prismBotId,
-    //       BOTS_MSGS[4],
-    //       MessageType.PROMPT_OWN_DID,
-    //       false,
-    //       '1234567890'
-    //     ),
-    //   })
-    // );
-    // thunkAPI.dispatch(
-    //   addMessage({
-    //     chatId: userId,
-    //     message: sendMessage(
-    //       userId,
-    //       prismBotId,
-    //       BOTS_MSGS[5],
-    //       MessageType.BLOCKCHAIN_URL,
-    //       false,
-    //       'randomhash123413132'
-    //     ),
-    //   })
-    // );
-    // thunkAPI.dispatch(
-    //   addMessage({
-    //     chatId: userId,
-    //     message: sendMessage(
-    //       userId,
-    //       prismBotId,
-    //       BOTS_MSGS[6],
-    //       MessageType.TEXT
-    //     ),
-    //   })
-    // );
+    }
     const today = new Date(Date.now());
     await setupDiscordDemo(thunkAPI,rootsHelperId,today)
-    await thunkAPI.dispatch(startPrismDemo())
+    // await thunkAPI.dispatch(startPrismDemo())
     return WALLET_CREATED_SUCCESS;
   }
 );
@@ -436,29 +440,32 @@ export const initiateNewContact = createAsyncThunk(
     ).payload;
 
     dispatch(initiateChat({ chatId: newContactId }));
+    let msg = sendMessage(
+      newContactId,
+      rootsHelper?._id,
+      'To celebrate your new contact, you are issuing a verifiable credential',
+      MessageType.TEXT
+    )
 
     dispatch(
       addMessage({
         chatId: newContactId,
-        message: sendMessage(
-          newContactId,
-          rootsHelper?._id,
-          'To celebrate your new contact, you are issuing a verifiable credential',
-          MessageType.TEXT
-        ),
+        message: msg
       })
     );
+
+    msg = sendMessage(
+      currentUser._id,
+      rootsHelper?._id,
+      `You added a demo contact ${userName}`,
+      MessageType.PROMPT_NEW_CONTACT,
+      false,
+      { contact: newContactId }
+  )
       dispatch(
           addMessage({
               chatId: currentUser._id,
-              message: sendMessage(
-                  currentUser._id,
-                  rootsHelper?._id,
-                  `You added a demo contact ${userName}`,
-                  MessageType.PROMPT_NEW_CONTACT,
-                  false,
-                  { contact: newContactId }
-              ),
+              message: msg
           })
       );
     const today = new Date(Date.now());
@@ -474,17 +481,20 @@ export const initiateNewContact = createAsyncThunk(
       revoked: false,
     };
     const cred = (await dispatch(createAndAddCredential(credsObject))).payload;
+    msg = sendMessage(
+      newContactId,
+      rootsHelper?._id,
+      `You have issued a verifiable credential ${cred?.alias}!`,
+      MessageType.PROMPT_ISSUED_CREDENTIAL,
+      false,
+      { credential: cred }
+    )
+
+    console.log('cred', cred)
     dispatch(
       addMessage({
         chatId: newContactId,
-        message: sendMessage(
-          newContactId,
-          rootsHelper?._id,
-          `You have issued a verifiable credential ${cred?.alias}!`,
-          MessageType.PROMPT_ISSUED_CREDENTIAL,
-          false,
-          { credential: cred }
-        ),
+        message: msg
       })
     );
   }
@@ -513,17 +523,21 @@ export const createNewCredential = createAsyncThunk(
         createAndAddCredential(credsObject)
       )
     ).payload;
+
+    const message = sendMessage(
+      currentUser._id,
+      rootsHelper?._id,
+      `You created a demo credential ${cred.alias}!`,
+      MessageType.PROMPT_ISSUED_CREDENTIAL,
+      false,
+      { credential: cred }
+    )
+    LocalPlaintextStore.storeMessage(message)
+
     dispatch(
       addMessage({
         chatId: currentUser._id,
-        message: sendMessage(
-          currentUser._id,
-          rootsHelper?._id,
-          `You created a demo credential ${cred.alias}!`,
-          MessageType.PROMPT_ISSUED_CREDENTIAL,
-          false,
-          { credential: cred }
-        ),
+        message: message
       })
     );
   }
@@ -535,17 +549,20 @@ export const addCredentialAndNotify = createAsyncThunk(
     const { dispatch, getState } = thunkAPI;
     const rootsHelper = getRootsHelperContact(getState());
     const cred = (await dispatch(addCredentialToList(credential))).payload;
+    const message = sendMessage(
+      credential.issuerId,
+      rootsHelper?._id,
+      `Discord Social credential accepted ${cred.alias}!`,
+      MessageType.PROMPT_ACCEPTED_CREDENTIAL,
+      false,
+      { credential: cred }
+    )
+    console.log('storing credential action ', message)
+    await LocalPlaintextStore.storeMessage(message)
     dispatch(
       addMessage({
         chatId: credential.issuerId,
-        message: sendMessage(
-          credential.issuerId,
-          rootsHelper?._id,
-          `Discord Social credential accepted ${cred.alias}!`,
-          MessageType.PROMPT_ACCEPTED_CREDENTIAL,
-          false,
-          { credential: cred }
-        ),
+        message: message
       })
     );
   }
@@ -556,16 +573,19 @@ export const denyCredentialAndNotify = createAsyncThunk(
   async (credential: any, thunkAPI) => {
     const { dispatch, getState } = thunkAPI;
     const rootsHelper = getRootsHelperContact(getState());
+    const message = sendMessage(
+      credential.issuerId,
+      rootsHelper?._id,
+      `Discord social credential denied!`,
+      MessageType.TEXT,
+      false
+    )
+    LocalPlaintextStore.storeMessage(message)
+
     dispatch(
       addMessage({
         chatId: credential.issuerId,
-        message: sendMessage(
-          credential.issuerId,
-          rootsHelper?._id,
-          `Discord social credential denied!`,
-          MessageType.TEXT,
-          false
-        ),
+        message: message
       })
     );
   }

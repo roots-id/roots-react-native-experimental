@@ -1,12 +1,23 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { encodeCredential } from '../../models/samples/credentials';
-import { addCredential, updateCredential } from '../slices/credential';
+import { addCredential, updateCredential, loadCredentialsReducer } from '../slices/credential';
+import { LocalPlaintextStore } from '../../services';
 
 const BASE_CREDENTIAL = 'credentials/';
 const CREATE_CREDENTIAL = `${BASE_CREDENTIAL}create`;
 const CREATE_ADD_CREDENTIAL = `${BASE_CREDENTIAL}createAndAdd`;
 const ADD_CREDENTIAL_TO_LIST = `${BASE_CREDENTIAL}addToList`;
 const UPDATE_CREDENTIAL_VALIDATION = `${BASE_CREDENTIAL}credential_validation`;
+
+
+export const loadAllCredenitals = createAsyncThunk(
+  `${BASE_CREDENTIAL}loadAllCredentials`,
+  async (arg, thunkAPI) => {
+    const credentials = await LocalPlaintextStore.getAllCredentials();
+    thunkAPI.dispatch(loadCredentialsReducer(credentials));
+  }
+);
+
 
 export const createCredential = createAsyncThunk(
   CREATE_CREDENTIAL,
@@ -43,6 +54,9 @@ export const createAndAddCredential = createAsyncThunk(
   async (credential: any, thunkAPI: any) => {
     const cred = (await thunkAPI.dispatch(createCredential(credential)))
       .payload;
+
+    //store before adding credential  
+    LocalPlaintextStore.storeCredential(credential);
     thunkAPI.dispatch(addCredential(cred));
     return cred;
   }
@@ -51,6 +65,8 @@ export const createAndAddCredential = createAsyncThunk(
 export const addCredentialToList = createAsyncThunk(
   ADD_CREDENTIAL_TO_LIST,
   async (credential: any, thunkAPI: any) => {
+    //store before adding credential  
+    LocalPlaintextStore.storeCredential(credential);
     thunkAPI.dispatch(addCredential(credential));
     return credential;
   }
@@ -63,6 +79,11 @@ export const updateCredentialValidation = createAsyncThunk(
     const findCredentialIndex = state.credential.credentials.findIndex(cred => cred._id === credential._id);
     const isRevoked = !!(findCredentialIndex % 2);
     if( findCredentialIndex > -1) {
+          //store before adding credential  
+    LocalPlaintextStore.storeCredential({
+      ...credential,
+      revoked: isRevoked,
+    });
       thunkAPI.dispatch(
         updateCredential({ index: findCredentialIndex, credential: {
           ...credential,

@@ -1,11 +1,16 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-
 const chatSlice = createSlice({
   name: 'chat',
   initialState: {
     chats: {},
   },
   reducers: {
+    loadChatsAndMessagesReducer(state, action: PayloadAction<any>): any {
+      // load messages from local storage
+      console.log('saving chats to state', action.payload)
+      state.chats = action.payload;
+    },
+
     initiateChat(state, action: PayloadAction<any>): any {
       // add dummy chat
       // const chatId = uuid.v4() as string;
@@ -18,10 +23,12 @@ const chatSlice = createSlice({
     },
     addMessage(state, action: PayloadAction<any>) {
       // add dummy message
+
       const { chatId, message } = action.payload;
       if(state.chats[chatId]) {
         state.chats[chatId].messages.push(message);
       }
+      console.log("Added message to chat", message.text)
     },
   updateMessageQuickReplyStatus(state, action: PayloadAction<any>) {
     const {chatId, messageId, keepIt} = action.payload;
@@ -41,5 +48,5 @@ const chatSlice = createSlice({
   },
 });
 
-export const { initiateChat, addMessage, updateMessageQuickReplyStatus } = chatSlice.actions;
+export const { initiateChat, addMessage, updateMessageQuickReplyStatus, loadChatsAndMessagesReducer } = chatSlice.actions;
 export const chatReducer = chatSlice.reducer;

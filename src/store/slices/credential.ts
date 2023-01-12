@@ -6,6 +6,9 @@ const credentialSlice = createSlice({
     credentials: [],
   },
   reducers: {
+    loadCredentialsReducer(state, action: PayloadAction<any>) {
+      state.credentials = action.payload;
+    },
     addCredential(state, action: PayloadAction<any>) {
       state.credentials.push(action.payload);
     },
@@ -15,5 +18,5 @@ const credentialSlice = createSlice({
   },
 });
 
-export const { addCredential, updateCredential } = credentialSlice.actions;
+export const { addCredential, updateCredential, loadCredentialsReducer } = credentialSlice.actions;
 export const credentialReducer = credentialSlice.reducer;

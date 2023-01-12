@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { LocalPlaintextStore } from '../../services';
 
 const walletSlice = createSlice({
   name: 'wallet',
@@ -22,6 +23,7 @@ const walletSlice = createSlice({
     changeProfileInfo(state, action: PayloadAction<any>): any {
       state.profile = { ...state.profile, ...action.payload };
     }
+
   }
 });
 

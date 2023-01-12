@@ -6,8 +6,10 @@ import AuthStack from './AuthStack';
 import MainStack from './MainStack';
 import { useDispatch, useSelector } from 'react-redux';
 import { getWalletExists } from '../store/selectors/wallet';
-import { initiateWalletCreation } from '../store/thunks/wallet';
-
+import { createWallet, initiateWalletCreation } from '../store/thunks/wallet';
+import { loadChatsAndMessages } from '../store/thunks/chat';
+import { loadAllContacts } from '../store/thunks/contact';
+import { loadAllCredenitals } from '../store/thunks/credential';
 const localStorageService = new LocalStorageService();
 
 export const AuthContext = React.createContext({});
@@ -34,8 +36,24 @@ export default function Routes() {
   useEffect(() => {
     // localStorageService.clear();
     const checkWalletCreation = async () => {
-      if (!walletExists) {
+      const isFirstTime = await localStorageService.fetch('123isfirst');
+      console.log( typeof (isFirstTime))
+      if (isFirstTime == null) {
+        await localStorageService.persist('123isfirst', 'true');
+        console.log('initiating wallet')
         await dispatch(initiateWalletCreation({}));
+  
+        // await dispatch(loadAllContacts())
+        // await dispatch(loadChatsAndMessages())
+        
+      }
+      else{
+        console.log('loading messages')
+        await dispatch(createWallet({}))
+
+        await dispatch(loadAllContacts())
+        await dispatch(loadChatsAndMessages())
+        await dispatch(loadAllCredenitals())
       }
       setLoggedIn(true);
     };

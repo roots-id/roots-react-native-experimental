@@ -1,4 +1,5 @@
 import { createSelector } from 'reselect';
+import { LocalPlaintextStore } from '../../services';
 
 const walletSelector = (state: any) => state.wallet;
 
@@ -7,6 +8,7 @@ export const getWallet = createSelector(walletSelector, (state) => {
 });
 
 export const getWalletExists = createSelector(walletSelector, (state) => {
+  //chec if LocalPlaintextStore 
   return Boolean(state.wallet);
 });
 
