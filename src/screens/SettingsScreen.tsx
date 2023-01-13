@@ -20,7 +20,8 @@ import {
   changePin,
   changePinStatus,
 } from '../store/slices/wallet';
-import { updateProfileInfo } from '../store/thunks/wallet';
+import {createNewDidAndNotify, updateProfileInfo} from '../store/thunks/wallet';
+import {IdType} from "roots-manager";
 
 const serverService = new ServerService();
 const configService = new ConfigService();
@@ -80,6 +81,10 @@ export default function SettingsScreen({
   const handleAvatarChange = () => {
     dispatch(updateProfileInfo({ data: { displayPictureUrl: avatar }, message: `Avatar picture has been updated` }));
   };
+
+  const handleCreateId = () => {
+    dispatch(createNewDidAndNotify({ data: { type: IdType.Fake }, message: `Identifier has been created` }));
+  }
 
   return (
     <View
@@ -248,6 +253,15 @@ export default function SettingsScreen({
             modeValue='contained'
             labelStyle={styles.loginButtonLabel}
             onPress={() => navigation.navigate(ROUTE_NAMES.DEVELOPERS)}
+          />
+        </View>
+        <Text />
+        <View style={{ flexDirection: 'row' }}>
+          <FormButton
+              title='Test Create Id'
+              modeValue='contained'
+              labelStyle={styles.loginButtonLabel}
+              onPress={() => handleCreateId()}
           />
         </View>
       </Animated.View>

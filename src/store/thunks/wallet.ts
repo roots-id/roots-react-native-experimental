@@ -228,23 +228,6 @@ export const initiateWalletCreation = createAsyncThunk(
       })
     );
 
-      let newId: Identifier = {value: "not set"};
-      // let proto = new CreateIdProtocol((idType:IdType)=>{"did:"+fake})
-      // rootsManager.registerCreateIdProtocol(IdType.Fake,)
-      rootsManager.createId(IdType.Fake,(id)=>{newId=id})
-      console.log("wallet - createId produced",newId.value)
-
-    thunkAPI.dispatch(
-      addMessage({
-        chatId: userId,
-        message: sendMessage(
-          userId,
-          prismBotId,
-          BOTS_MSGS[3]+"\n"+newId,
-          MessageType.TEXT
-        ),
-      })
-    );
     // thunkAPI.dispatch(
     //   addMessage({
     //     chatId: userId,
@@ -461,4 +444,29 @@ export const updateProfileInfo = createAsyncThunk(
       })
     );
   }
+);
+
+export const createNewDidAndNotify = createAsyncThunk(
+    CREATE_NEW_DID,
+    async (type: any, thunkAPI) => {
+        const {dispatch, getState} = thunkAPI;
+
+        let newId: Identifier = {value: "not set"};
+        rootsManager.createId(IdType.Fake, (id) => {
+            newId = id
+        })
+        console.log("wallet - createId produced", newId.value)
+        const currentUser = getCurrentUserContact(getState());
+        thunkAPI.dispatch(
+            addMessage({
+                chatId: currentUser._id,
+                message: sendMessage(
+                    currentUser,
+                    rootsHelperId,
+                    BOTS_MSGS[3] + "\n" + newId,
+                    MessageType.PROMPT_OWN_DID
+                ),
+            })
+        );
+    }
 );
