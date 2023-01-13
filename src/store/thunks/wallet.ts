@@ -23,7 +23,9 @@ import * as models from "../../models";
 import thunk from "redux-thunk";
 import {identifier} from "../../models";
 import uuid from "react-native-uuid";
-import { EventType, rootsEventBus } from '@rootsid/roots-manager';
+import { IdType, rootsManager } from 'roots-manager';
+import { Identifier } from 'roots-manager/src/types/id';
+import { CreateIdProtocol } from 'roots-manager/src/protocol/id';
 
 const { DIDFunctionalities, CalendarModuleFoo } = ReactNative.NativeModules;
 
@@ -226,12 +228,11 @@ export const initiateWalletCreation = createAsyncThunk(
       })
     );
 
-      let newId = "not set";
-      rootsEventBus.emit(EventType.CreateId,"fake",(id: string) => {
-          console.log("fired createId with callback - Callback called with id",id)
-          newId = id;
-      })
-      console.log("createId event produced newId",newId)
+      let newId: Identifier = {value: "not set"};
+      // let proto = new CreateIdProtocol((idType:IdType)=>{"did:"+fake})
+      // rootsManager.registerCreateIdProtocol(IdType.Fake,)
+      rootsManager.createId(IdType.Fake,(id)=>{newId=id})
+      console.log("wallet - createId produced",newId.value)
 
     thunkAPI.dispatch(
       addMessage({
