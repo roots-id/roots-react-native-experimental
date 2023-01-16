@@ -249,4 +249,21 @@ class DIDFunctionalities: NSObject {
        return messages
     }
 
+@objc public func sendMessage(
+  _ forward_did: NSString,
+  message: NSString,
+  resolve: @escaping RCTPromiseResolveBlock,
+  rejecter reject: @escaping RCTPromiseRejectBlock
+) -> Void {
+    Task {
+
+      let result = await sendMessage(forward_did,message)
+      resolve(result)
+    }
+  }
+
+  func sendMessage(forward_did: NSString, message : NSString) async -> String? {
+    let message = message as String
+    let res = await PrismAgent.sendMessage(message)
+  }
 }

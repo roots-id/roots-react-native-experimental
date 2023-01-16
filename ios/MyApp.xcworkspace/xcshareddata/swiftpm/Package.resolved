@@ -3,7 +3,7 @@
     {
       "identity" : "antlr4",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/antlr/antlr4",
+      "location" : "git@github.com:antlr/antlr4.git",
       "state" : {
         "branch" : "master",
         "revision" : "76fa05c21b12b96a6c12a0a82e611ed9d87d5af4"
@@ -33,7 +33,7 @@
       "location" : "https://github.com/input-output-hk/atala-prism-swift-sdk",
       "state" : {
         "branch" : "main",
-        "revision" : "2c1d43bfc93893322cdda82422791e960339aa92"
+        "revision" : "0f4147172408b5b326724b6f938af7fb24603482"
       }
     },
     {

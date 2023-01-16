@@ -49,4 +49,11 @@ RCT_EXTERN_METHOD(
   getMessages:(RCTPromiseResolveBlock)resolve
   rejecter:(RCTPromiseRejectBlock)reject
 )
+
+RCT_EXTERN_METHOD(
+  sendMessage:(NSString *)forward_did
+  message:(NSString *)message
+  resolve:(RCTPromiseResolveBlock)resolve
+  rejecter:(RCTPromiseRejectBlock)reject
+)
 @end

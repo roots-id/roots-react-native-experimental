@@ -25,6 +25,8 @@ import {identifier} from "../../models";
 import uuid from "react-native-uuid";
 import { LocalPlaintextStore } from '../../services';
 
+import { EventType,rootsEventBus } from 'roots-manager'
+
 const { DIDFunctionalities, CalendarModuleFoo } = ReactNative.NativeModules;
 
 const WALLET_NAME_STORAGE_KEY = 'primaryRootsWalletStorageNameKey';
@@ -177,17 +179,20 @@ export const parseOob = createAsyncThunk(
 //
 // // Wait for 1 minute (60,000 milliseconds)
 // await new Promise(resolve => setTimeout(resolve, 20000));
-//
+//      
+// // Call getMessages  
+        const msg = sendMessage(
+          prismDemoId,
+          rootsHelperId,
+          "You have new messages available",
+          MessageType.PROMPT_GET_MESSAGES,
+          false,
+      )
+      LocalPlaintextStore.storeMessage(msg)
         thunkAPI.dispatch(
             addMessage({
                 chatId: prismDemoId,
-                message: sendMessage(
-                    prismDemoId,
-                    rootsHelperId,
-                    "You have new messages available",
-                    MessageType.PROMPT_GET_MESSAGES,
-                    false,
-                ),
+                message: msg
             })
         )
     }
@@ -222,18 +227,22 @@ export const startPrismDemo = createAsyncThunk(
         // console.log("")
 
         const error = await DIDFunctionalities.StartPrismAgent('did:peer:2.Ez6LSms555YhFthn1WV8ciDBpZm86hK9tp83WojJUmxPGk1hZ.Vz6MkmdBjMyB4TS5UbbQw54szm8yvMMf1ftGV2sQVYAxaeWhE.SeyJpZCI6Im5ldy1pZCIsInQiOiJkbSIsInMiOiJodHRwczovL21lZGlhdG9yLnJvb3RzaWQuY2xvdWQiLCJhIjpbImRpZGNvbW0vdjIiXX0').catch(console.error)
+        
+        
         if(!error || error.length<=0) {
+          const msg = sendMessage(
+            prismDemoId,
+            rootsHelperId,
+            "Started Prism agent w/mediation",
+            MessageType.TEXT,
+            false,
+        )
+        LocalPlaintextStore.storeMessage(msg)
             console.log('wallet - prism agent started');
             thunkAPI.dispatch(
                 addMessage({
                     chatId: prismDemoId,
-                    message: sendMessage(
-                        prismDemoId,
-                        rootsHelperId,
-                        "Started Prism agent w/mediation",
-                        MessageType.TEXT,
-                        false,
-                    ),
+                    message: msg
                 })
             )
 
@@ -245,37 +254,42 @@ export const startPrismDemo = createAsyncThunk(
                 console.log("wallet - encoded oob",oob)
                 // const decodedOob = atob(oob)
                 // console.log("wallet - created oob",decodedOob);
+                const msg = sendMessage(
+                  prismDemoId,
+                  rootsHelperId,
+                  "Prism created your identifier and corresponding Out-of-Band (OOB) invitation",
+                  MessageType.PROMPT_DISPLAY_IDENTIFIER,
+                  false,
+                  {identifier:
+                          {
+                              identifier: mediatorPeerDid,
+                              oob: oob
+                          }
+                  }
+              )
+              LocalPlaintextStore.storeMessage(msg)
                 thunkAPI.dispatch(
                     addMessage({
                         chatId: prismDemoId,
-                        message: sendMessage(
-                            prismDemoId,
-                            rootsHelperId,
-                            "Prism created your identifier and corresponding Out-of-Band (OOB) invitation",
-                            MessageType.PROMPT_DISPLAY_IDENTIFIER,
-                            false,
-                            {identifier:
-                                    {
-                                        identifier: mediatorPeerDid,
-                                        oob: oob
-                                    }
-                            }
-                        ),
+                        message: msg
                     })
                 )
 
             } else {
                 console.error("Could not create Prism peer did",mediatorPeerDid)
+                const msg = sendMessage(
+                  prismDemoId,
+                  rootsHelperId,
+                  "Failed to generate your identifier",
+                  MessageType.TEXT,
+                  false,
+              )
+                LocalPlaintextStore.storeMessage(msg)
+
                 thunkAPI.dispatch(
                     addMessage({
                         chatId: prismDemoId,
-                        message: sendMessage(
-                            prismDemoId,
-                            rootsHelperId,
-                            "Failed to generate your identifier",
-                            MessageType.TEXT,
-                            false,
-                        ),
+                        message: msg
                     })
                 )
             }
@@ -317,6 +331,10 @@ export const startPrismDemo = createAsyncThunk(
 export const initiateWalletCreation = createAsyncThunk(
   INITIATE_ACCOUNT,
   async (wallet: CreateWalletDto, thunkAPI) => {
+
+    const res = rootsEventBus.emit(EventType.CreateId,"default",(id: string)=> {
+      console.log('wallet - created id',id)
+    })
 
     await thunkAPI.dispatch(createWallet(wallet));
 
@@ -362,12 +380,8 @@ export const initiateWalletCreation = createAsyncThunk(
 
 
       
-      const does_chat_exist_locally = await LocalPlaintextStore.fetch('chat'+userId);
-      console.log('does_chat_exist_locally', does_chat_exist_locally)
-      if (does_chat_exist_locally == null ) {
-        console.log('found chat for ', userId,' in local storage', does_chat_exist_locally)
-        await LocalPlaintextStore.persist('chat'+userId, JSON.stringify({ _id: userId, messages: [] }))
-        thunkAPI.dispatch(initiateChat({ chatId: userId }));
+    
+      thunkAPI.dispatch(initiateChat({ chatId: userId }));
 
       
       const msg_0 = sendMessage(
@@ -415,10 +429,10 @@ export const initiateWalletCreation = createAsyncThunk(
         message: msg_2
       })
     );
-    }
+    
     const today = new Date(Date.now());
     await setupDiscordDemo(thunkAPI,rootsHelperId,today)
-    // await thunkAPI.dispatch(startPrismDemo())
+    await thunkAPI.dispatch(startPrismDemo())
     return WALLET_CREATED_SUCCESS;
   }
 );

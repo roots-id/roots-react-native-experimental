@@ -34,7 +34,7 @@ export default function Routes() {
   );
 
   useEffect(() => {
-    // localStorageService.clear();
+    localStorageService.clear();
     const checkWalletCreation = async () => {
       const isFirstTime = await localStorageService.fetch('123isfirst');
       console.log( typeof (isFirstTime))
