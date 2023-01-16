@@ -26,6 +26,7 @@ import uuid from "react-native-uuid";
 import { IdType, rootsManager } from 'roots-manager';
 import { Identifier } from 'roots-manager/src/types/id';
 import { CreateIdProtocol } from 'roots-manager/src/protocol/id';
+import { registerPrism } from 'RootsRN/src/prism';
 
 const { DIDFunctionalities, CalendarModuleFoo } = ReactNative.NativeModules;
 
@@ -61,6 +62,7 @@ export const createWallet = createAsyncThunk(
   CREATE_WALLET,
   async (wallet: CreateWalletDto, thunkAPI) => {
     const createdWallet = { ...wallet, key: WALLET_NAME_STORAGE_KEY };
+    registerPrism()
     thunkAPI.dispatch(addWallet(createdWallet));
   }
 );
