@@ -41,7 +41,7 @@ export default function ShowQrCodeScreen({ route, navigation }: CompositeScreenP
   useEffect(() => {
     switch (viewSelection) {
       case qrView:
-        setViewOut(<QRCode value={jsonData} size={300} />);
+        setViewOut(<QRCode value={jsonData} size={300} backgroundColor='#FFFFFF' color='#000000' quietZone='5' />);
         setViewIcon('format-text');
         break;
       case textView:
