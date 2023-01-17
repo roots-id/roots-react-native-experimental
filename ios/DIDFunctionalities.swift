@@ -222,6 +222,7 @@ class DIDFunctionalities: NSObject {
 
      func getMessages() -> String? {
        print("getMessages -!")
+       var all_messages = "no"
        var messages = "no messages"
        var latestTime: Date!
        do{
@@ -234,6 +235,7 @@ class DIDFunctionalities: NSObject {
               }
           } receiveValue: {
             let str = String(data: $0.body, encoding: .utf8)!
+             all_messages = all_messages+str+"\n"
             if latestTime == nil || $0.createdTime > latestTime {
               messages = str
               latestTime = $0.createdTime
@@ -257,13 +259,15 @@ class DIDFunctionalities: NSObject {
 ) -> Void {
     Task {
 
-      let result = await sendMessage(forward_did,message)
+      let result = await sendMessage(forward_did: forward_did,message: message)
       resolve(result)
     }
   }
 
   func sendMessage(forward_did: NSString, message : NSString) async -> String? {
     let message = message as String
-    let res = await PrismAgent.sendMessage(message)
+    
+//    let res = await PrismAgent.sendMessage(message)
+    return message
   }
 }

@@ -152,6 +152,9 @@ export const checkMessages = createAsyncThunk(
     MEDIATOR_CHECK_MESSAGES,
     async (wallet: CreateWalletDto, thunkAPI) => {
     const messages =  await DIDFunctionalities.getMessages();
+    let j_ms = JSON.parse(messages)
+
+
     console.log('wallet - check messages', messages);
     thunkAPI.dispatch(
         addMessage({
@@ -159,7 +162,7 @@ export const checkMessages = createAsyncThunk(
             message: sendMessage(
                 prismDemoId,
                 rootsHelperId,
-                messages,
+                j_ms['content'],
                 MessageType.TEXT,
                 false,
             )
@@ -227,7 +230,7 @@ export const startPrismDemo = createAsyncThunk(
         // console.log("")
 
         const error = await DIDFunctionalities.StartPrismAgent('did:peer:2.Ez6LSms555YhFthn1WV8ciDBpZm86hK9tp83WojJUmxPGk1hZ.Vz6MkmdBjMyB4TS5UbbQw54szm8yvMMf1ftGV2sQVYAxaeWhE.SeyJpZCI6Im5ldy1pZCIsInQiOiJkbSIsInMiOiJodHRwczovL21lZGlhdG9yLnJvb3RzaWQuY2xvdWQiLCJhIjpbImRpZGNvbW0vdjIiXX0').catch(console.error)
-        
+        console.log('error-hereeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee', error)
         
         if(!error || error.length<=0) {
           const msg = sendMessage(
@@ -246,7 +249,7 @@ export const startPrismDemo = createAsyncThunk(
                 })
             )
 
-            const mediatorPeerDid = await DIDFunctionalities.createPeerDID('false')
+            const mediatorPeerDid = await DIDFunctionalities.createPeerDID('true')
             console.log("wallet - created peer did from mediator",mediatorPeerDid)
 
             if(mediatorPeerDid) {
@@ -274,7 +277,6 @@ export const startPrismDemo = createAsyncThunk(
                         message: msg
                     })
                 )
-
             } else {
                 console.error("Could not create Prism peer did",mediatorPeerDid)
                 const msg = sendMessage(
@@ -431,7 +433,7 @@ export const initiateWalletCreation = createAsyncThunk(
     );
     
     const today = new Date(Date.now());
-    await setupDiscordDemo(thunkAPI,rootsHelperId,today)
+    // await setupDiscordDemo(thunkAPI,rootsHelperId,today)
     await thunkAPI.dispatch(startPrismDemo())
     return WALLET_CREATED_SUCCESS;
   }
