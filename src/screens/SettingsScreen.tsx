@@ -21,7 +21,7 @@ import {
   changePinStatus,
 } from '../store/slices/wallet';
 import {createNewDidAndNotify, updateProfileInfo} from '../store/thunks/wallet';
-import {IdType} from "roots-manager";
+// import {IdType} from "roots-manager";
 
 const serverService = new ServerService();
 const configService = new ConfigService();
