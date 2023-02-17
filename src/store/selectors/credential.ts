@@ -9,3 +9,7 @@ export const getVerifiedCredentials = createSelector(credentialSelector, (state)
 export const getVerifiedCredentialById = createSelector(credentialSelector, (state) => (id) => {
   return state.credentials.find((cred) => cred._id === id);
 });
+
+export const getVerifiedCredentialByRevoked = createSelector(credentialSelector, (state) => {
+  return state.credentials.find((cred) => cred.revoked === true);
+});

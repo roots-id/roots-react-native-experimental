@@ -13,6 +13,7 @@ export const createContact = createAsyncThunk(
         _id: `${MOCK_CONTACT_PREFIX_ID}:${uuid.v4()}`,
         displayPictureUrl: contact.displayPictureUrl,
         displayName: contact.displayName,
+        connectiondId: contact.connectiondId,
         ...(contact.isCurrentUser ? { isCurrentUser: true} : {})
       }
     thunkAPI.dispatch(addContact(dummyContact));

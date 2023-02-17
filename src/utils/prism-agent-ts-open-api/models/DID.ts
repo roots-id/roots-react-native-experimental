@@ -25,9 +25,15 @@ import {
     VerificationMethodFromJSONTyped,
     VerificationMethodToJSON,
 } from './VerificationMethod';
+import type { VerificationMethodOrRef } from './VerificationMethodOrRef';
+import {
+    VerificationMethodOrRefFromJSON,
+    VerificationMethodOrRefFromJSONTyped,
+    VerificationMethodOrRefToJSON,
+} from './VerificationMethodOrRef';
 
 /**
- * 
+ * A core DID data model capable of being transformed into W3C compliant representation.
  * @export
  * @interface DID
  */
@@ -52,28 +58,34 @@ export interface DID {
     verificationMethod?: Array<VerificationMethod>;
     /**
      * 
-     * @type {Array<VerificationMethod>}
+     * @type {Array<VerificationMethodOrRef>}
      * @memberof DID
      */
-    authentication?: Array<VerificationMethod>;
+    authentication?: Array<VerificationMethodOrRef>;
     /**
      * 
-     * @type {Array<VerificationMethod>}
+     * @type {Array<VerificationMethodOrRef>}
      * @memberof DID
      */
-    assertionMethod?: Array<VerificationMethod>;
+    assertionMethod?: Array<VerificationMethodOrRef>;
     /**
      * 
-     * @type {Array<VerificationMethod>}
+     * @type {Array<VerificationMethodOrRef>}
      * @memberof DID
      */
-    keyAgreement?: Array<VerificationMethod>;
+    keyAgreement?: Array<VerificationMethodOrRef>;
     /**
      * 
-     * @type {Array<VerificationMethod>}
+     * @type {Array<VerificationMethodOrRef>}
      * @memberof DID
      */
-    capabilityInvocation?: Array<VerificationMethod>;
+    capabilityInvocation?: Array<VerificationMethodOrRef>;
+    /**
+     * 
+     * @type {Array<VerificationMethodOrRef>}
+     * @memberof DID
+     */
+    capabilityDelegation?: Array<VerificationMethodOrRef>;
     /**
      * 
      * @type {Array<Service>}
@@ -105,10 +117,11 @@ export function DIDFromJSONTyped(json: any, ignoreDiscriminator: boolean): DID {
         'id': json['id'],
         'controller': !exists(json, 'controller') ? undefined : json['controller'],
         'verificationMethod': !exists(json, 'verificationMethod') ? undefined : ((json['verificationMethod'] as Array<any>).map(VerificationMethodFromJSON)),
-        'authentication': !exists(json, 'authentication') ? undefined : ((json['authentication'] as Array<any>).map(VerificationMethodFromJSON)),
-        'assertionMethod': !exists(json, 'assertionMethod') ? undefined : ((json['assertionMethod'] as Array<any>).map(VerificationMethodFromJSON)),
-        'keyAgreement': !exists(json, 'keyAgreement') ? undefined : ((json['keyAgreement'] as Array<any>).map(VerificationMethodFromJSON)),
-        'capabilityInvocation': !exists(json, 'capabilityInvocation') ? undefined : ((json['capabilityInvocation'] as Array<any>).map(VerificationMethodFromJSON)),
+        'authentication': !exists(json, 'authentication') ? undefined : ((json['authentication'] as Array<any>).map(VerificationMethodOrRefFromJSON)),
+        'assertionMethod': !exists(json, 'assertionMethod') ? undefined : ((json['assertionMethod'] as Array<any>).map(VerificationMethodOrRefFromJSON)),
+        'keyAgreement': !exists(json, 'keyAgreement') ? undefined : ((json['keyAgreement'] as Array<any>).map(VerificationMethodOrRefFromJSON)),
+        'capabilityInvocation': !exists(json, 'capabilityInvocation') ? undefined : ((json['capabilityInvocation'] as Array<any>).map(VerificationMethodOrRefFromJSON)),
+        'capabilityDelegation': !exists(json, 'capabilityDelegation') ? undefined : ((json['capabilityDelegation'] as Array<any>).map(VerificationMethodOrRefFromJSON)),
         'service': !exists(json, 'service') ? undefined : ((json['service'] as Array<any>).map(ServiceFromJSON)),
     };
 }
@@ -125,10 +138,11 @@ export function DIDToJSON(value?: DID | null): any {
         'id': value.id,
         'controller': value.controller,
         'verificationMethod': value.verificationMethod === undefined ? undefined : ((value.verificationMethod as Array<any>).map(VerificationMethodToJSON)),
-        'authentication': value.authentication === undefined ? undefined : ((value.authentication as Array<any>).map(VerificationMethodToJSON)),
-        'assertionMethod': value.assertionMethod === undefined ? undefined : ((value.assertionMethod as Array<any>).map(VerificationMethodToJSON)),
-        'keyAgreement': value.keyAgreement === undefined ? undefined : ((value.keyAgreement as Array<any>).map(VerificationMethodToJSON)),
-        'capabilityInvocation': value.capabilityInvocation === undefined ? undefined : ((value.capabilityInvocation as Array<any>).map(VerificationMethodToJSON)),
+        'authentication': value.authentication === undefined ? undefined : ((value.authentication as Array<any>).map(VerificationMethodOrRefToJSON)),
+        'assertionMethod': value.assertionMethod === undefined ? undefined : ((value.assertionMethod as Array<any>).map(VerificationMethodOrRefToJSON)),
+        'keyAgreement': value.keyAgreement === undefined ? undefined : ((value.keyAgreement as Array<any>).map(VerificationMethodOrRefToJSON)),
+        'capabilityInvocation': value.capabilityInvocation === undefined ? undefined : ((value.capabilityInvocation as Array<any>).map(VerificationMethodOrRefToJSON)),
+        'capabilityDelegation': value.capabilityDelegation === undefined ? undefined : ((value.capabilityDelegation as Array<any>).map(VerificationMethodOrRefToJSON)),
         'service': value.service === undefined ? undefined : ((value.service as Array<any>).map(ServiceToJSON)),
     };
 }

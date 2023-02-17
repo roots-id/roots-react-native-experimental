@@ -23,8 +23,10 @@ import { decodeCredential } from "../models/samples/credentials";
 import { goToShowQrCode } from "../navigation/helper/navigate-to";
 import { useDispatch } from "react-redux";
 import { updateCredentialValidation } from "../store/thunks/credential";
-const credLogo = require("../assets/vc.png");
+const credLogo = require("../assets/discord-offer.png");
 const discordLogo = require("../assets/discord.png");
+
+
 
 export default function CredentialDetailScreen({
   route,
@@ -66,30 +68,24 @@ export default function CredentialDetailScreen({
           <IconButton
             icon="keyboard-backspace"
             size={28}
-            color="#C5C8D1"
+            color="white"
             onPress={() => navigation.goBack()}
             style={{ borderWidth: 1, borderColor: "#FFA149", borderRadius: 10 }}
           />
           <IconButton
             icon={verified}
             size={28}
-            color="#C5C8D1"
+            color="#white"
             onPress={updateVerification}
             style={{ borderWidth: 1, borderColor: "#FFA149", borderRadius: 10 }}
           />
           <IconButton
             icon="qrcode"
             size={28}
-            color="#C5C8D1"
+            color="#white"
             style={{ borderWidth: 1, borderColor: "#FFA149", borderRadius: 10 }}
             onPress={() =>
-              goToShowQrCode(navigation, {
-                encodedSignedCredential: "dummy_vcEncodedSignedCredential",
-                proof: {
-                  hash: "dummy_proofHash",
-                  index: 0,
-                },
-              })
+              goToShowQrCode(navigation, JSON.stringify(route.params?.cred))
             }
           />
         </View>

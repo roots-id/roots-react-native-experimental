@@ -153,10 +153,6 @@ export type message = {
     system: boolean,
 }
 
-export type proof = {
-    hash: string,
-    index: number,
-}
 
 export type publicKey = {
     id: string,
@@ -198,8 +194,7 @@ export type contactShareable = {
 }
 
 export type vc = {
-    encodedSignedCredential: string,
-    proof: proof,
+    encodedSignedCredential: string
 }
 
 

@@ -20,6 +20,7 @@ import type {
   DIDOperationResponse,
   ErrorResponse,
   ListManagedDIDResponseInner,
+  UpdateManagedDIDRequest,
 } from '../models';
 import {
     CreateManagedDIDResponseFromJSON,
@@ -32,14 +33,25 @@ import {
     ErrorResponseToJSON,
     ListManagedDIDResponseInnerFromJSON,
     ListManagedDIDResponseInnerToJSON,
+    UpdateManagedDIDRequestFromJSON,
+    UpdateManagedDIDRequestToJSON,
 } from '../models';
 
 export interface CreateManagedDidOperationRequest {
     createManagedDidRequest: CreateManagedDidRequest;
 }
 
+export interface DeactivateManagedDidRequest {
+    didRef: string;
+}
+
 export interface PublishManagedDidRequest {
     didRef: string;
+}
+
+export interface UpdateManagedDidRequest {
+    didRef: string;
+    updateManagedDIDRequest: UpdateManagedDIDRequest;
 }
 
 /**
@@ -83,6 +95,42 @@ export class DIDRegistrarApi extends runtime.BaseAPI {
      */
     async createManagedDid(requestParameters: CreateManagedDidOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<CreateManagedDIDResponse> {
         const response = await this.createManagedDidRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Deactivate DID in PrismAgent\'s wallet and post deactivate operation to blockchain. 
+     * Deactivate DID in PrismAgent\'s wallet and post deactivate operation to blockchain
+     */
+    async deactivateManagedDidRaw(requestParameters: DeactivateManagedDidRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<DIDOperationResponse>> {
+        if (requestParameters.didRef === null || requestParameters.didRef === undefined) {
+            throw new runtime.RequiredError('didRef','Required parameter requestParameters.didRef was null or undefined when calling deactivateManagedDid.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.apiKey) {
+            headerParameters["apikey"] = this.configuration.apiKey("apikey"); // ApiKeyAuth authentication
+        }
+
+        const response = await this.request({
+            path: `/did-registrar/dids/{didRef}/deactivations`.replace(`{${"didRef"}}`, encodeURIComponent(String(requestParameters.didRef))),
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => DIDOperationResponseFromJSON(jsonValue));
+    }
+
+    /**
+     * Deactivate DID in PrismAgent\'s wallet and post deactivate operation to blockchain. 
+     * Deactivate DID in PrismAgent\'s wallet and post deactivate operation to blockchain
+     */
+    async deactivateManagedDid(requestParameters: DeactivateManagedDidRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<DIDOperationResponse> {
+        const response = await this.deactivateManagedDidRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
@@ -151,6 +199,49 @@ export class DIDRegistrarApi extends runtime.BaseAPI {
      */
     async publishManagedDid(requestParameters: PublishManagedDidRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<DIDOperationResponse> {
         const response = await this.publishManagedDidRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Update DID in PrismAgent\'s wallet and post update operation to blockchain. This endpoint updates the DID document from last confirmed operation. Submitting multiple update operations without waiting for confirmation will result in some operation being rejected as only one operation can be appended from last confirmed operation. 
+     * Update DID in PrismAgent\'s wallet and post update operation to blockchain
+     */
+    async updateManagedDidRaw(requestParameters: UpdateManagedDidRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<DIDOperationResponse>> {
+        if (requestParameters.didRef === null || requestParameters.didRef === undefined) {
+            throw new runtime.RequiredError('didRef','Required parameter requestParameters.didRef was null or undefined when calling updateManagedDid.');
+        }
+
+        if (requestParameters.updateManagedDIDRequest === null || requestParameters.updateManagedDIDRequest === undefined) {
+            throw new runtime.RequiredError('updateManagedDIDRequest','Required parameter requestParameters.updateManagedDIDRequest was null or undefined when calling updateManagedDid.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        if (this.configuration && this.configuration.apiKey) {
+            headerParameters["apikey"] = this.configuration.apiKey("apikey"); // ApiKeyAuth authentication
+        }
+
+        const response = await this.request({
+            path: `/did-registrar/dids/{didRef}/updates`.replace(`{${"didRef"}}`, encodeURIComponent(String(requestParameters.didRef))),
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: UpdateManagedDIDRequestToJSON(requestParameters.updateManagedDIDRequest),
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => DIDOperationResponseFromJSON(jsonValue));
+    }
+
+    /**
+     * Update DID in PrismAgent\'s wallet and post update operation to blockchain. This endpoint updates the DID document from last confirmed operation. Submitting multiple update operations without waiting for confirmation will result in some operation being rejected as only one operation can be appended from last confirmed operation. 
+     * Update DID in PrismAgent\'s wallet and post update operation to blockchain
+     */
+    async updateManagedDid(requestParameters: UpdateManagedDidRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<DIDOperationResponse> {
+        const response = await this.updateManagedDidRaw(requestParameters, initOverrides);
         return await response.value();
     }
 

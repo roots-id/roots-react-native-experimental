@@ -42,10 +42,6 @@ export interface CreateConnectionOperationRequest {
     createConnectionRequest: CreateConnectionRequest;
 }
 
-export interface DeleteConnectionRequest {
-    connectionId: string;
-}
-
 export interface GetConnectionRequest {
     connectionId: string;
 }
@@ -131,41 +127,6 @@ export class ConnectionsManagementApi extends runtime.BaseAPI {
     async createConnection(requestParameters: CreateConnectionOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Connection> {
         const response = await this.createConnectionRaw(requestParameters, initOverrides);
         return await response.value();
-    }
-
-    /**
-     * Just deletes connection state in the Agent, it does not include notifing other party that connection is deleted. We should consider this feature for the future. If additional action is attempted over deleted connection, it should thow error (no matter which side deleted connection).
-     * Deletes existing connection record.
-     */
-    async deleteConnectionRaw(requestParameters: DeleteConnectionRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
-        if (requestParameters.connectionId === null || requestParameters.connectionId === undefined) {
-            throw new runtime.RequiredError('connectionId','Required parameter requestParameters.connectionId was null or undefined when calling deleteConnection.');
-        }
-
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        if (this.configuration && this.configuration.apiKey) {
-            headerParameters["apikey"] = this.configuration.apiKey("apikey"); // ApiKeyAuth authentication
-        }
-
-        const response = await this.request({
-            path: `/connections/{connectionId}`.replace(`{${"connectionId"}}`, encodeURIComponent(String(requestParameters.connectionId))),
-            method: 'DELETE',
-            headers: headerParameters,
-            query: queryParameters,
-        }, initOverrides);
-
-        return new runtime.VoidApiResponse(response);
-    }
-
-    /**
-     * Just deletes connection state in the Agent, it does not include notifing other party that connection is deleted. We should consider this feature for the future. If additional action is attempted over deleted connection, it should thow error (no matter which side deleted connection).
-     * Deletes existing connection record.
-     */
-    async deleteConnection(requestParameters: DeleteConnectionRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
-        await this.deleteConnectionRaw(requestParameters, initOverrides);
     }
 
     /**

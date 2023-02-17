@@ -20,6 +20,7 @@ import { ROUTE_NAMES } from "./constants";
 import ScanQrCode from "../screens/ScanQrCodeScreen";
 import ShowQrCodeScreen from "../screens/ShowQrCodeScreen";
 import IdentifierDetailScreen from "../screens/IdentifierDetailScreen";
+import LoginScreen from '../screens/LoginScreen';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -173,6 +174,7 @@ export default function MainStack() {
                 headerShown: false,
             }}
         >
+            {/* <Stack.Screen name={ROUTE_NAMES.LOGIN} component={LoginScreen} /> */}
             <Stack.Group>
                 <Stack.Screen name={ROUTE_NAMES.MAIN_TABS} component={Main} />
             </Stack.Group>

@@ -110,13 +110,66 @@ function addQuickReply(msg: message) {
           messageId: msg._id,
         },
         {
-          title: 'Revoke',
+          title: 'Accept',
           value: MessageType.PROMPT_ISSUED_CREDENTIAL + 'CRED_REVOKE',
           messageId: msg._id,
         },
       ],
     };
   }
+  if (msg.type === MessageType.PRISM_DID) {
+    msg.quickReplies = {
+      type: 'radio',
+      keepIt: true,
+      values: [
+        {
+          title: 'fetch',
+          value: MessageType.FETCH_PRISM_DID,
+          messageId: msg._id,
+        },
+        {
+          title: 'show endpoints',
+          value: MessageType.SHOW_KEYS_PRISM_DID,
+          messageId: msg._id,
+        },
+      ],
+    };
+  }
+  if (msg.type === MessageType.LONG_PRISM_DID) {
+    msg.quickReplies = {
+      type: 'radio',
+      keepIt: true,
+      values: [
+        {
+          title: 'publish',
+          value: MessageType.LONG_PRISM_DID_PUBLISH,
+          messageId: msg._id,
+        },
+      ],
+    };
+  }
+
+  if (msg.type === MessageType.LONG_PRISM_DIDDOC) {
+    msg.data.didDoc 
+    msg.quickReplies = {
+      type: 'radio',
+      keepIt: true,
+      values: [
+        {
+          title: 'add endpoint',
+          value: MessageType.LONG_PRISM_UPDATE,
+          messageId: msg._id,
+          data: msg.data.didDoc
+        },
+        {
+          title: 'show endpoints',
+          value: MessageType.SHOW_KEYS_PRISM_DID,
+          messageId: msg._id,
+        },
+      ],
+    };
+  }
+
   if (msg.type === MessageType.PROMPT_OWN_CREDENTIAL) {
     msg.quickReplies = {
       type: 'radio',

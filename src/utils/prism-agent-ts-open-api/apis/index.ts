@@ -2,7 +2,6 @@
 /* eslint-disable */
 export * from './ConnectionsManagementApi';
 export * from './DIDApi';
-export * from './DIDAuthenticationApi';
 export * from './DIDRegistrarApi';
 export * from './IssueCredentialsProtocolApi';
 export * from './PresentProofApi';

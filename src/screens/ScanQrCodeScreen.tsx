@@ -9,7 +9,6 @@ import ReactNative, {
   Platform, TouchableOpacity, Linking,
 } from 'react-native';
 import { IconButton } from 'react-native-paper';
-const { DIDFunctionalities } = ReactNative.NativeModules;
 
 import { faker } from '@faker-js/faker';
 import React from 'react';
@@ -18,7 +17,7 @@ import { styles } from '../styles/styles';
 import { ConfigService } from '../services';
 import { useDispatch, useSelector } from 'react-redux';
 import { getCurrentUserContact, getRootsHelperContact } from '../store/selectors/contact';
-import {createNewCredential, initiateNewContact, startPrismDemo} from '../store/thunks/wallet';
+import {createNewCredential, initiateNewContact, initiatDiscordDemo} from '../store/thunks/wallet';
 import {
   Camera,
   CameraDevice,
@@ -76,7 +75,7 @@ export default function ScanQrCodeScreen({
 
   const handleDemo = async () => {
       console.log('Scan QR - pretending to scan with demo data');
-      alert('Adding demo data.');
+      // alert('Adding demo data.');
 
       if (modelType === 'contact') {
         console.log('Scan QR - getting contact demo data');
@@ -126,7 +125,7 @@ export default function ScanQrCodeScreen({
         setError(error+"\nNo access to mic:\n"+microphonePermission)
       }
           // if (await configService.getDemo()) {
-      //   setTimeOutId(setTimeout(handleDemo, 10000));
+        setTimeOutId(setTimeout(handleDemo, 1000));
       // }
       const devices = await Camera.getAvailableCameraDevices()
       console.log("available devices",devices)
@@ -153,8 +152,7 @@ export default function ScanQrCodeScreen({
 
   async function parseOob(oobUrl: string) {
     console.log("Parsing OOB",oobUrl)
-    const result = DIDFunctionalities.parseOOBMessage(oobUrl)
-    console.log("Parsed OOB",result)
+    initiatDiscordDemo(oobUrl)
   }
 
   useEffect(() => {

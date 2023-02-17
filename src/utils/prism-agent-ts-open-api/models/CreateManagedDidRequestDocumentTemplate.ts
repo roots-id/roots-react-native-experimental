@@ -13,12 +13,12 @@
  */
 
 import { exists, mapValues } from '../runtime';
-import type { CreateManagedDidRequestDocumentTemplatePublicKeysInner } from './CreateManagedDidRequestDocumentTemplatePublicKeysInner';
+import type { ManagedDIDKeyTemplate } from './ManagedDIDKeyTemplate';
 import {
-    CreateManagedDidRequestDocumentTemplatePublicKeysInnerFromJSON,
-    CreateManagedDidRequestDocumentTemplatePublicKeysInnerFromJSONTyped,
-    CreateManagedDidRequestDocumentTemplatePublicKeysInnerToJSON,
-} from './CreateManagedDidRequestDocumentTemplatePublicKeysInner';
+    ManagedDIDKeyTemplateFromJSON,
+    ManagedDIDKeyTemplateFromJSONTyped,
+    ManagedDIDKeyTemplateToJSON,
+} from './ManagedDIDKeyTemplate';
 import type { Service } from './Service';
 import {
     ServiceFromJSON,
@@ -34,10 +34,10 @@ import {
 export interface CreateManagedDidRequestDocumentTemplate {
     /**
      * 
-     * @type {Array<CreateManagedDidRequestDocumentTemplatePublicKeysInner>}
+     * @type {Array<ManagedDIDKeyTemplate>}
      * @memberof CreateManagedDidRequestDocumentTemplate
      */
-    publicKeys: Array<CreateManagedDidRequestDocumentTemplatePublicKeysInner>;
+    publicKeys: Array<ManagedDIDKeyTemplate>;
     /**
      * 
      * @type {Array<Service>}
@@ -67,7 +67,7 @@ export function CreateManagedDidRequestDocumentTemplateFromJSONTyped(json: any, 
     }
     return {
         
-        'publicKeys': ((json['publicKeys'] as Array<any>).map(CreateManagedDidRequestDocumentTemplatePublicKeysInnerFromJSON)),
+        'publicKeys': ((json['publicKeys'] as Array<any>).map(ManagedDIDKeyTemplateFromJSON)),
         'services': ((json['services'] as Array<any>).map(ServiceFromJSON)),
     };
 }
@@ -81,7 +81,7 @@ export function CreateManagedDidRequestDocumentTemplateToJSON(value?: CreateMana
     }
     return {
         
-        'publicKeys': ((value.publicKeys as Array<any>).map(CreateManagedDidRequestDocumentTemplatePublicKeysInnerToJSON)),
+        'publicKeys': ((value.publicKeys as Array<any>).map(ManagedDIDKeyTemplateToJSON)),
         'services': ((value.services as Array<any>).map(ServiceToJSON)),
     };
 }

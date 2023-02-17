@@ -28,9 +28,10 @@ export const getRootsHelperContact = createSelector(
 export const getPrismBotContact = createSelector(
   contactSelector,
   (state) => {
-    return state.contacts.find((contact) => contact.displayName === BOTS_NAMES.PRISM_BOT );
+    return state.contacts.find((contact) => contact.displayName === 'prism' );
   }
 );
+
 
 export const getContactById = createSelector(contactSelector, (state) => (id) => {
     return state.contacts.find((contact) => contact._id === id);

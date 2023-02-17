@@ -44,7 +44,7 @@ export interface Service {
  * @export
  */
 export const ServiceTypeEnum = {
-    MediatorService: 'MediatorService'
+    LinkedDomains: 'LinkedDomains'
 } as const;
 export type ServiceTypeEnum = typeof ServiceTypeEnum[keyof typeof ServiceTypeEnum];
 

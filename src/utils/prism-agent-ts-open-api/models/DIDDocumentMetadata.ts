@@ -25,6 +25,12 @@ export interface DIDDocumentMetadata {
      * @memberof DIDDocumentMetadata
      */
     deactivated: boolean;
+    /**
+     * A DID in canonical form
+     * @type {string}
+     * @memberof DIDDocumentMetadata
+     */
+    canonicalId?: string;
 }
 
 /**
@@ -48,6 +54,7 @@ export function DIDDocumentMetadataFromJSONTyped(json: any, ignoreDiscriminator:
     return {
         
         'deactivated': json['deactivated'],
+        'canonicalId': !exists(json, 'canonicalId') ? undefined : json['canonicalId'],
     };
 }
 
@@ -61,6 +68,7 @@ export function DIDDocumentMetadataToJSON(value?: DIDDocumentMetadata | null): a
     return {
         
         'deactivated': value.deactivated,
+        'canonicalId': value.canonicalId,
     };
 }
 
