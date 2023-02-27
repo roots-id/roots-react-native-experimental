@@ -9,6 +9,8 @@ export const getAllChats = createSelector(chatSelector, (state) => {
 });
 
 export const getChatById = createSelector(chatSelector, (_, chatId) => chatId, (state) => getContactById(state), (state, chatId, fetchContact) => {
+    console.log('selectors/chat - chatId:',state.chats)
+    
     const chatById = state.chats[chatId];
     if(!chatById) {
         console.error("selectors/chat chatById not found:",chatById)

@@ -38,8 +38,20 @@ const chatSlice = createSlice({
       }
     }
     },
+
+    updateMessage(state, action: PayloadAction<any>) {
+      const {chatId, messageId, message} = action.payload;
+      if (state.chats[chatId]) {
+        const messageIndex = state.chats[chatId].messages?.findIndex(
+            (msg) => msg._id === messageId
+        );
+        if (messageIndex >= 0) {
+          state.chats[chatId].messages[messageIndex] = message;
+        }
+      }
+    }
   },
 });
 
-export const { initiateChat, addMessage, updateMessageQuickReplyStatus } = chatSlice.actions;
+export const { initiateChat, addMessage, updateMessageQuickReplyStatus, updateMessage } = chatSlice.actions;
 export const chatReducer = chatSlice.reducer;

@@ -17,8 +17,7 @@ import { CompositeScreenProps } from '@react-navigation/core/src/types';
 import { styles } from '../styles/styles';
 import { ConfigService } from '../services';
 import { useDispatch, useSelector } from 'react-redux';
-import { getCurrentUserContact, getRootsHelperContact } from '../store/selectors/contact';
-import {createNewCredential, initiateNewContact, startPrismDemo} from '../store/thunks/wallet';
+import { getCurrentUserContact } from '../store/selectors/contact';
 import {
   Camera,
   CameraDevice,
@@ -29,6 +28,7 @@ import {
 import 'react-native-reanimated';
 import {runOnJS} from "react-native-reanimated";
 import {useScanBarcodes, BarcodeFormat, Barcode} from 'vision-camera-code-scanner';
+import { addContact } from '../store/slices/contact';
 
 const configService = new ConfigService();
 
@@ -51,7 +51,6 @@ export default function ScanQrCodeScreen({
   const [devices,setDevices] = useState<CameraDevice[]>();
   const [prefDevice,setPrefDevice] = useState<CameraDevice>();
   const [error,setError] = useState<string>("");
-  const rootsHelper = useSelector(getRootsHelperContact);
   const currentUser = useSelector(getCurrentUserContact);
   const dispatch = useDispatch();
   const modelType = route.params.type;
@@ -59,13 +58,7 @@ export default function ScanQrCodeScreen({
   //   checkInverted: true,
   // });
 
-  const addDummyCredential = async () => {
-    dispatch(createNewCredential());
-  };
 
-  const addDummyContact = async () => {
-    dispatch(initiateNewContact());
-  };
 
   const onSuccess = e => {
     console.log('Scan QR - onSuccess');
@@ -77,21 +70,8 @@ export default function ScanQrCodeScreen({
   const handleDemo = async () => {
       console.log('Scan QR - pretending to scan with demo data');
       alert('Adding demo data.');
-
-      if (modelType === 'contact') {
-        console.log('Scan QR - getting contact demo data');
-        // const demoData = getDemoRel();
-        // await importContact(demoData);
-        addDummyContact().then(clearAndGoBack).catch(console.error);
-      } else {
-        console.log('Scan QR - getting credential demo data');
-        // const did = getDid(getUserId());
-        // if (did) {
-        //   const demoData = getDemoCred(did).verifiedCredential;
-        //   await importVerifiedCredential(demoData);
-        // }
-        addDummyCredential().then(clearAndGoBack).catch(console.error);
-      }
+      
+      dispatch(addContact({}))
   };
 
   useEffect(() => {
@@ -151,14 +131,8 @@ export default function ScanQrCodeScreen({
     return""
   }
 
-  async function parseOob(oobUrl: string) {
-    console.log("Parsing OOB",oobUrl)
-    const result = DIDFunctionalities.parseOOBMessage(oobUrl)
-    console.log("Parsed OOB",result)
-  }
 
   useEffect(() => {
-
       if (!scanned && qr) {
         setScanned(true);
         console.log(
@@ -166,24 +140,10 @@ export default function ScanQrCodeScreen({
             modelType,
             qr
         );
-        // alert("You scanned "+qr)
-        if(qr.match("_oob")) {
-          parseOob(qr).then(clearAndGoBack).catch(console.error)
-        } else {
-          console.log("Scan QR - Unknown QR scanned, running demo")
-          handleDemo().catch(console.error)
-        }
-        // const jsonData = JSON.parse(data);
-        //if (modelType == 'credential') {
-        //   console.log('Scan QR - Importing dummy vc', qr);
-        //   addDummyCredenial().catch(console.error);
-        //   // await importVerifiedCredential(jsonData);
-        // } else if (modelType == 'contact') {
-        //   console.log('Scan QR - Importing dummy contact', qr);
-        //   addDummyContact().catch(console.error);
-        //   // await importContact(jsonData);
-        // }
+        alert("You scanned "+qr)
+        //this qr will be a string that is encoded in the QR code
       } else {
+        handleDemo().catch(console.error)
         console.log('Scan QR - Scan already completed, skipping processing')
       }
     }, [qr]);
@@ -198,17 +158,8 @@ export default function ScanQrCodeScreen({
     }
   };
 
-  // const takePicture = async () => {
-  //   if (camera) {
-  //     const options = { quality: 0.5, base64: true };
-  //     const data = await camera.takePictureAsync(options);
-  //     console.log(data.uri);
-  //   }
-  // };
+
   function getDevice(): CameraDevice {
-    // if(!devices) {
-    //   setDevices(useCameraDevices())
-    // }
     if (!prefDevice) {
       devices?.every(d => {
             console.log("device: ", d)
@@ -223,19 +174,10 @@ export default function ScanQrCodeScreen({
     return prefDevice as CameraDevice
   }
 
-  // const onQRCodeDetected = useCallback((qrCode: string) => {
-  //   navigation.push("ProductPage", { productId: qrCode })
-  // }, [])
+
   const [frameProcessor, barcodes] = useScanBarcodes([BarcodeFormat.QR_CODE], {
     checkInverted: true,
   });
-  // const frameProcessor = useFrameProcessor((frame) => {
-  //   'worklet'
-  //   const qrCodes = scanQRCodes(frame)
-  //   if (qrCodes.length > 0) {
-  //     runOnJS(onQRCodeDetected)(qrCodes[0])
-  //   }
-  // }, [onQRCodeDetected])
 
     return (
         <View
