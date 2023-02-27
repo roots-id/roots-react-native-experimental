@@ -36,7 +36,7 @@ const CredentialsScreen = ({
         <FlatList
           data={creds}
           extraData={refresh}
-          keyExtractor={(item) => item.verifiedCredential.proof.hash}
+          keyExtractor={(item) => item.verifiedCredential.encodedSignedCredential}
           ItemSeparatorComponent={() => <Divider />}
           renderItem={({ item }) => (
             <React.Fragment>

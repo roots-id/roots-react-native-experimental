@@ -1,11 +1,12 @@
 import RelRow from "../components/RelRow";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { FlatList, SafeAreaView, View } from "react-native";
 import { Divider } from "react-native-paper";
 import { getContacts } from "../store/selectors/contact";
 import { styles } from "../styles/styles";
-
+import { agent } from "../services/agent";
+let agentPrism = new agent();
 const RelationshipsScreen = ({ route, navigation }) => {
     console.log("rel screen - params", route.params);
     const [refresh, setRefresh] = useState(true);

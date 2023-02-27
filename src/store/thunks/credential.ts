@@ -18,18 +18,21 @@ export const createCredential = createAsyncThunk(
       keyId: 'issuing0',
       credentialSubject: credential.credSub,
     };
-    const proof = {
-      hash: today.getMilliseconds().toString(),
-      index: 1,
-    };
-    const encoded = encodeCredential(decodedSignedCred);
+
+    //check if credential has jwtCredential property then encoded is that value else encodeCredential  decodedSignedCred
+    console.log('credential.jwtCred', credential.jwtCred)
+    const encoded = credential.jwtCredential
+      ? credential.jwtCredential
+      : encodeCredential(decodedSignedCred);
+    
+
+    // const encoded = encodeCredential(decodedSignedCred);
 
     const newCredential = {
       _id: `${credential.issuerId}:cred_${Date.now()}`,
       alias: credential.alias,
       verifiedCredential: {
         encodedSignedCredential: encoded,
-        proof,
       },
       issuerId: credential.issuerId,
       revoked: credential.revoked,

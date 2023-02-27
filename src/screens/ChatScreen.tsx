@@ -25,8 +25,8 @@ import { ROUTE_NAMES } from '../navigation';
 import { useDispatch, useSelector } from 'react-redux';
 import { getChatById } from '../store/selectors/chat';
 import {
-  addCredentialAndNotify, checkMessages,
-  denyCredentialAndNotify, parseOob,
+  addCredentialAndNotify, publishDid, updateDid,
+  denyCredentialAndNotify, resolveFetchDid, resolveDidAndShowKeys, acceptPrismCredential
 } from '../store/thunks/wallet';
 import {
   getContactById,
@@ -34,7 +34,8 @@ import {
 } from '../store/selectors/contact';
 import { sendMessageToChat } from '../store/thunks/chat';
 import { updateMessageQuickReplyStatus } from "../store/slices/chat";
-
+import { agent } from '../services/agent';
+let agentImpl = new agent();
 export default function ChatScreen({
   route,
   navigation,
@@ -123,10 +124,22 @@ export default function ChatScreen({
             console.log(
               'ChatScreen - process quick reply for revoking credential'
             );
+            const msgCurrentChat = currentChat?.messages.find(
+
+              (message) => message._id === reply.messageId
+            );
+            let chatid: string = currentChat?._id
+            let recordid: string = msgCurrentChat?.data?.recordId
+            //entrypoint fro prism acceptance
+            dispatch(acceptPrismCredential(
+              {chatId: chatid,
+              recordId: recordid})
+              )
             console.log('ChatScreen - credential revoked?');
           } else if (reply.value.endsWith(MessageType.CRED_VIEW)) {
             console.log('ChatScreen - quick reply view issued credential');
             const msgCurrentChat = currentChat?.messages.find(
+
               (message) => message._id === reply.messageId
             );
             navigation.navigate(ROUTE_NAMES.CREDENTIAL_DETAILS, {
@@ -197,7 +210,7 @@ export default function ChatScreen({
           });
         } else if (reply.value.startsWith(MessageType.PROMPT_DISPLAY_OOB)) {
           console.log('ChatScreen - quick reply display oob');
-          dispatch(parseOob())
+          // dispatch(parseOob())
           const msg = currentChat?.messages.find(
               (message) => message._id === reply.messageId)
           console.log('ChatScreen - reply msg data is',msg?.data);
@@ -212,8 +225,61 @@ export default function ChatScreen({
             dispatch(msgCurrentChat?.data?.callback())
           } else if (reply.value.startsWith(MessageType.PROMPT_GET_MESSAGES)) {
               console.log('ChatScreen - process quick reply for check messages');
-              dispatch(checkMessages())
+              // dispatch(checkMessages())
+          } else if (reply.value.startsWith(MessageType.FETCH_PRISM_DID)) {
+              console.log('fetching prism did ')
+              const msg = currentChat?.messages.find(
+                (message) => message._id === reply.messageId)
+                
+
+              let short_did = msg.text.split(": ")[1].replace(" ","")
+              console.log('ChatScreen - prism did is',msg);
+              dispatch(resolveFetchDid(short_did))
+
+            
+          } else if (reply.value.startsWith(MessageType.LONG_PRISM_DID_PUBLISH)) {
+            console.log('fetching prism did ')
+            const msg = currentChat?.messages.find(
+              (message) => message._id === reply.messageId)
+              
+
+            let short_did = msg.data.did
+            console.log('ChatScreen - prism did is',msg);
+            dispatch(publishDid(short_did))
+
+          
+        }else if (reply.value.startsWith(MessageType.SHOW_KEYS_PRISM_DID)) {
+          console.log('fetching prism did ')
+          const msg = currentChat?.messages.find(
+            (message) => message._id === reply.messageId)
+            
+            //try this
+          let short_did = msg.data.didDoc?.did?.controller
+          //or else
+          if (short_did == undefined) {
+            short_did = msg.data.did
           }
+
+          console.log('ChatScreen - prism did is',msg);
+          dispatch(resolveDidAndShowKeys(short_did))
+
+        
+      }
+
+        else if (reply.value.startsWith(MessageType.LONG_PRISM_UPDATE)) {
+          console.log('fetching prism did ')
+          const msg = currentChat?.messages.find(
+            (message) => message._id === reply.messageId)
+            
+
+          let short_did = msg.data.didDoc.did.controller
+          console.log('UPDATE-ChatScreen - update prism did is',msg.data.didDoc.did.controller);
+          console.log('UPDATE-SHORT DID',reply);
+
+          dispatch(updateDid(short_did))
+
+        
+      }
         else {
           console.log(
             'ChatScreen - reply value not recognized, was',
