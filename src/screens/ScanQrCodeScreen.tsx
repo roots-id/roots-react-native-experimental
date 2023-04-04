@@ -78,20 +78,20 @@ export default function ScanQrCodeScreen({
       console.log('Scan QR - pretending to scan with demo data');
       alert('Adding demo data.');
 
-      if (modelType === 'contact') {
-        console.log('Scan QR - getting contact demo data');
-        // const demoData = getDemoRel();
-        // await importContact(demoData);
-        addDummyContact().then(clearAndGoBack).catch(console.error);
-      } else {
-        console.log('Scan QR - getting credential demo data');
-        // const did = getDid(getUserId());
-        // if (did) {
-        //   const demoData = getDemoCred(did).verifiedCredential;
-        //   await importVerifiedCredential(demoData);
-        // }
-        addDummyCredential().then(clearAndGoBack).catch(console.error);
-      }
+      // if (modelType === 'contact') {
+      //   console.log('Scan QR - getting contact demo data');
+      //   // const demoData = getDemoRel();
+      //   // await importContact(demoData);
+      //   addDummyContact().then(clearAndGoBack).catch(console.error);
+      // } else {
+      //   console.log('Scan QR - getting credential demo data');
+      //   // const did = getDid(getUserId());
+      //   // if (did) {
+      //   //   const demoData = getDemoCred(did).verifiedCredential;
+      //   //   await importVerifiedCredential(demoData);
+      //   // }
+      //   addDummyCredential().then(clearAndGoBack).catch(console.error);
+      // }
   };
 
   useEffect(() => {

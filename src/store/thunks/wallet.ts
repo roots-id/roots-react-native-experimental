@@ -421,7 +421,7 @@ export const initiateWalletCreation = createAsyncThunk(
     //   })
     // );
     const today = new Date(Date.now());
-    await setupDiscordDemo(thunkAPI,rootsHelperId,today)
+    // await setupDiscordDemo(thunkAPI,rootsHelperId,today)
     await thunkAPI.dispatch(startPrismDemo())
     return WALLET_CREATED_SUCCESS;
   }
