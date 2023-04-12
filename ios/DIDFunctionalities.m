@@ -44,9 +44,19 @@ RCT_EXTERN_METHOD(
   resolve:(RCTPromiseResolveBlock)resolve
   rejecter:(RCTPromiseRejectBlock)reject
 )
-
+RCT_EXTERN_METHOD(
+  sendPrismMsg:(NSString *)msg
+  to:(NSString *)to
+  from:(NSString *)from
+  resolve:(RCTPromiseResolveBlock)resolve
+  rejecter:(RCTPromiseRejectBlock)reject
+)
 RCT_EXTERN_METHOD(
   getMessages:(RCTPromiseResolveBlock)resolve
+  rejecter:(RCTPromiseRejectBlock)reject
+)
+RCT_EXTERN_METHOD(
+  AcceptConnection:(RCTPromiseResolveBlock)resolve
   rejecter:(RCTPromiseRejectBlock)reject
 )
 @end
