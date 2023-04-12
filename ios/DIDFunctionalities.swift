@@ -3,10 +3,11 @@ import Builders
 import Domain
 import Foundation
 import PrismAgent
-
+import Combine
 @objc(DIDFunctionalities)
 class DIDFunctionalities: NSObject {
   //  private let castor: Castor
+  private var cancellables = Set<AnyCancellable>()
   private let castor: Castor
   private let agent: PrismAgent
   private let mercury: Mercury
@@ -303,45 +304,41 @@ class DIDFunctionalities: NSObject {
   }
   
   @objc public func AcceptConnection(
-      _ resolve: @escaping RCTPromiseResolveBlock,
-      rejecter reject: @escaping RCTPromiseRejectBlock
-    ) -> Void {
-      Task {
-        let result = AcceptConnection()
-        resolve(result)
-      }
+    _ resolve: @escaping RCTPromiseResolveBlock,
+    rejecter reject: @escaping RCTPromiseRejectBlock
+) -> Void {
+    Task.init {
+        do {
+            let result = try await AcceptConnection()
+            resolve(result)
+        } catch {
+            reject("ACCEPT_CONNECTION_ERROR", "Failed to accept connection", error)
+        }
     }
+}
+
+func AcceptConnection() async throws -> String? {
+    print("AcceptConnection -!")
+    var messages = ""
+    var latestTime: Date!
     
-    func AcceptConnection() -> String?
-  {
-      print("AcceptConnection -!")
-      var messages = ""
-      var latestTime: Date!
-      do{
-        agent.handleMessagesEvents().sink {
-          switch $0 {
-          case .finished:
-            print("Finished message retrieval")
-          case .failure(let error):
-            print(error.localizedDescription)
+    
+      agent.handleReceivedMessagesEvents()
+          .drop {
+              (try? ConnectionRequest(fromMessage: $0)) == nil
           }
-        } receiveValue: {
-          
-          print("Received connection request")
-          let req = try ConnectionRequest(fromMessage: $0)
-          print(req)
-          let resp = try await agent.sendMessage(message: ConnectionAccept(fromRequest: req).makeMessage())
-          print("connection accepted \($0.id)")
-            
-          }
-      }
-      catch {
-        print(error)
-        messages = messages+"\n"+error.localizedDescription
-      }
+          .flatMap { message in
+              Future { [weak self] in
+                  guard let req = try? ConnectionRequest(fromMessage: message) else { return message }
+                  _ = try? await self?.agent?.sendMessage(message: ConnectionAccept(fromRequest: req).makeMessage())
+              }
+          } 
+          .sink(receiveCompletion: { _ in }, receiveValue: { _ in })
+          .store(in: &cancellables)
       
-      return messages
-    }
+
     
+    return messages
+}
   
 }
