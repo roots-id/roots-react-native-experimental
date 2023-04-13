@@ -323,22 +323,35 @@ func AcceptConnection() async throws -> String? {
     var latestTime: Date!
     
     
-      agent.handleReceivedMessagesEvents()
-          .drop {
-              (try? ConnectionRequest(fromMessage: $0)) == nil
-          }
-          .flatMap { message in
-              Future { [weak self] in
-                  guard let req = try? ConnectionRequest(fromMessage: message) else { return message }
-                  _ = try? await self?.agent?.sendMessage(message: ConnectionAccept(fromRequest: req).makeMessage())
+  agent.handleReceivedMessagesEvents()
+              .drop {
+                  (try? ConnectionRequest(fromMessage: $0)) == nil
               }
-          } 
-          .sink(receiveCompletion: { _ in }, receiveValue: { _ in })
-          .store(in: &cancellables)
-      
-
-    
-    return messages
-}
+              .flatMap { message in
+                  Future { [weak self] in
+                      guard let req = try? ConnectionRequest(fromMessage: message) else { return message }
+                    _ = try? await self.agent.sendMessage(message: ConnectionAccept(fromRequest: req).makeMessage())
+                      // You need this line so you always return the same type
+                      return message
+                  }
+              }
+              .sink(receiveCompletion: { _ in }, receiveValue: { _ in })
+              .store(in: &cancellables)
+      }
   
+}
+
+public extension Future where Failure == Error {
+    convenience init(operation: @escaping () async throws -> Output) {
+        self.init { promise in
+            Task {
+                do {
+                    let output = try await operation()
+                    promise(.success(output))
+                } catch {
+                    promise(.failure(error))
+                }
+            }
+        }
+    }
 }
