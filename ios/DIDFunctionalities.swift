@@ -4,6 +4,28 @@ import Domain
 import Foundation
 import PrismAgent
 import Combine
+extension Publishers {
+    struct MissingOutputError: Error {}
+}
+
+public extension Publishers.First where Failure == Error {
+    func await() async throws -> Output {
+        for try await output in values {
+            return output
+        }
+        throw Publishers.MissingOutputError()
+    }
+}
+
+public extension Publishers.FirstWhere where Failure == Error {
+    func await() async throws -> Output {
+        for try await output in values {
+            return output
+        }
+        throw Publishers.MissingOutputError()
+    }
+}
+
 @objc(DIDFunctionalities)
 class DIDFunctionalities: NSObject {
   //  private let castor: Castor
@@ -304,54 +326,39 @@ class DIDFunctionalities: NSObject {
   }
   
   @objc public func AcceptConnection(
-    _ resolve: @escaping RCTPromiseResolveBlock,
-    rejecter reject: @escaping RCTPromiseRejectBlock
-) -> Void {
-    Task.init {
-        do {
-            let result = try await AcceptConnection()
-            resolve(result)
-        } catch {
-            reject("ACCEPT_CONNECTION_ERROR", "Failed to accept connection", error)
-        }
-    }
-}
-
-func AcceptConnection() async throws -> String? {
-    print("AcceptConnection -!")
-    var messages = ""
-    var latestTime: Date!
-    
-    
-  agent.handleReceivedMessagesEvents()
-              .drop {
-                  (try? ConnectionRequest(fromMessage: $0)) == nil
-              }
-              .flatMap { message in
-                  Future { [weak self] in
-                      guard let req = try? ConnectionRequest(fromMessage: message) else { return message }
-                    _ = try? await self.agent.sendMessage(message: ConnectionAccept(fromRequest: req).makeMessage())
-                      // You need this line so you always return the same type
-                      return message
-                  }
-              }
-              .sink(receiveCompletion: { _ in }, receiveValue: { _ in })
-              .store(in: &cancellables)
+      _ resolve: @escaping RCTPromiseResolveBlock,
+      rejecter reject: @escaping RCTPromiseRejectBlock
+  ) -> Void {
+      Task.init {
+          do {
+              let result = try await AcceptConnection()
+              resolve(result)
+          } catch {
+              reject("ACCEPT_CONNECTION_ERROR", "Failed to accept connection", error)
+          }
       }
-  
-}
+  }
 
-public extension Future where Failure == Error {
-    convenience init(operation: @escaping () async throws -> Output) {
-        self.init { promise in
-            Task {
-                do {
-                    let output = try await operation()
-                    promise(.success(output))
-                } catch {
-                    promise(.failure(error))
+  func AcceptConnection() async throws -> Message? {
+      print("AcceptConnection -!")
+
+      return try await agent
+            .handleReceivedMessagesEvents()
+          // Only move forward if the message is a ConnectionRequest Message, if not drop the stream
+            .drop {
+                (try? ConnectionRequest(fromMessage: $0)) == nil
+            }
+            // We got the connecton request message now we are going to produce a flat map with an async future
+            .flatMap { message in
+                Future { [weak self] in
+                    guard let req = try? ConnectionRequest(fromMessage: message) else { return message }
+                  _ = try? await self?.agent.sendMessage(message: ConnectionAccept(fromRequest: req).makeMessage())
+                  return message
                 }
             }
-        }
-    }
+            // At this point it means we send the message successfully and we want to not receive any more messages in this stream, so we put first to complete the stream. Basically first() transforms the stream into something like a JS Promise.
+            .first()
+            // This will transform a First stream into an async/await format. So now you can use the await.
+            .await()
+      }
 }
